@@ -8,14 +8,16 @@ namespace Soulbreak.Orbs
     public class OrbDropper : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private EnemyEventChannel enemyKilled;
+        [SerializeField] private OrbEventChannel orbCollected;
         [SerializeField] private Sprite orbSprite;
         [SerializeField] private Material orbMaterial;
         [SerializeField, ColorUsage(false, true)] private Color soulColor = new Color(1.6f, 0.7f, 3f);
         [SerializeField, ColorUsage(false, true)] private Color healColor = new Color(0.6f, 3f, 1.2f);
         [SerializeField] private float size = 0.7f;
 
-        private void OnEnable() => Enemy.OnAnyKilled += HandleEnemyKilled;
-        private void OnDisable() => Enemy.OnAnyKilled -= HandleEnemyKilled;
+        private void OnEnable() => enemyKilled.OnRaised += HandleEnemyKilled;
+        private void OnDisable() => enemyKilled.OnRaised -= HandleEnemyKilled;
 
         private void HandleEnemyKilled(Enemy enemy)
         {
@@ -48,7 +50,7 @@ namespace Soulbreak.Orbs
             col.isTrigger = true;
             col.radius = 0.5f;
 
-            go.AddComponent<Orb>().Init(type, value, stats.Get(StatType.OrbLifetime), color);
+            go.AddComponent<Orb>().Init(type, value, stats.Get(StatType.OrbLifetime), color, orbCollected);
         }
     }
 }

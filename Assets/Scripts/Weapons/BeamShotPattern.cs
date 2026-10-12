@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Soulbreak.Core;
 using UnityEngine;
@@ -12,13 +11,9 @@ namespace Soulbreak.Weapons
         public float length = 26f;
         public float width = 0.4f;
         [Min(0.1f)] public float damageMultiplier = 2f;
-
-        public static event Action<Vector2, Vector2, float, Color> OnBeam;   // (from, to, width, color)
+        public BeamEventChannel beamChannel;
 
         private static readonly HashSet<IShootable> Hit = new HashSet<IShootable>();
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => OnBeam = null;
 
         public override void Fire(ShotContext ctx)
         {
@@ -29,7 +24,8 @@ namespace Soulbreak.Weapons
             foreach (var h in Physics2D.CircleCastAll(start, width, ctx.Direction, length))
                 if (h.collider.TryGetComponent(out IShootable s) && Hit.Add(s)) s.Shoot(damage);
 
-            OnBeam?.Invoke(start, start + ctx.Direction * length, width, color);
+            if (beamChannel != null)
+                beamChannel.Raise(new BeamInfo { From = start, To = start + ctx.Direction * length, Width = width, Color = color });
         }
     }
 }

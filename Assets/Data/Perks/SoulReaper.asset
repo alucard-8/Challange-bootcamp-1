@@ -1,6 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-6655303076090978754
+--- !u!114 &-7901852783986516484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
+  m_Name: Soul Reaper - StatPerkEffect
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
+  stat: 6
+  operation: 0
+  value: 0.5
+--- !u!114 &-6481641695851748148
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -14,21 +29,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.ReactorPerkEffect
   action: 3
   amount: 1
---- !u!114 &-295635369752502742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
-  m_Name: Soul Reaper - StatPerkEffect
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 0
-  operation: 0
-  value: 2
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49,10 +49,10 @@ MonoBehaviour:
   costGrowth: 200
   maxStacks: 1
   effects:
-  - {fileID: -295635369752502742}
-  - {fileID: 6786533589265393658}
-  - {fileID: -6655303076090978754}
---- !u!114 &6786533589265393658
+  - {fileID: 2032302516052771315}
+  - {fileID: -7901852783986516484}
+  - {fileID: -6481641695851748148}
+--- !u!114 &2032302516052771315
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,6 +64,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
   m_Name: Soul Reaper - StatPerkEffect
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 6
+  stat: 0
   operation: 0
-  value: 0.5
+  value: 2

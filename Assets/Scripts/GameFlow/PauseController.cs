@@ -1,5 +1,5 @@
 using System;
-using Soulbreak.Core;
+
 using UnityEngine;
 
 namespace Soulbreak.GameFlow
@@ -20,9 +20,6 @@ namespace Soulbreak.GameFlow
 
         private void Update()
         {
-            bool canPause = game.State != GameState.GameOver && !SceneFader.IsBusy;
-            if (canPause && InputReader.PausePressed()) SetPaused(!IsPaused);
-
             float goal = IsPaused ? 1f : 0f;
             if (Mathf.Approximately(raw, goal)) return;
 
@@ -31,10 +28,12 @@ namespace Soulbreak.GameFlow
             if (game.State != GameState.GameOver) Time.timeScale = 1f - Blend;
         }
 
+        public void Toggle() => SetPaused(!IsPaused);
+
         public void SetPaused(bool paused)
         {
             if (paused == IsPaused) return;
-            if (paused && game.State == GameState.GameOver) return;
+            if (paused && (game.State == GameState.GameOver || SceneFader.IsBusy)) return;
             IsPaused = paused;
             OnPauseChanged?.Invoke(paused);
         }

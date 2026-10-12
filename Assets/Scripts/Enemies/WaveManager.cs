@@ -17,6 +17,8 @@ namespace Soulbreak.Enemies
     public class WaveManager : MonoBehaviour
     {
         [SerializeField] private Transform target;
+        [Tooltip("Channels handed to every enemy this manager spawns; also used to count living enemies.")]
+        [SerializeField] private EnemyChannels channels;
         [SerializeField] private WaveEnemy[] roster;
         [SerializeField] private EnemyConfig bossConfig;
         [SerializeField] private int bossEvery = 5;
@@ -35,6 +37,25 @@ namespace Soulbreak.Enemies
         public bool InCombat { get; private set; }
         public bool IsBossWave => bossConfig != null && bossEvery > 0 && Wave % bossEvery == 0;
         public int RemainingToSpawn { get; private set; }
+        public int AliveCount { get; private set; }
+
+        private void OnEnable()
+        {
+            channels.spawned.OnRaised += HandleSpawned;
+            channels.killed.OnRaised += HandleGone;
+            channels.reachedTarget.OnRaised += HandleGone;
+        }
+
+        private void OnDisable()
+        {
+            channels.spawned.OnRaised -= HandleSpawned;
+            channels.killed.OnRaised -= HandleGone;
+            channels.reachedTarget.OnRaised -= HandleGone;
+        }
+
+        // Counting through the channels also catches enemies spawned by others (e.g. splitter children).
+        private void HandleSpawned(Enemy e) => AliveCount++;
+        private void HandleGone(Enemy e) => AliveCount = Mathf.Max(0, AliveCount - 1);
 
         public event Action<int, bool> OnWaveStarted;   // (wave, isBoss)
         public event Action<int> OnWaveCleared;
@@ -71,7 +92,7 @@ namespace Soulbreak.Enemies
                     RemainingToSpawn--;
                 }
             }
-            else if (Enemy.AliveCount == 0)
+            else if (AliveCount == 0)
             {
                 InCombat = false;
                 OnWaveCleared?.Invoke(Wave);
@@ -104,7 +125,7 @@ namespace Soulbreak.Enemies
             Vector2 pos = (Vector2)target.position + UnityEngine.Random.insideUnitCircle.normalized * spawnRadius;
             float hp = 1f + healthGrowth * (Wave - 1);
             float spd = 1f + speedGrowth * (Wave - 1);
-            EnemyFactory.Create(config, pos, target, hp, spd);
+            EnemyFactory.Create(config, pos, target, channels, hp, spd);
         }
     }
 }

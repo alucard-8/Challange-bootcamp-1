@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Soulbreak.Core;
-using Soulbreak.Enemies;
+
 using UnityEngine;
 
 namespace Soulbreak.Weapons
@@ -69,8 +69,8 @@ namespace Soulbreak.Weapons
         {
             foreach (var hit in Physics2D.OverlapCircleAll(pos, pattern.bladeSize * 0.6f))
             {
-                bool target = hit.GetComponent<Enemy>() != null || hit.GetComponent<EnemyProjectile>() != null;
-                if (!target || !hit.TryGetComponent(out IShootable s)) continue;
+
+                if (!hit.TryGetComponent(out IHostile s) || !s.IsAlive) continue;
 
                 var id = hit;
                 if (lastHit.TryGetValue(id, out float t) && age - t < pattern.hitCooldown) continue;

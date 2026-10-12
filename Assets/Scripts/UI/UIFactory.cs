@@ -154,6 +154,24 @@ namespace Soulbreak.UI
             fill.offsetMax = new Vector2(-2f, -2f);
         }
 
+        // Rebuilds a centered row of pip images when the count changes (ammo, shield charges).
+        public static void Pips(RectTransform row, System.Collections.Generic.List<Image> pips, int count, float size, float gap,
+                                Color color, float height = 0f)
+        {
+            if (pips.Count == count) return;
+            foreach (var p in pips) UnityEngine.Object.Destroy(p.gameObject);
+            pips.Clear();
+            float h = height > 0f ? height : size;
+            float total = count * size + (count - 1) * gap;
+            for (int i = 0; i < count; i++)
+            {
+                var img = Panel(row, color, "Pip");
+                img.rectTransform.Place(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                    new Vector2(-total / 2f + size / 2f + i * (size + gap), 0f), new Vector2(size, h));
+                pips.Add(img);
+            }
+        }
+
         public static string Hex(Color c) => ColorUtility.ToHtmlStringRGB(c);
     }
 }

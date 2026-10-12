@@ -7,9 +7,10 @@ namespace Soulbreak.Reactor
     public class ReactorHealer : MonoBehaviour
     {
         [SerializeField] private Reactor reactor;
+        [SerializeField] private OrbEventChannel orbCollected;
 
-        private void OnEnable() => Orb.OnAnyCollected += HandleOrbCollected;
-        private void OnDisable() => Orb.OnAnyCollected -= HandleOrbCollected;
+        private void OnEnable() => orbCollected.OnRaised += HandleOrbCollected;
+        private void OnDisable() => orbCollected.OnRaised -= HandleOrbCollected;
 
         private void HandleOrbCollected(Orb orb)
         {

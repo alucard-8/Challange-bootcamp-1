@@ -1,13 +1,11 @@
 using System;
-using Soulbreak.Core;
 using Soulbreak.Weapons;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Soulbreak.Player
 {
-    // Tracks the aim and turns clicks into shots. Which shot fires is decided by the weapon ring
-    // slot the aim passes through; the shot itself is a ShotPattern strategy.
+    // Holds the aim and fires shots on command. Which shot fires is decided by the weapon ring slot the
+    // aim passes through; the shot itself is a ShotPattern strategy. Input lives in PlayerController.
     public class PlayerShooter : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -26,19 +24,18 @@ namespace Soulbreak.Player
             if (cam == null) cam = Camera.main;
         }
 
-        private void Update()
+        public void AimAtScreenPoint(Vector2 screenPoint)
         {
-            if (Time.timeScale == 0f) return;
+            AimPoint = cam.ScreenToWorldPoint(screenPoint);
+            Vector2 toAim = AimPoint - (Vector2)muzzle.position;
+            if (toAim.sqrMagnitude > 0.0001f) AimDirection = toAim.normalized;
+        }
+
+        public bool Fire()
+        {
+            if (Time.timeScale == 0f || !ammo.TryConsume()) return false;
 
             Vector2 origin = muzzle.position;
-            AimPoint = cam.ScreenToWorldPoint(InputReader.PointerPosition());
-            Vector2 toAim = AimPoint - origin;
-            if (toAim.sqrMagnitude > 0.0001f) AimDirection = toAim.normalized;
-
-            if (!InputReader.FirePressed()) return;
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
-            if (!ammo.TryConsume()) return;
-
             bool crit = UnityEngine.Random.value < stats.Get(StatType.CritChance);
             int damage = Mathf.Max(1, Mathf.RoundToInt(stats.Get(StatType.Damage) * (crit ? stats.Get(StatType.CritMultiplier) : 1f)));
             int slot = weapons.GetSlotIndex(AimDirection);
@@ -55,6 +52,7 @@ namespace Soulbreak.Player
             });
             weapons.Consume(slot);   // module slots empty out and reload a new module
             OnShotFired?.Invoke(origin, AimPoint, crit, pattern);
+            return true;
         }
     }
 }

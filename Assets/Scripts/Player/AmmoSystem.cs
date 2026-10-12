@@ -1,10 +1,10 @@
 using System;
-using Soulbreak.Core;
+
 using UnityEngine;
 
 namespace Soulbreak.Player
 {
-    // Owns the clip. The shooter asks it for permission to fire; it never knows what is shot.
+    // Owns the clip. The shooter asks it for permission to fire; it never knows what is shot or reads input.
     public class AmmoSystem : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -44,10 +44,13 @@ namespace Soulbreak.Player
                     Refill();
                     OnReloadFinished?.Invoke();
                 }
-                return;
             }
+        }
 
-            if (Current < Max && InputReader.ReloadPressed()) StartReload();
+        // Manual reload command (sent by PlayerController).
+        public void Reload()
+        {
+            if (!IsReloading && Current < Max) StartReload();
         }
 
         public bool TryConsume()

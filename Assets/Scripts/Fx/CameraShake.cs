@@ -9,6 +9,7 @@ namespace Soulbreak.Fx
     {
         [SerializeField] private Reactor.Reactor reactor;
         [SerializeField] private NovaAbility nova;
+        [SerializeField] private EnemyEventChannel enemyKilled;
         [SerializeField] private float maxOffset = 0.35f;
         [SerializeField] private float decay = 1.8f;
 
@@ -21,14 +22,14 @@ namespace Soulbreak.Fx
         {
             reactor.OnHit += HandleHit;
             nova.OnUsed += HandleNova;
-            Enemy.OnAnyKilled += HandleKill;
+            enemyKilled.OnRaised += HandleKill;
         }
 
         private void OnDisable()
         {
             reactor.OnHit -= HandleHit;
             nova.OnUsed -= HandleNova;
-            Enemy.OnAnyKilled -= HandleKill;
+            enemyKilled.OnRaised -= HandleKill;
         }
 
         private void HandleHit(bool shielded) => AddTrauma(shielded ? 0.35f : 0.6f);

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Soulbreak.Core;
+
 using Soulbreak.GameFlow;
 using Soulbreak.UI;
 using UnityEngine;
@@ -49,11 +49,12 @@ namespace Soulbreak.Menu
             howTo.blocksRaycasts = howTo.interactable = howToOpen;
             mainGroup.alpha = 1f - h * 0.85f;
 
-            if (!starting && !howToOpen && InputReader.ConfirmPressed()) Play();
-            if (howToOpen && InputReader.PausePressed()) howToOpen = false;
         }
 
-        private void Play()
+        public bool IsHowToOpen => howToOpen;
+        public void CloseHowTo() => howToOpen = false;
+
+        public void Play()
         {
             if (starting) return;
             starting = true;

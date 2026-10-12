@@ -1,28 +1,18 @@
-using System;
 using Soulbreak.Core;
-using Soulbreak.Enemies;
 using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
     // A player projectile: flies straight, homes, or travels to a point and explodes.
-    // Uses overlap checks instead of physics callbacks, so it needs no Rigidbody.
+    // Targets only IHostile (never the Enemy class) and uses overlap checks, so it needs no Rigidbody.
     public class PlayerProjectile : MonoBehaviour
     {
-        public static event Action<Vector2, float, Color> OnAnyExploded;   // (position, radius, color)
-
         private ProjectileShotPattern pattern;
         private Vector2 velocityDir, targetPoint;
         private int damage;
         private float travelled, hitRadius;
         private Transform homingTarget;
         private float retargetTimer;
-
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => OnAnyExploded = null;
-
-        // Lets other weapon objects (e.g. the black hole) reuse the explosion event/visual.
-        public static void RaiseExplosion(Vector2 pos, float radius, Color color) => OnAnyExploded?.Invoke(pos, radius, color);
 
         public static void Spawn(ProjectileShotPattern pattern, Vector2 origin, Vector2 dir, Vector2 target, int damage, bool crit)
         {
@@ -42,7 +32,7 @@ namespace Soulbreak.Weapons
             p.targetPoint = target;
             p.damage = damage;
             p.hitRadius = pattern.size * 0.45f;
-            if (pattern.homing) p.homingTarget = NearestEnemy(target, 6f);
+            if (pattern.homing) p.homingTarget = NearestHostile(target, 6f);
         }
 
         private void Update()
@@ -71,7 +61,7 @@ namespace Soulbreak.Weapons
             retargetTimer -= Time.deltaTime;
             if (homingTarget == null && retargetTimer <= 0f)
             {
-                homingTarget = NearestEnemy(transform.position, 12f);
+                homingTarget = NearestHostile(transform.position, 12f);
                 retargetTimer = 0.2f;
             }
             if (homingTarget == null) return;
@@ -85,11 +75,10 @@ namespace Soulbreak.Weapons
         {
             foreach (var hit in Physics2D.OverlapCircleAll(transform.position, hitRadius))
             {
-                bool isTarget = hit.GetComponent<Enemy>() != null || hit.GetComponent<EnemyProjectile>() != null;
-                if (!isTarget || !hit.TryGetComponent(out IShootable shootable)) continue;
+                if (!hit.TryGetComponent(out IHostile hostile) || !hostile.IsAlive) continue;
 
                 if (pattern.explosionRadius > 0f) Explode();
-                else { shootable.Shoot(damage); Destroy(gameObject); }
+                else { hostile.Shoot(damage); Destroy(gameObject); }
                 return true;
             }
             return false;
@@ -101,19 +90,20 @@ namespace Soulbreak.Weapons
             foreach (var hit in Physics2D.OverlapCircleAll(transform.position, pattern.explosionRadius))
                 if (hit.TryGetComponent(out IShootable shootable)) shootable.Shoot(damage);
 
-            OnAnyExploded?.Invoke(transform.position, pattern.explosionRadius, pattern.color);
+            if (pattern.explodedChannel != null)
+                pattern.explodedChannel.Raise(new ExplosionInfo { Position = transform.position, Radius = pattern.explosionRadius, Color = pattern.color });
             Destroy(gameObject);
         }
 
-        private static Transform NearestEnemy(Vector2 point, float radius)
+        public static Transform NearestHostile(Vector2 point, float radius)
         {
             Transform best = null;
             float bestDist = float.MaxValue;
             foreach (var hit in Physics2D.OverlapCircleAll(point, radius))
             {
-                if (!hit.TryGetComponent(out Enemy enemy)) continue;
-                float d = ((Vector2)enemy.transform.position - point).sqrMagnitude;
-                if (d < bestDist) { bestDist = d; best = enemy.transform; }
+                if (!hit.TryGetComponent(out IHostile h) || !h.IsAlive) continue;
+                float d = ((Vector2)h.transform.position - point).sqrMagnitude;
+                if (d < bestDist) { bestDist = d; best = h.transform; }
             }
             return best;
         }

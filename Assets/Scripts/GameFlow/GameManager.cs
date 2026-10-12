@@ -1,5 +1,5 @@
 using System;
-using Soulbreak.Core;
+
 using Soulbreak.Enemies;
 using Soulbreak.Perks;
 using UnityEngine;
@@ -50,7 +50,7 @@ namespace Soulbreak.GameFlow
         private void Update()
         {
             if (State == GameState.Combat) SurvivalTime += Time.deltaTime;
-            else if (State == GameState.GameOver && InputReader.RestartPressed()) Restart();
+
         }
 
         private void HandleWaveCleared(int wave)

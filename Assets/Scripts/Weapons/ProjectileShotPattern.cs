@@ -27,6 +27,9 @@ namespace Soulbreak.Weapons
         public bool homing;
         [Min(0f)] public float turnSpeed = 540f;
 
+        [Header("Events")]
+        public ExplosionEventChannel explodedChannel;
+
         public override void Fire(ShotContext ctx)
         {
             int damage = Mathf.Max(1, Mathf.RoundToInt(ctx.Damage * damageMultiplier));

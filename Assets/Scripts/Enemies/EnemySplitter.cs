@@ -5,10 +5,11 @@ namespace Soulbreak.Enemies
     // Observer: when an enemy whose config has splitInto dies, spawn its children.
     public class EnemySplitter : MonoBehaviour
     {
+        [SerializeField] private EnemyEventChannel enemyKilled;
         [SerializeField] private float spread = 0.6f;
 
-        private void OnEnable() => Enemy.OnAnyKilled += HandleKilled;
-        private void OnDisable() => Enemy.OnAnyKilled -= HandleKilled;
+        private void OnEnable() => enemyKilled.OnRaised += HandleKilled;
+        private void OnDisable() => enemyKilled.OnRaised -= HandleKilled;
 
         private void HandleKilled(Enemy enemy)
         {
@@ -19,7 +20,7 @@ namespace Soulbreak.Enemies
             {
                 Vector2 offset = Random.insideUnitCircle.normalized * spread;
                 EnemyFactory.Create(cfg.splitInto, (Vector2)enemy.transform.position + offset, enemy.Target,
-                                    enemy.HealthMultiplier, enemy.SpeedMultiplier);
+                                    enemy.Channels, enemy.HealthMultiplier, enemy.SpeedMultiplier);
             }
         }
     }

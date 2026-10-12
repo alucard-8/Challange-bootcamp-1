@@ -1,11 +1,11 @@
 using System;
 using Soulbreak.Core;
-using Soulbreak.Enemies;
 using UnityEngine;
 
 namespace Soulbreak.Player
 {
-    // Panic button: SPACE blasts every enemy near the reactor, then goes on cooldown.
+    // Panic button: blasts every hostile near the reactor, then goes on cooldown.
+    // Triggered by PlayerController; targets IHostile only.
     public class NovaAbility : MonoBehaviour
     {
         [SerializeField] private Transform center;
@@ -22,28 +22,29 @@ namespace Soulbreak.Player
 
         private void Update()
         {
-            if (Time.timeScale == 0f) return;
-
-            if (CooldownRemaining > 0f)
-            {
-                CooldownRemaining -= Time.deltaTime;
-                if (CooldownRemaining <= 0f) OnReady?.Invoke();
-            }
-
-            // Only fire when there is something to hit, so it isn't wasted between waves.
-            if (IsReady && Enemy.AliveCount > 0 && InputReader.AbilityPressed()) Use();
+            if (CooldownRemaining <= 0f) return;
+            CooldownRemaining -= Time.deltaTime;
+            if (CooldownRemaining <= 0f) OnReady?.Invoke();
         }
 
-        private void Use()
+        // Only fires if something is in range, so it isn't wasted between waves.
+        public bool TryUse()
         {
-            foreach (var hit in Physics2D.OverlapCircleAll(center.position, Radius))
+            if (!IsReady || Time.timeScale == 0f) return false;
+
+            var hits = Physics2D.OverlapCircleAll(center.position, Radius);
+            bool any = false;
+            foreach (var hit in hits)
             {
-                if (hit.TryGetComponent(out Enemy enemy)) enemy.TakeDamage(damage);
-                else if (hit.TryGetComponent(out EnemyProjectile projectile)) projectile.Shoot(damage);
+                if (!hit.TryGetComponent(out IHostile h) || !h.IsAlive) continue;
+                h.Shoot(damage);
+                any = true;
             }
+            if (!any) return false;
 
             CooldownRemaining = Cooldown;
             OnUsed?.Invoke(center.position, Radius);
+            return true;
         }
     }
 }

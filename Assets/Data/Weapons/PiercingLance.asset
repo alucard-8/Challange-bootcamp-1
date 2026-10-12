@@ -20,3 +20,4 @@ MonoBehaviour:
   length: 26
   width: 0.4
   damageMultiplier: 2
+  beamChannel: {fileID: 11400000, guid: d3879626ff153c6468d081c4b44999ac, type: 2}

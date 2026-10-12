@@ -29,3 +29,4 @@ MonoBehaviour:
   explosionRadius: 1.8
   homing: 0
   turnSpeed: 420
+  explodedChannel: {fileID: 11400000, guid: c97d58e9bdbf95640ad412257dfd1184, type: 2}

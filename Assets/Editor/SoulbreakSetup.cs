@@ -68,6 +68,7 @@ namespace Soulbreak.EditorTools
             Shots(quad, orbMat);
             SetReloadTimes();
             Techniques(quad, orbMat);
+            Channels();
 
             var roster = Enemies(quad, enemyMat, orbMat, out var boss);
             var perks = Perks();
@@ -124,6 +125,8 @@ namespace Soulbreak.EditorTools
 
             var view = new GameObject("MainMenu").AddComponent<Soulbreak.Menu.MainMenuView>();
             Set(view, "ambience", amb);
+            var menuInput = view.gameObject.AddComponent<Soulbreak.Menu.MainMenuInput>();
+            Set(menuInput, "view", view); Set(menuInput, "ambience", amb);
 
             EditorSceneManager.SaveScene(scene, MenuScenePath);
         }
@@ -237,6 +240,55 @@ namespace Soulbreak.EditorTools
             vortexShot = Load<VortexShotPattern>("BlackHole");
             vortexShot.displayName = "Black Hole"; vortexShot.icon = 7; vortexShot.color = new Color(2.2f, 0.6f, 4.5f);
             vortexShot.reloadTime = 8f; vortexShot.sprite = quad; vortexShot.material = Mat("Vortex", "Soulbreak/Vortex");
+        }
+
+        // ---------------- Event channels ----------------
+        private class ChannelSet
+        {
+            public EnemyEventChannel enemySpawned, enemyKilled, enemyReached;
+            public EnemyProjectileEventChannel projectileShotDown;
+            public OrbEventChannel orbCollected;
+            public ExplosionEventChannel explosions;
+            public ChainEventChannel chains;
+            public BeamEventChannel beams;
+        }
+
+        private static ChannelSet ch;
+
+        private static T Channel<T>(string name, string description) where T : ScriptableObject
+        {
+            Folder("Assets/Data", "Events");
+            string path = $"Assets/Data/Events/{name}.asset";
+            var a = AssetDatabase.LoadAssetAtPath<T>(path);
+            if (a == null) { a = ScriptableObject.CreateInstance<T>(); AssetDatabase.CreateAsset(a, path); }
+            var so = new SerializedObject(a);
+            so.FindProperty("description").stringValue = description;
+            so.ApplyModifiedPropertiesWithoutUndo();
+            return a;
+        }
+
+        private static void Channels()
+        {
+            ch = new ChannelSet
+            {
+                enemySpawned = Channel<EnemyEventChannel>("EnemySpawned", "Raised by an enemy when it is created."),
+                enemyKilled = Channel<EnemyEventChannel>("EnemyKilled", "Raised by an enemy when its health reaches 0."),
+                enemyReached = Channel<EnemyEventChannel>("EnemyReachedReactor", "Raised by an enemy when it hits the reactor."),
+                projectileShotDown = Channel<EnemyProjectileEventChannel>("EnemyProjectileShotDown", "Raised when the player shoots down an enemy bullet."),
+                orbCollected = Channel<OrbEventChannel>("OrbCollected", "Raised when the player shoots an orb."),
+                explosions = Channel<ExplosionEventChannel>("Explosions", "Raised by explosive weapons (cannon, black hole)."),
+                chains = Channel<ChainEventChannel>("ChainLightning", "Raised by Chain Lightning with the points it jumped through."),
+                beams = Channel<BeamEventChannel>("Beams", "Raised by the Piercing Lance."),
+            };
+
+            tripleShot.explodedChannel = ch.explosions;
+            cannonShot.explodedChannel = ch.explosions;
+            seekerShot.explodedChannel = ch.explosions;
+            vortexShot.explodedChannel = ch.explosions;
+            chainShot.chainChannel = ch.chains;
+            lanceShot.beamChannel = ch.beams;
+            foreach (var s in new ShotPattern[] { tripleShot, cannonShot, seekerShot, vortexShot, chainShot, lanceShot })
+                EditorUtility.SetDirty(s);
         }
 
         private static void SetReloadTimes()
@@ -503,7 +555,7 @@ namespace Soulbreak.EditorTools
             var shooter = Sys<PlayerShooter>("PlayerShooter");
             var nova = Sys<NovaAbility>("NovaAbility");
             var waves = Sys<WaveManager>("WaveManager");
-            Sys<EnemySplitter>("EnemySplitter");
+            var splitter = Sys<EnemySplitter>("EnemySplitter");
             var dropper = Sys<OrbDropper>("OrbDropper");
             var combo = Sys<ComboSystem>("ComboSystem");
             var wallet = Sys<SoulWallet>("SoulWallet");
@@ -512,7 +564,9 @@ namespace Soulbreak.EditorTools
             var shop = Sys<PerkShop>("PerkShop");
             var gm = Sys<GameManager>("GameManager");
             var fx = Sys<FxSystem>("FxSystem");
-            var hud = Sys<HUD>("HUD");
+            var hudGo = new GameObject("HUD");
+            hudGo.transform.SetParent(sys);
+            var hud = hudGo.AddComponent<HUDCanvas>();
             var shopView = Sys<ShopView>("ShopView");
             var shake = Get<CameraShake>(cam.gameObject);
             var weapons = Sys<Weapons.WeaponRing>("WeaponRing");
@@ -576,12 +630,52 @@ namespace Soulbreak.EditorTools
             Set(fx, "shooter", shooter); Set(fx, "nova", nova); Set(fx, "reactor", reactor);
             Set(fx, "quad", quad); Set(fx, "ringMaterial", ringMat); Set(fx, "tracerMaterial", tracerMat); Set(fx, "enemyMaterial", enemyMat);
 
-            Set(hud, "reactor", reactor); Set(hud, "wallet", wallet); Set(hud, "ammo", ammo); Set(hud, "nova", nova);
-            Set(hud, "combo", combo); Set(hud, "waves", waves); Set(hud, "gameManager", gm);
+            // HUD: one shared canvas + small single-purpose views
+            Set(hud, "game", gm);
+            var reactorPanel = hudGo.AddComponent<ReactorPanelView>();
+            Set(reactorPanel, "hud", hud); Set(reactorPanel, "reactor", reactor); Set(reactorPanel, "waves", waves);
+            var soulView = hudGo.AddComponent<SoulCounterView>();
+            Set(soulView, "hud", hud); Set(soulView, "wallet", wallet);
+            var ammoView = hudGo.AddComponent<AmmoView>();
+            Set(ammoView, "hud", hud); Set(ammoView, "ammo", ammo);
+            var novaView = hudGo.AddComponent<NovaView>();
+            Set(novaView, "hud", hud); Set(novaView, "nova", nova);
+            var comboView = hudGo.AddComponent<ComboView>();
+            Set(comboView, "hud", hud); Set(comboView, "combo", combo);
+            var banner = hudGo.AddComponent<BannerView>();
+            Set(banner, "hud", hud); Set(banner, "waves", waves); Set(banner, "nova", nova);
+            var gameOver = hudGo.AddComponent<GameOverView>();
+            Set(gameOver, "hud", hud); Set(gameOver, "game", gm); Set(gameOver, "wallet", wallet);
 
             Set(shopView, "shop", shop); Set(shopView, "wallet", wallet);
 
             Set(shake, "reactor", reactor); Set(shake, "nova", nova);
+
+            // Input controllers (systems and views never read input themselves)
+            var player = Sys<PlayerController>("PlayerController");
+            Set(player, "shooter", shooter); Set(player, "ammo", ammo); Set(player, "nova", nova);
+            var hotkeys = Sys<GameHotkeys>("GameHotkeys");
+            Set(hotkeys, "game", gm); Set(hotkeys, "pause", pause);
+            var shopKeys = Sys<ShopHotkeys>("ShopHotkeys");
+            Set(shopKeys, "shop", shop);
+
+            // Event channels (ScriptableObject assets shared by broadcasters and listeners)
+            var so2 = new SerializedObject(waves);
+            so2.FindProperty("channels.spawned").objectReferenceValue = ch.enemySpawned;
+            so2.FindProperty("channels.killed").objectReferenceValue = ch.enemyKilled;
+            so2.FindProperty("channels.reachedTarget").objectReferenceValue = ch.enemyReached;
+            so2.FindProperty("channels.projectileShotDown").objectReferenceValue = ch.projectileShotDown;
+            so2.ApplyModifiedPropertiesWithoutUndo();
+
+            Set(splitter, "enemyKilled", ch.enemyKilled);
+            Set(dropper, "enemyKilled", ch.enemyKilled); Set(dropper, "orbCollected", ch.orbCollected);
+            Set(combo, "enemyKilled", ch.enemyKilled);
+            Set(wallet, "enemyKilled", ch.enemyKilled); Set(wallet, "orbCollected", ch.orbCollected);
+            Set(healer, "orbCollected", ch.orbCollected);
+            Set(shake, "enemyKilled", ch.enemyKilled);
+            Set(fx, "enemyKilled", ch.enemyKilled); Set(fx, "orbCollected", ch.orbCollected);
+            Set(fx, "projectileShotDown", ch.projectileShotDown); Set(fx, "explosions", ch.explosions);
+            Set(fx, "chains", ch.chains); Set(fx, "beams", ch.beams);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);

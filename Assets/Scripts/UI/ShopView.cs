@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Soulbreak.Core;
+
 using Soulbreak.Economy;
 using Soulbreak.Perks;
 using UnityEngine;
@@ -70,9 +70,6 @@ namespace Soulbreak.UI
         private void Update()
         {
             if (!shop.IsOpen) return;
-            if (Time.timeScale > 0f)
-                for (int i = 0; i < cards.Count; i++)
-                    if (InputReader.PerkPressed(i)) shop.TryBuy(i);
 
             // Open animation: overlay fades in, cards fly up one after another.
             showTime += Time.unscaledDeltaTime;

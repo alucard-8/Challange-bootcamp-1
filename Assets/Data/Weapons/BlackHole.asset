@@ -28,3 +28,4 @@ MonoBehaviour:
   implodeDamageMultiplier: 3
   sprite: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
   material: {fileID: 2100000, guid: 691700f14694e1f42a3ccc1fca0099a6, type: 2}
+  explodedChannel: {fileID: 11400000, guid: c97d58e9bdbf95640ad412257dfd1184, type: 2}

@@ -5,7 +5,7 @@ namespace Soulbreak.Enemies
     // Factory pattern: the only place that knows how an enemy GameObject is assembled.
     public static class EnemyFactory
     {
-        public static Enemy Create(EnemyConfig config, Vector2 position, Transform target,
+        public static Enemy Create(EnemyConfig config, Vector2 position, Transform target, EnemyChannels channels,
                                    float healthMultiplier = 1f, float speedMultiplier = 1f)
         {
             var go = new GameObject(config.name);
@@ -22,7 +22,7 @@ namespace Soulbreak.Enemies
             rb.bodyType = RigidbodyType2D.Kinematic;
 
             var enemy = go.AddComponent<Enemy>();
-            enemy.Init(config, target, healthMultiplier, speedMultiplier);
+            enemy.Init(config, target, channels, healthMultiplier, speedMultiplier);
             go.AddComponent<EnemyView>();
 
             if (config.stopDistance > 0f) go.AddComponent<EnemyRangedAttack>();

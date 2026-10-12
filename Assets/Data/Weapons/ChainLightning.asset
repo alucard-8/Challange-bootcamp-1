@@ -22,3 +22,4 @@ MonoBehaviour:
   jumpRadius: 3.8
   falloff: 0.85
   damageMultiplier: 1.5
+  chainChannel: {fileID: 11400000, guid: 346e8729f6d9faa4692ae7c246bf8a11, type: 2}

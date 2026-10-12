@@ -1,22 +1,20 @@
-using System;
 using Soulbreak.Core;
 using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Enemy bullet flying at the reactor. The player can shoot it down (IShootable).
-    public class EnemyProjectile : MonoBehaviour, IShootable
+    // Enemy bullet flying at the reactor. The player can shoot it down (it's IHostile/IShootable).
+    public class EnemyProjectile : MonoBehaviour, IHostile
     {
-        public static event Action<EnemyProjectile> OnAnyShotDown;
-
         private Transform target;
         private float speed;
         private int damage;
+        private EnemyProjectileEventChannel shotDownChannel;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => OnAnyShotDown = null;
+        public bool IsAlive => this != null;
+        public bool IsHeavy => false;
 
-        public static EnemyProjectile Spawn(Vector2 position, Transform target, EnemyConfig source)
+        public static EnemyProjectile Spawn(Vector2 position, Transform target, EnemyConfig source, EnemyProjectileEventChannel shotDown)
         {
             var go = new GameObject("EnemyProjectile");
             go.transform.position = position;
@@ -38,6 +36,7 @@ namespace Soulbreak.Enemies
             p.target = target;
             p.speed = source.projectileSpeed;
             p.damage = source.projectileDamage;
+            p.shotDownChannel = shotDown;
             return p;
         }
 
@@ -49,7 +48,7 @@ namespace Soulbreak.Enemies
 
         public void Shoot(int dmg)
         {
-            OnAnyShotDown?.Invoke(this);
+            if (shotDownChannel != null) shotDownChannel.Raise(this);
             Destroy(gameObject);
         }
 

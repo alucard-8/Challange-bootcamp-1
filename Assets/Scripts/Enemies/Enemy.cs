@@ -5,17 +5,14 @@ using UnityEngine;
 namespace Soulbreak.Enemies
 {
     // Moves toward its target and dies. It does NOT give souls, drop orbs, split or draw effects —
-    // it raises events and other systems (wallet, orb dropper, splitter, fx) react.
+    // it raises events on its channels and other systems (wallet, orb dropper, splitter, fx) react.
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-    public class Enemy : MonoBehaviour, IShootable, IDamageable
+    public class Enemy : MonoBehaviour, IHostile, IDamageable
     {
-        public static event Action<Enemy> OnAnyKilled;
-        public static event Action<Enemy> OnAnyReachedTarget;
-        public static int AliveCount { get; private set; }
-
-        public event Action<Enemy> OnDamaged;
+        public event Action<Enemy> OnDamaged;   // per-instance, for this enemy's own view
 
         public EnemyConfig Config { get; private set; }
+        public EnemyChannels Channels { get; private set; }
         public Transform Target { get; private set; }
         public int Health { get; private set; }
         public int MaxHealth { get; private set; }
@@ -23,29 +20,23 @@ namespace Soulbreak.Enemies
         public float HealthMultiplier { get; private set; }
         public bool InRange { get; private set; }
 
+        public bool IsAlive => Health > 0;
+        public bool IsHeavy => Config != null && Config.isBoss;
+
         private float speed;
 
-        // Clear static state when entering Play Mode with domain reload disabled.
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics()
-        {
-            OnAnyKilled = null;
-            OnAnyReachedTarget = null;
-            AliveCount = 0;
-        }
-
-        private void OnEnable() => AliveCount++;
-        private void OnDisable() => AliveCount--;
-
-        public void Init(EnemyConfig config, Transform target, float healthMultiplier, float speedMultiplier)
+        public void Init(EnemyConfig config, Transform target, EnemyChannels channels, float healthMultiplier, float speedMultiplier)
         {
             Config = config;
             Target = target;
+            Channels = channels;
             HealthMultiplier = healthMultiplier;
             SpeedMultiplier = speedMultiplier;
             MaxHealth = Health = Mathf.Max(1, Mathf.RoundToInt(config.maxHealth * healthMultiplier));
             speed = config.speed * speedMultiplier;
             transform.localScale = Vector3.one * config.size;
+
+            if (channels?.spawned != null) channels.spawned.Raise(this);
         }
 
         private void Update()
@@ -67,7 +58,7 @@ namespace Soulbreak.Enemies
             OnDamaged?.Invoke(this);
 
             if (Health > 0) return;
-            OnAnyKilled?.Invoke(this);
+            if (Channels?.killed != null) Channels.killed.Raise(this);
             Destroy(gameObject);
         }
 
@@ -77,7 +68,7 @@ namespace Soulbreak.Enemies
             if (other.TryGetComponent(out IDamageable damageable)) damageable.TakeDamage(Config.damage);
 
             Health = 0;
-            OnAnyReachedTarget?.Invoke(this);
+            if (Channels?.reachedTarget != null) Channels.reachedTarget.Raise(this);
             Destroy(gameObject);
         }
     }

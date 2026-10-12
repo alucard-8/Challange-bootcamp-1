@@ -1,4 +1,4 @@
-using System;
+
 using Soulbreak.Core;
 using UnityEngine;
 
@@ -6,11 +6,11 @@ namespace Soulbreak.Orbs
 {
     public enum OrbType { Soul, Heal }
 
-    // A shootable pickup. Shooting it raises OnAnyCollected; it doesn't know who rewards the player.
+    // A shootable pickup. Shooting it raises its "collected" channel; it doesn't know who rewards the player.
     // The glow/pulse is done by the Orb shader; this script only handles lifetime and blinking.
     public class Orb : MonoBehaviour, IShootable
     {
-        public static event Action<Orb> OnAnyCollected;
+        private OrbEventChannel collectedChannel;
 
         public OrbType Type { get; private set; }
         public int Value { get; private set; }
@@ -20,11 +20,9 @@ namespace Soulbreak.Orbs
         private float age;
         private SpriteRenderer sr;
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetStatics() => OnAnyCollected = null;
-
-        public void Init(OrbType type, int value, float lifetime, Color color)
+        public void Init(OrbType type, int value, float lifetime, Color color, OrbEventChannel collected)
         {
+            collectedChannel = collected;
             Type = type;
             Value = value;
             Color = color;
@@ -49,7 +47,7 @@ namespace Soulbreak.Orbs
 
         public void Shoot(int damage)
         {
-            OnAnyCollected?.Invoke(this);
+            if (collectedChannel != null) collectedChannel.Raise(this);
             Destroy(gameObject);
         }
     }

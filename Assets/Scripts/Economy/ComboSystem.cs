@@ -9,6 +9,7 @@ namespace Soulbreak.Economy
     public class ComboSystem : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private EnemyEventChannel enemyKilled;
         [SerializeField] private float bonusPerKill = 0.05f;
         [SerializeField] private float maxMultiplier = 2f;
 
@@ -20,8 +21,8 @@ namespace Soulbreak.Economy
 
         private float timer, window;
 
-        private void OnEnable() => Enemy.OnAnyKilled += HandleKill;
-        private void OnDisable() => Enemy.OnAnyKilled -= HandleKill;
+        private void OnEnable() => enemyKilled.OnRaised += HandleKill;
+        private void OnDisable() => enemyKilled.OnRaised -= HandleKill;
 
         private void HandleKill(Enemy enemy)
         {

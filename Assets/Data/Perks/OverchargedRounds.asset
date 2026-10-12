@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8582554401746193056
+--- !u!114 &-2074368528424478323
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15,21 +15,6 @@ MonoBehaviour:
   stat: 1
   operation: 0
   value: 0.1
---- !u!114 &-829269826315577597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
-  m_Name: Overcharged Rounds - StatPerkEffect
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 0
-  operation: 0
-  value: 2
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,5 +35,20 @@ MonoBehaviour:
   costGrowth: 120
   maxStacks: 3
   effects:
-  - {fileID: -829269826315577597}
-  - {fileID: -8582554401746193056}
+  - {fileID: 5455681496817384090}
+  - {fileID: -2074368528424478323}
+--- !u!114 &5455681496817384090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
+  m_Name: Overcharged Rounds - StatPerkEffect
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
+  stat: 0
+  operation: 0
+  value: 2

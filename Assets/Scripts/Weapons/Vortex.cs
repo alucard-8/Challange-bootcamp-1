@@ -1,10 +1,9 @@
 using Soulbreak.Core;
-using Soulbreak.Enemies;
 using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Runtime black hole: travel -> pull + tick damage -> implode.
+    // Runtime black hole: travel -> pull + tick damage -> implode. Works on any IHostile.
     public class Vortex : MonoBehaviour
     {
         private static readonly int ColorId = Shader.PropertyToID("_Color");
@@ -60,14 +59,14 @@ namespace Soulbreak.Weapons
 
             foreach (var hit in Physics2D.OverlapCircleAll(c, pattern.pullRadius))
             {
-                if (!hit.TryGetComponent(out Enemy e)) continue;
-                if (!e.Config.isBoss)
+                if (!hit.TryGetComponent(out IHostile h) || !h.IsAlive) continue;
+                if (!h.IsHeavy)
                 {
-                    float dist = Vector2.Distance(e.transform.position, c);
+                    float dist = Vector2.Distance(h.transform.position, c);
                     float strength = pattern.pullStrength * (1.2f - dist / pattern.pullRadius);
-                    e.transform.position = Vector2.MoveTowards(e.transform.position, c, strength * Time.deltaTime);
+                    h.transform.position = Vector2.MoveTowards(h.transform.position, c, strength * Time.deltaTime);
                 }
-                if (doTick) e.TakeDamage(Mathf.Max(1, Mathf.RoundToInt(baseDamage * pattern.tickDamageMultiplier)));
+                if (doTick) h.Shoot(Mathf.Max(1, Mathf.RoundToInt(baseDamage * pattern.tickDamageMultiplier)));
             }
 
             if (age >= pattern.duration) Implode(c);
@@ -79,7 +78,8 @@ namespace Soulbreak.Weapons
             foreach (var hit in Physics2D.OverlapCircleAll(c, pattern.implodeRadius))
                 if (hit.TryGetComponent(out IShootable s)) s.Shoot(dmg);
 
-            PlayerProjectile.RaiseExplosion(c, pattern.implodeRadius, pattern.color);
+            if (pattern.explodedChannel != null)
+                pattern.explodedChannel.Raise(new ExplosionInfo { Position = c, Radius = pattern.implodeRadius, Color = pattern.color });
             Destroy(gameObject);
         }
     }

@@ -11,6 +11,8 @@ namespace Soulbreak.Economy
     {
         [SerializeField] private PlayerStats stats;
         [SerializeField] private ComboSystem combo;
+        [SerializeField] private EnemyEventChannel enemyKilled;
+        [SerializeField] private OrbEventChannel orbCollected;
         [SerializeField] private int startingSouls = 0;
 
         public int Souls { get; private set; }
@@ -22,14 +24,14 @@ namespace Soulbreak.Economy
 
         private void OnEnable()
         {
-            Enemy.OnAnyKilled += HandleEnemyKilled;
-            Orb.OnAnyCollected += HandleOrbCollected;
+            enemyKilled.OnRaised += HandleEnemyKilled;
+            orbCollected.OnRaised += HandleOrbCollected;
         }
 
         private void OnDisable()
         {
-            Enemy.OnAnyKilled -= HandleEnemyKilled;
-            Orb.OnAnyCollected -= HandleOrbCollected;
+            enemyKilled.OnRaised -= HandleEnemyKilled;
+            orbCollected.OnRaised -= HandleOrbCollected;
         }
 
         private void Start() => OnSoulsChanged?.Invoke(Souls);

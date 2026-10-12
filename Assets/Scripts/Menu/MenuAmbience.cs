@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Soulbreak.Core;
+
 using Soulbreak.Fx;
 using UnityEngine;
 
@@ -74,6 +74,10 @@ namespace Soulbreak.Menu
 
         public void ZoomIn() => zooming = true;
 
+        // Where the player is pointing (screen space) — fed by MainMenuInput, used for camera parallax.
+        public void LookAt(Vector2 screenPoint) => lookScreenPoint = screenPoint;
+        private Vector2 lookScreenPoint;
+
         private void Update()
         {
             float dt = Time.unscaledDeltaTime;
@@ -91,7 +95,7 @@ namespace Soulbreak.Menu
             for (int i = wisps.Count - 1; i >= 0; i--) UpdateWisp(wisps[i], i, dt);
 
             // Camera: parallax toward the mouse, and a dive into the reactor when Play is pressed.
-            Vector2 mouse = InputReader.PointerPosition();
+            Vector2 mouse = lookScreenPoint;
             Vector2 n = new Vector2(mouse.x / Mathf.Max(1, Screen.width) - 0.5f, mouse.y / Mathf.Max(1, Screen.height) - 0.5f);
             if (zooming) zoom = Mathf.Min(1f, zoom + dt * 1.4f);
             float z = zoom * zoom * zoom;

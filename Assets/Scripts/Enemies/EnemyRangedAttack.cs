@@ -23,7 +23,7 @@ namespace Soulbreak.Enemies
             if (timer > 0f) return;
             timer = enemy.Config.fireInterval;
 
-            EnemyProjectile.Spawn(transform.position, enemy.Target, enemy.Config);
+            EnemyProjectile.Spawn(transform.position, enemy.Target, enemy.Config, enemy.Channels?.projectileShotDown);
         }
     }
 }

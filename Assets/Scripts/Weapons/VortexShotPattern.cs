@@ -17,6 +17,7 @@ namespace Soulbreak.Weapons
         [Min(0.1f)] public float implodeDamageMultiplier = 3f;
         public Sprite sprite;
         public Material material;
+        public ExplosionEventChannel explodedChannel;
 
         public override void Fire(ShotContext ctx) =>
             Vortex.Spawn(this, ctx.Origin + ctx.Direction * 1.9f, ctx.Target, ctx.Damage);
