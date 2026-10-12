@@ -13,6 +13,7 @@ namespace Soulbreak.Menu
         [SerializeField] private Meta.MetaCatalog catalog;
         [SerializeField] private Meta.CodexCatalog codex;
         [SerializeField] private IndexView index;
+        [SerializeField] private UI.AccountView account;
 
         private void Update()
         {
@@ -26,14 +27,15 @@ namespace Soulbreak.Menu
 
             ambience.LookAt(InputReader.PointerPosition());
 
-            bool anyPanel = view.IsAscensionOpen || view.IsHowToOpen || view.IsSettingsOpen || view.IsDifficultyOpen || index.IsOpen;
+            bool anyPanel = view.IsAscensionOpen || view.IsHowToOpen || view.IsSettingsOpen || view.IsDifficultyOpen || index.IsOpen || account.IsOpen;
             if (InputReader.FirePressed() && !anyPanel && Camera.main != null)
                 easterEgg.RegisterClick(Camera.main.ScreenToWorldPoint(InputReader.PointerPosition()));
 
             bool esc = InputReader.PausePressed();
             bool enter = InputReader.ConfirmPressed();
 
-            if (index.IsOpen)
+            if (account.IsOpen) { if (esc) account.Close(); }   // typing: Enter must not start a run
+            else if (index.IsOpen)
             {
                 if (esc) index.Close();
                 else if (InputReader.LeftPressed()) index.TurnPage(-1);

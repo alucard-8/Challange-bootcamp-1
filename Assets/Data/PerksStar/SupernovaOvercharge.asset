@@ -20,4 +20,4 @@ MonoBehaviour:
   costGrowth: 60
   maxStacks: 3
   effects:
-  - {fileID: -3469122924630972086, guid: f3e2fda73715124449513089c1e46ae4, type: 2}
+  - {fileID: 7397162028118612401, guid: f3e2fda73715124449513089c1e46ae4, type: 2}

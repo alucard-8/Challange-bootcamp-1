@@ -1,6 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1558339402120271168
+--- !u!114 &-1913460129981828158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
+  m_Name: Soul Reaper - StatPerkEffect
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
+  stat: 0
+  operation: 0
+  value: 2
+--- !u!114 &-1486962409439982337
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -35,25 +50,10 @@ MonoBehaviour:
   costGrowth: 200
   maxStacks: 1
   effects:
-  - {fileID: 2577378106223379947}
-  - {fileID: -1558339402120271168}
-  - {fileID: 4385634032446155586}
---- !u!114 &2577378106223379947
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
-  m_Name: Soul Reaper - StatPerkEffect
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 0
-  operation: 0
-  value: 2
---- !u!114 &4385634032446155586
+  - {fileID: -1913460129981828158}
+  - {fileID: -1486962409439982337}
+  - {fileID: 5215722019623862756}
+--- !u!114 &5215722019623862756
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

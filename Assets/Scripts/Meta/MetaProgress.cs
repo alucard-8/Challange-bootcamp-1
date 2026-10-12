@@ -25,6 +25,7 @@ namespace Soulbreak.Meta
             public int runs;
             public List<string> seenEnemies = new List<string>();
             public List<string> seenPerks = new List<string>();
+            public long savedAt;   // unix ms, so cloud sync can tell which copy is newer
         }
 
         // ---------- Index (discovered enemies & perks) ----------
@@ -172,8 +173,25 @@ namespace Soulbreak.Meta
             }
         }
 
+        // ---------- Cloud sync (used by CloudProgress) ----------
+        public static string ExportJson() => JsonUtility.ToJson(Data);
+        public static long SavedAt => Data.savedAt;
+        public static bool HasProgress => Data.runs > 0 || Data.essence > 0 || Data.unlocked.Count > 0;
+
+        // Replaces local progress with a copy from the cloud (keeps its timestamp).
+        public static void ImportJson(string json)
+        {
+            var incoming = string.IsNullOrEmpty(json) ? null : JsonUtility.FromJson<SaveData>(json);
+            if (incoming == null) return;
+            data = incoming;
+            PlayerPrefs.SetString(Key, JsonUtility.ToJson(data));
+            PlayerPrefs.Save();
+            OnChanged?.Invoke();
+        }
+
         private static void Save()
         {
+            Data.savedAt = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             PlayerPrefs.SetString(Key, JsonUtility.ToJson(Data));
             PlayerPrefs.Save();
             OnChanged?.Invoke();

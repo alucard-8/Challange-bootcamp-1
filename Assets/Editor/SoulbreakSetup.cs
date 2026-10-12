@@ -161,6 +161,8 @@ namespace Soulbreak.EditorTools
             Set(view, "index", index); Set(menuInput, "index", index); Set(menuInput, "codex", CodexAsset());
             var menuHowTo = UIPrefab<HowToView>("HowTo");
             Set(view, "howToView", menuHowTo);
+            UIPrefab<LeaderboardPanel>("Leaderboard");   // slide-out global leaderboard (right edge)
+            Set(menuInput, "account", UIPrefab<AccountView>("Account"));   // account button + login popup
 
             EditorSceneManager.SaveScene(scene, MenuScenePath);
         }
@@ -1120,6 +1122,7 @@ namespace Soulbreak.EditorTools
             var difficultyApplier = Sys<DifficultyApplier>("DifficultyApplier");
             Set(difficultyApplier, "waves", waves); Set(difficultyApplier, "reactor", reactor);
             Set(gameOver, "recorder", recorder);
+            Set(Sys<LeaderboardSubmitter>("LeaderboardSubmitter"), "recorder", recorder);
 
             // Feedback: damage numbers, aim label, settings
             var dmgNumbers = hudGo.GetComponent<DamageNumbersView>();
@@ -1132,6 +1135,11 @@ namespace Soulbreak.EditorTools
             Set(pauseMenu, "settings", settings);
             Set(pauseMenu, "index", UIPrefab<Soulbreak.Menu.IndexView>("Index", sys));
             Set(pauseMenu, "howTo", UIPrefab<HowToView>("HowTo", sys));
+            var pauseBoard = UIPrefab<LeaderboardPanel>("Leaderboard", sys);
+            Set(pauseBoard, "pause", Object.FindAnyObjectByType<PauseController>());
+            var boardSo = new SerializedObject(pauseBoard);
+            boardSo.FindProperty("sortingOrder").intValue = 22;   // above the pause menu, below its popups
+            boardSo.ApplyModifiedPropertiesWithoutUndo();
             Set(Object.FindAnyObjectByType<GameHotkeys>(), "pauseMenu", pauseMenu);
 
             // Core upgrades (visual) + game mode

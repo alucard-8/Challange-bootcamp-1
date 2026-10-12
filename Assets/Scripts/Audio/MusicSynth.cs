@@ -6,6 +6,8 @@ namespace Soulbreak.Audio
     // A minor progression (Am - F - C - G) with layers that fade in with Intensity:
     //   0.00 pad + bass   0.25 kick   0.50 hats + arpeggio   0.75 snare   0.90 lead
     // Muffle applies a low-pass (used while paused / shopping).
+    // Browsers can't stream audio from a callback, so on WebGL the 4-bar loop is pre-rendered at three
+    // intensity tiers and the tiers are crossfaded instead (muffle becomes a volume dip there).
     public class MusicSynth : MonoBehaviour
     {
         [SerializeField, Range(0f, 1f)] private float volume = 0.3f;
@@ -22,7 +24,13 @@ namespace Soulbreak.Audio
         };
 
         private volatile int variant;
-        public void SetVariant(int v) => variant = Mathf.Clamp(v, 0, Progressions.Length - 1);
+        public void SetVariant(int v)
+        {
+            int clamped = Mathf.Clamp(v, 0, Progressions.Length - 1);
+            if (clamped == variant) return;
+            variant = clamped;
+            if (tierSources != null) RenderTiers();
+        }
 
         // Written from the main thread, read on the audio thread.
         private volatile float targetIntensity;
@@ -42,6 +50,10 @@ namespace Soulbreak.Audio
         private void Start()
         {
             targetIntensity = intensity = startIntensity;
+#if UNITY_WEBGL && !UNITY_EDITOR
+            StartPrerendered();
+            return;
+#endif
             var src = gameObject.AddComponent<AudioSource>();
             src.clip = AudioClip.Create("SoulbreakMusic", Rate * 4, 2, Rate, true, OnAudioRead);
             src.loop = true;
@@ -58,6 +70,60 @@ namespace Soulbreak.Audio
         private void Update()
         {
             if (source != null) source.volume = volume * Core.GameSettings.Music;
+            if (tierSources != null) MixTiers();
+        }
+
+        // ---------- WebGL: pre-rendered tiers ----------
+        private static readonly float[] TierLevels = { 0.2f, 0.6f, 1f };
+        private AudioSource[] tierSources;
+        private float webMuffle;
+
+        private void StartPrerendered()
+        {
+            tierSources = new AudioSource[TierLevels.Length];
+            for (int i = 0; i < tierSources.Length; i++)
+            {
+                var src = gameObject.AddComponent<AudioSource>();
+                src.loop = true;
+                src.spatialBlend = 0f;
+                src.ignoreListenerPause = true;
+                tierSources[i] = src;
+            }
+            RenderTiers();
+        }
+
+        private void RenderTiers()
+        {
+            int length = Mathf.RoundToInt(64 * (60f / bpm / 4f) * Rate);   // exactly 4 bars of 16ths
+            float keepIntensity = targetIntensity, keepMuffle = targetMuffle;
+            for (int i = 0; i < tierSources.Length; i++)
+            {
+                sample = 0;
+                intensity = targetIntensity = TierLevels[i];
+                muffle = targetMuffle = 0f;
+                var data = new float[length * 2];
+                OnAudioRead(data);
+                var clip = AudioClip.Create("SoulbreakMusic_" + i, length, 2, Rate, false);
+                clip.SetData(data, 0);
+                tierSources[i].clip = clip;
+            }
+            foreach (var src in tierSources) src.Play();   // started together so they stay in sync
+            targetIntensity = keepIntensity;
+            targetMuffle = keepMuffle;
+        }
+
+        private void MixTiers()
+        {
+            float level = Mathf.Clamp(targetIntensity, TierLevels[0], 1f);
+            webMuffle = Mathf.MoveTowards(webMuffle, targetMuffle, Time.unscaledDeltaTime * 2f);
+            float master = volume * Core.GameSettings.Music * Mathf.Lerp(1f, 0.4f, webMuffle);
+            for (int i = 0; i < tierSources.Length; i++)
+            {
+                float lo = i > 0 ? TierLevels[i - 1] : -1f, hi = i < TierLevels.Length - 1 ? TierLevels[i + 1] : 2f;
+                float c = TierLevels[i];
+                float w = level <= c ? Mathf.InverseLerp(lo, c, level) : 1f - Mathf.InverseLerp(c, hi, level);
+                tierSources[i].volume = master * w;
+            }
         }
 
         private static float MidiToHz(int midi) => 440f * Mathf.Pow(2f, (midi - 69) / 12f);

@@ -61,6 +61,9 @@ namespace Soulbreak.UI
                 menuButtons[i].onClick.AddListener(() => action());
             }
             helpButton.onClick.AddListener(() => howTo.Open());
+#if UNITY_WEBGL
+            menuButtons[menuButtons.Length - 1].gameObject.SetActive(false);   // no quitting a browser tab
+#endif
         }
 
         private void OnEnable() => pause.OnPauseChanged += HandlePause;
