@@ -20,8 +20,8 @@ MonoBehaviour:
   costGrowth: 30
   maxStacks: 5
   effects:
-  - {fileID: 4310904118077220843}
---- !u!114 &4310904118077220843
+  - {fileID: 8455438824986005945}
+--- !u!114 &8455438824986005945
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -33,6 +33,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
   m_Name: Extended Clip - StatPerkEffect
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 4
+  stat: 5
   operation: 0
   value: 3

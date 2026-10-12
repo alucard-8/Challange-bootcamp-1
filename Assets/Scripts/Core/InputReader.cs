@@ -45,6 +45,15 @@ namespace Soulbreak.Core
 #endif
         }
 
+        public static bool OverdrivePressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
+#else
+            return Input.GetKeyDown(KeyCode.Q);
+#endif
+        }
+
         public static bool PausePressed()
         {
 #if ENABLE_INPUT_SYSTEM

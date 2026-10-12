@@ -13,6 +13,7 @@ namespace Soulbreak.UI
     {
         [SerializeField] private PerkShop shop;
         [SerializeField] private SoulWallet wallet;
+        [SerializeField] private Weapons.SynergySystem synergies;
 
         private static readonly Color[] RarityColors =
         {
@@ -141,7 +142,8 @@ namespace Soulbreak.UI
                 card.Category.text = perk.IsTechnique ? "TECHNIQUE" : $"BUFF  -  {perk.category.ToString().ToUpper()}";
                 card.Category.color = cat;
                 card.Name.text = perk.displayName;
-                card.Description.text = perk.description;
+                var tech = perk.TechniqueEffect;
+                card.Description.text = perk.description + (synergies != null && tech != null ? synergies.HintFor(tech.module) : "");
                 card.Owned.text = perk.maxStacks > 0 ? $"Owned {stacks}/{perk.maxStacks}" : (stacks > 0 ? $"Owned {stacks}" : "");
                 card.Hotkey.text = $"[{i + 1}]";
 

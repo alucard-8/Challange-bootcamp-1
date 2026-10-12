@@ -20,8 +20,8 @@ MonoBehaviour:
   costGrowth: 30
   maxStacks: 4
   effects:
-  - {fileID: 3894140586883839649}
---- !u!114 &3894140586883839649
+  - {fileID: 5263419644743109339}
+--- !u!114 &5263419644743109339
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -33,6 +33,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
   m_Name: Quick Hands - StatPerkEffect
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 5
+  stat: 6
   operation: 1
   value: 0.8

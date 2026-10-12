@@ -54,6 +54,9 @@ namespace Soulbreak.Weapons
             }
         }
 
+        public IEnumerable<ShotPattern> OwnedModules => modules.Keys;
+        public bool Owns(ShotPattern pattern) => pattern != null && modules.ContainsKey(pattern);
+
         public int ModuleCount
         {
             get { int n = 0; foreach (var kv in modules) n += kv.Value; return n; }

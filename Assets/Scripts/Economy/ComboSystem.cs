@@ -18,6 +18,10 @@ namespace Soulbreak.Economy
         public float TimeLeft01 => window > 0f ? timer / window : 0f;
 
         public event Action<int, float> OnComboChanged;   // (count, multiplier)
+        public event Action<int, string> OnMilestone;     // (count, title) — kill streak announcements
+
+        private static readonly int[] MilestoneCounts = { 5, 10, 15, 25, 40, 60 };
+        private static readonly string[] MilestoneTitles = { "KILLING SPREE", "RAMPAGE", "UNSTOPPABLE", "GODLIKE", "SOUL REAPER", "ASCENDED" };
 
         private float timer, window;
 
@@ -29,6 +33,9 @@ namespace Soulbreak.Economy
             Count++;
             window = timer = stats.Get(StatType.ComboWindow);
             OnComboChanged?.Invoke(Count, Multiplier);
+
+            int m = Array.IndexOf(MilestoneCounts, Count);
+            if (m >= 0) OnMilestone?.Invoke(Count, MilestoneTitles[m]);
         }
 
         private void Update()

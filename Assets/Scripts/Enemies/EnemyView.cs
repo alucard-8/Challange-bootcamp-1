@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Visual side of an enemy: feeds the enemy shader (color, spikes, hit flash, health ring).
-    // Split from Enemy so gameplay and visuals change independently (SRP).
+    // Visual side of an enemy: feeds the enemy shader (color, spikes, hit flash, health ring,
+    // elite aura, shield bubble). Split from Enemy so gameplay and visuals change independently (SRP).
     [RequireComponent(typeof(Enemy), typeof(SpriteRenderer))]
     public class EnemyView : MonoBehaviour
     {
@@ -12,10 +12,13 @@ namespace Soulbreak.Enemies
         private static readonly int HealthId = Shader.PropertyToID("_HealthFrac");
         private static readonly int SpikesId = Shader.PropertyToID("_Spikes");
         private static readonly int SeedId = Shader.PropertyToID("_Seed");
+        private static readonly int AuraId = Shader.PropertyToID("_AuraColor");
+        private static readonly int ShieldId = Shader.PropertyToID("_ShieldBubble");
 
         private Enemy enemy;
         private SpriteRenderer sr;
         private MaterialPropertyBlock block;
+        private Vector3 baseScale;
         private float flash, appear;
 
         private void Awake()
@@ -23,6 +26,8 @@ namespace Soulbreak.Enemies
             enemy = GetComponent<Enemy>();
             sr = GetComponent<SpriteRenderer>();
             block = new MaterialPropertyBlock();
+            baseScale = transform.localScale;   // set by Enemy.Init (elites are a bit bigger)
+            transform.localScale = Vector3.zero;
         }
 
         private void OnEnable() => enemy.OnDamaged += HandleDamaged;
@@ -37,6 +42,7 @@ namespace Soulbreak.Enemies
             block.SetColor(ColorId, enemy.Config.color);
             block.SetFloat(SpikesId, enemy.Config.spikes);
             block.SetFloat(SeedId, Random.value * 10f);
+            block.SetColor(AuraId, EnemyModifierInfo.AuraColor(enemy.Modifiers));
             Apply();
         }
 
@@ -49,7 +55,7 @@ namespace Soulbreak.Enemies
             {
                 appear = Mathf.Min(1f, appear + Time.deltaTime * 3f);
                 float s = 1f + 2.2f * Mathf.Pow(appear - 1f, 3f) + 1.2f * Mathf.Pow(appear - 1f, 2f);
-                transform.localScale = Vector3.one * enemy.Config.size * s;
+                transform.localScale = baseScale * s;
             }
 
             if (flash <= 0f) return;
@@ -61,6 +67,7 @@ namespace Soulbreak.Enemies
         {
             block.SetFloat(FlashId, flash);
             block.SetFloat(HealthId, (float)enemy.Health / enemy.MaxHealth);
+            block.SetFloat(ShieldId, enemy.ShieldHits / 3f);
             sr.SetPropertyBlock(block);
         }
     }

@@ -12,6 +12,7 @@ namespace Soulbreak.Menu
     public class MainMenuView : MonoBehaviour
     {
         [SerializeField] private MenuAmbience ambience;
+        [SerializeField] private AscensionView ascension;
 
         private class Intro { public RectTransform rt; public CanvasGroup group; public Vector2 basePos, offset; public float delay; }
 
@@ -52,6 +53,8 @@ namespace Soulbreak.Menu
         }
 
         public bool IsHowToOpen => howToOpen;
+        public bool IsAscensionOpen => ascension.IsOpen;
+        public void CloseAscension() => ascension.Close();
         public void CloseHowTo() => howToOpen = false;
 
         public void Play()
@@ -87,14 +90,14 @@ namespace Soulbreak.Menu
             AddIntro(tag.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -320), new Vector2(1200, 50)), 0.45f, new Vector2(0, 30));
 
             // Buttons
-            string[] labels = { "PLAY", "HOW TO PLAY", "QUIT" };
-            System.Action[] actions = { Play, () => howToOpen = true, GameManager.Quit };
+            string[] labels = { "PLAY", "ASCENSION", "HOW TO PLAY", "QUIT" };
+            System.Action[] actions = { Play, () => ascension.Open(), () => howToOpen = true, GameManager.Quit };
             for (int i = 0; i < labels.Length; i++)
             {
                 var color = i == 0 ? new Color(0.1f, 0.42f, 0.55f, 0.95f) : theme.buttonColor;
                 var btn = UIFactory.Button(main, labels[i], color, actions[i], out _, i == 0 ? 44 : 32);
                 var rt = ((RectTransform)btn.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0),
-                    new Vector2(0, 300 - i * 100), new Vector2(i == 0 ? 460 : 400, i == 0 ? 92 : 78));
+                    new Vector2(0, 330 - i * 88), new Vector2(i == 0 ? 460 : 400, i == 0 ? 86 : 72));
                 AddIntro(rt, 0.7f + i * 0.12f, new Vector2(0, -60));
             }
 

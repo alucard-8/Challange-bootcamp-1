@@ -10,6 +10,18 @@ namespace Soulbreak.Reactor
         private static readonly int ShieldId = Shader.PropertyToID("_Shield");
         private static readonly int ShieldMaxId = Shader.PropertyToID("_ShieldMax");
         private static readonly int FlashId = Shader.PropertyToID("_Flash");
+        private static readonly int CracksId = Shader.PropertyToID("_Cracks");
+        private static readonly int AlarmId = Shader.PropertyToID("_Alarm");
+        private static readonly int CoreColorId = Shader.PropertyToID("_Color");
+        private static readonly int ShieldColorId = Shader.PropertyToID("_ShieldColor");
+
+        // Reactor skins (meta progression) recolor the core and shield.
+        public void SetColors(Color core, Color shield)
+        {
+            block.SetColor(CoreColorId, core);
+            block.SetColor(ShieldColorId, shield);
+            Apply();
+        }
 
         [SerializeField] private Reactor reactor;
 
@@ -37,8 +49,20 @@ namespace Soulbreak.Reactor
             reactor.OnHit -= HandleHit;
         }
 
-        private void HandleHealth(int cur, int max) { block.SetFloat(HealthId, max > 0 ? (float)cur / max : 0f); Apply(); }
-        private void HandleShield(int cur, int max) { block.SetFloat(ShieldId, cur); block.SetFloat(ShieldMaxId, max); Apply(); }
+        private void HandleHealth(int cur, int max)
+        {
+            float h = max > 0 ? (float)cur / max : 0f;
+            block.SetFloat(HealthId, h);
+            block.SetFloat(CracksId, 1f - h);
+            block.SetFloat(AlarmId, h <= 0.3f && cur > 0 ? 1f : 0f);
+            Apply();
+        }
+        private void HandleShield(int cur, int max)
+        {
+            block.SetFloat(ShieldId, reactor.ShieldSuppressed ? 0 : cur);
+            block.SetFloat(ShieldMaxId, max);
+            Apply();
+        }
         private void HandleHit(bool shielded) => flash = 1f;
 
         private void Update()

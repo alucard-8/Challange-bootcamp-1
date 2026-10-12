@@ -11,6 +11,7 @@ namespace Soulbreak.Player
         [SerializeField] private PlayerStats stats;
         [SerializeField] private AmmoSystem ammo;
         [SerializeField] private WeaponRing weapons;
+        [SerializeField] private OverdriveSystem overdrive;
         [SerializeField] private Transform muzzle;
         [SerializeField] private Camera cam;
 
@@ -33,15 +34,14 @@ namespace Soulbreak.Player
 
         public bool Fire()
         {
-            if (Time.timeScale == 0f || !ammo.TryConsume()) return false;
+            if (Time.timeScale == 0f) return false;
+            bool overdriven = overdrive != null && overdrive.IsActive;
+            if (!overdriven && !ammo.TryConsume()) return false;   // Overdrive = free ammo
 
             Vector2 origin = muzzle.position;
             bool crit = UnityEngine.Random.value < stats.Get(StatType.CritChance);
             int damage = Mathf.Max(1, Mathf.RoundToInt(stats.Get(StatType.Damage) * (crit ? stats.Get(StatType.CritMultiplier) : 1f)));
-            int slot = weapons.GetSlotIndex(AimDirection);
-            var pattern = weapons.GetPatternAt(slot);
-
-            pattern.Fire(new ShotContext
+            var ctx = new ShotContext
             {
                 Origin = origin,
                 Target = AimPoint,
@@ -49,9 +49,21 @@ namespace Soulbreak.Player
                 Damage = damage,
                 Crit = crit,
                 Stats = stats,
-            });
-            weapons.Consume(slot);   // module slots empty out and reload a new module
+            };
+
+            int slot = weapons.GetSlotIndex(AimDirection);
+            var pattern = weapons.GetPatternAt(slot);
+            pattern.Fire(ctx);
             OnShotFired?.Invoke(origin, AimPoint, crit, pattern);
+
+            if (overdriven)
+            {
+                // Overdrive: every other owned technique fires too, and nothing is used up.
+                foreach (var module in weapons.OwnedModules)
+                    if (module != pattern) { module.Fire(ctx); OnShotFired?.Invoke(origin, AimPoint, crit, module); }
+            }
+            else weapons.Consume(slot);   // module slots empty out and reload a new module
+
             return true;
         }
     }

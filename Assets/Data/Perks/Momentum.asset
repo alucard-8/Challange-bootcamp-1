@@ -20,8 +20,8 @@ MonoBehaviour:
   costGrowth: 40
   maxStacks: 3
   effects:
-  - {fileID: 2262758963873274536}
---- !u!114 &2262758963873274536
+  - {fileID: 4396100323586962768}
+--- !u!114 &4396100323586962768
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -33,6 +33,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
   m_Name: Momentum - StatPerkEffect
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 11
+  stat: 12
   operation: 0
   value: 1

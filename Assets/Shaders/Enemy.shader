@@ -12,6 +12,8 @@ Shader "Soulbreak/Enemy"
         _Flash ("Hit Flash", Range(0, 1)) = 0
         _HealthFrac ("Health", Range(0, 1)) = 1
         _Dissolve ("Dissolve", Range(0, 1)) = 0
+        [HDR] _AuraColor ("Elite Aura", Color) = (0, 0, 0, 0)
+        _ShieldBubble ("Shield Bubble", Range(0, 1)) = 0
     }
 
     SubShader
@@ -37,6 +39,8 @@ Shader "Soulbreak/Enemy"
                 float _Flash;
                 float _HealthFrac;
                 float _Dissolve;
+                half4 _AuraColor;
+                float _ShieldBubble;
             CBUFFER_END
 
             half4 frag(Varyings i) : SV_Target
@@ -66,6 +70,21 @@ Shader "Soulbreak/Enemy"
                 col += _Color.rgb * hpRing * 1.5;
 
                 float alpha = max(body, hpRing);
+
+                // Elite aura: flickering flame ring with orbiting sparks around the body.
+                float auraOn = step(0.01, _AuraColor.a + _AuraColor.r + _AuraColor.g + _AuraColor.b);
+                float flame = Fbm(float2(ang * 3.0 - t * 4.0, d * 6.0 - t * 3.0));
+                float aura = smoothstep(0.98, 0.75, d) * smoothstep(r - 0.05, r + 0.08, d) * (0.4 + flame) * auraOn;
+                float sparks = smoothstep(0.06, 0.0, abs(d - 0.88)) * pow(0.5 + 0.5 * sin(ang * 5.0 + t * 6.0), 12.0) * auraOn;
+                col += _AuraColor.rgb * (aura * 0.9 + sparks * 2.0);
+                alpha = max(alpha, saturate(aura * 0.8 + sparks));
+
+                // Shield bubble (Shielded elites): hex-ish shimmering shell that fades as hits are absorbed.
+                float bubble = smoothstep(0.05, 0.0, abs(d - 0.8)) + smoothstep(0.8, 0.5, d) * 0.12;
+                float hex = 0.6 + 0.4 * sin(p.x * 30.0 + t * 2.0) * sin(p.y * 30.0 - t * 2.0);
+                bubble *= hex * _ShieldBubble;
+                col += float3(0.5, 2.0, 3.2) * bubble;
+                alpha = max(alpha, saturate(bubble));
 
                 // Hit flash
                 col = lerp(col, float3(4, 4, 4), _Flash * body);

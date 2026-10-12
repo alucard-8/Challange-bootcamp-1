@@ -19,6 +19,9 @@ namespace Soulbreak.Enemies
         [Min(0.1f)] public float speed = 1.5f;
         [Min(1)] public int damage = 1;
         public bool isBoss;
+        [Tooltip("Boss only: minion type summoned in phase 1")]
+        public EnemyConfig minion;
+        public string displayName = "";
 
         [Header("Ranged (stopDistance > 0 makes it a shooter)")]
         [Min(0)] public float stopDistance = 0f;

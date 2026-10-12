@@ -29,6 +29,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Alarm: 0
+    - _Cracks: 0
     - _Flash: 0
     - _Health01: 1
     - _Shield: 3

@@ -61,6 +61,22 @@ classes wired through events, and each step was tested before moving on.
   `GameHotkeys`, `ShopHotkeys`, `MainMenuInput`) and send commands (`Fire()`, `Reload()`,
   `TryUse()`, `Toggle()`, `TryBuy()`). Gameplay systems and views never read the keyboard/mouse.
 
+## Deadlock-inspired features (all plugged in as listeners — no existing system had to know about them)
+| Feature | How it's built |
+|---|---|
+| **Headshots** | `IWeakPoint` on enemies (their glowing eye). The hitscan shot checks it, deals `HeadshotMultiplier` damage and raises the `Headshots` channel → popup, hit stop, sound. |
+| **Hit stop + impact flash** | `HitStop` listens to headshots / big kills / reactor hits / boss enrage and asks `TimeScaleService` for a 30-300 ms freeze; `ScreenFlashView` flashes. |
+| **TimeScaleService** | Single owner of `Time.timeScale`: pause, hit-stop, overdrive and game-over are *layers* that multiply — they never overwrite each other. |
+| **Overdrive (ultimate, Q)** | `OverdriveSystem` fills from kills; while active every shot fires **all** owned techniques, ammo is free, time slows; a purple post-process volume blends in. |
+| **Kill streaks** | `ComboSystem.OnMilestone` → `StreakRewards` (bonus souls) → `Announcements` channel → `AnnouncerView` ("RAMPAGE", "GODLIKE"...). |
+| **Elite enemies** | `EnemyModifier` flags (Shielded / Swift / Splitting / Blink) rolled by `WaveManager`; aura + shield bubble drawn by the enemy shader; 3x rewards. |
+| **Two-phase boss** | `BossBrain` (added by the factory): summons minions, then enrages at 50% (raises `BossEnraged`) and fires bullet rings. `BossHealthView` shows the bar. |
+| **Technique synergies** | `SynergyDefinition` assets (e.g. Black Hole + Chain Lightning = *Event Horizon*). `SynergySystem` fires a bonus pattern when the trigger fires; shop cards show synergy hints. |
+| **Map events** | `MapEventSystem`: Soul Urn (shoot it before it escapes), Solar Flare (shield offline), Rejuvenator (kill for a power surge). |
+| **Danger awareness** | `EnemyRegistry` (built from channels) feeds `DangerView`: edge arrows for off-screen enemies + pulsing red vignette. Reactor shader cracks and throbs at low health. |
+| **Procedural audio** | `SfxSynth` synthesizes every sound in code; `AudioDirector` maps events → sounds; `MusicSynth` is a procedural synthwave track whose layers follow `MusicDirector` intensity (waves, danger, boss, overdrive) and muffles while paused/shopping. |
+| **Meta progression** | `MetaProgress` (PlayerPrefs JSON) stores Soul Essence earned per run (`MetaRecorder`); the main-menu **Ascension** screen unlocks starting techniques and reactor skins (`MetaCatalog` asset); `StartingLoadout` applies them. |
+
 ## System breakdown
 
 | System | Scripts |
@@ -113,6 +129,8 @@ game scene, builds the main menu and registers both scenes in Build Settings. Sa
 - **Left click** — shoot through the weapon ring
 - **R / Right click** — reload
 - **Space** — Nova blast
+- **Q** — Overdrive (when the meter is full)
+- Click an enemy's **eye** for a headshot
 - **1-5** or click — buy in the shop
 - **ESC / P** — pause
 - **R** — restart after game over

@@ -12,6 +12,8 @@ Shader "Soulbreak/Reactor"
         _Shield ("Shield Charges", Float) = 3
         _ShieldMax ("Max Shield", Float) = 3
         _Flash ("Hit Flash", Range(0, 1)) = 0
+        _Cracks ("Cracks", Range(0, 1)) = 0
+        _Alarm ("Alarm", Range(0, 1)) = 0
     }
 
     SubShader
@@ -37,7 +39,25 @@ Shader "Soulbreak/Reactor"
                 float _Shield;
                 float _ShieldMax;
                 float _Flash;
+                float _Cracks;
+                float _Alarm;
             CBUFFER_END
+
+            // Cellular noise edge distance: small near cell borders = crack lines.
+            float CrackLines(float2 p)
+            {
+                float2 i = floor(p), f = frac(p);
+                float d1 = 8.0, d2 = 8.0;
+                for (int y = -1; y <= 1; y++)
+                for (int x = -1; x <= 1; x++)
+                {
+                    float2 g = float2(x, y);
+                    float2 o = float2(Hash21(i + g), Hash21(i + g + 17.3));
+                    float d = length(g + o - f);
+                    if (d < d1) { d2 = d1; d1 = d; } else if (d < d2) d2 = d;
+                }
+                return d2 - d1;
+            }
 
             half4 frag(Varyings i) : SV_Target
             {
@@ -76,6 +96,17 @@ Shader "Soulbreak/Reactor"
                 col += _Color.rgb * aura * (0.3 + 0.7 * _Health01);
 
                 float alpha = saturate(core + shell + ringMask * lerp(0.25, 1.0, lit) + aura);
+
+                // Cracks spreading over the core as it loses health (glowing hot red/orange)
+                float crack = smoothstep(0.06, 0.0, CrackLines(p * 6.0));
+                float reveal = step(Hash21(floor(p * 6.0) + 3.1), _Cracks * 1.2) * step(0.001, _Cracks);
+                float crackGlow = crack * reveal * (core + shell) * (0.8 + 0.4 * sin(t * 12.0 + d * 20.0));
+                col = lerp(col, float3(4.0, 0.9, 0.3) * 1.2, saturate(crackGlow));
+
+                // Low-health alarm: the whole reactor throbs red
+                float throb = (0.5 + 0.5 * sin(t * 9.0)) * _Alarm;
+                col = lerp(col, _HitColor.rgb * 0.8, throb * 0.45 * saturate(core + shell + aura * 2.0));
+                alpha = saturate(alpha + throb * aura * 0.5);
 
                 // Hit flash
                 col = lerp(col, _HitColor.rgb, _Flash * saturate(core + ringMask));

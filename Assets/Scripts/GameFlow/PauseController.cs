@@ -9,6 +9,7 @@ namespace Soulbreak.GameFlow
     public class PauseController : MonoBehaviour
     {
         [SerializeField] private GameManager game;
+        [SerializeField] private TimeScaleService time;
         [SerializeField] private float transition = 0.35f;
 
         public bool IsPaused { get; private set; }
@@ -25,7 +26,7 @@ namespace Soulbreak.GameFlow
 
             raw = Mathf.MoveTowards(raw, goal, Time.unscaledDeltaTime / transition);
             Blend = raw * raw * (3f - 2f * raw);
-            if (game.State != GameState.GameOver) Time.timeScale = 1f - Blend;
+            if (Blend <= 0f) time.Clear("pause"); else time.Set("pause", 1f - Blend);
         }
 
         public void Toggle() => SetPaused(!IsPaused);

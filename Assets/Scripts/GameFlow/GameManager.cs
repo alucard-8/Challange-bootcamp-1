@@ -17,6 +17,7 @@ namespace Soulbreak.GameFlow
         [SerializeField] private WaveManager waves;
         [SerializeField] private PerkShop shop;
         [SerializeField] private Weapons.WeaponRing weapons;
+        [SerializeField] private TimeScaleService time;
         [SerializeField] private float firstWaveDelay = 1.5f;
 
         public GameState State { get; private set; } = GameState.Combat;
@@ -41,7 +42,7 @@ namespace Soulbreak.GameFlow
 
         private void Start()
         {
-            Time.timeScale = 1f;
+            time.Clear("gameover");
             Invoke(nameof(BeginFirstWave), firstWaveDelay);
         }
 
@@ -72,7 +73,7 @@ namespace Soulbreak.GameFlow
         private void HandleReactorDestroyed()
         {
             SetState(GameState.GameOver);
-            Time.timeScale = 0f;
+            time.Set("gameover", 0f);
         }
 
         private void SetState(GameState state)

@@ -17,8 +17,10 @@ namespace Soulbreak.Fx
         [SerializeField] private PlayerShooter shooter;
         [SerializeField] private NovaAbility nova;
         [SerializeField] private Reactor.Reactor reactor;
+        [SerializeField] private Perks.PerkShop shop;
 
         [Header("Event channels")]
+        [SerializeField] private EnemyEventChannel bossEnraged;
         [SerializeField] private EnemyEventChannel enemyKilled;
         [SerializeField] private OrbEventChannel orbCollected;
         [SerializeField] private EnemyProjectileEventChannel projectileShotDown;
@@ -45,6 +47,8 @@ namespace Soulbreak.Fx
             nova.OnUsed += HandleNova;
             reactor.OnHit += HandleReactorHit;
             enemyKilled.OnRaised += HandleEnemyKilled;
+            bossEnraged.OnRaised += HandleBossEnraged;
+            shop.OnPerkBought += HandlePerkBought;
             orbCollected.OnRaised += HandleOrbCollected;
             projectileShotDown.OnRaised += HandleProjectileShotDown;
             explosions.OnRaised += HandleExplosion;
@@ -58,6 +62,8 @@ namespace Soulbreak.Fx
             nova.OnUsed -= HandleNova;
             reactor.OnHit -= HandleReactorHit;
             enemyKilled.OnRaised -= HandleEnemyKilled;
+            bossEnraged.OnRaised -= HandleBossEnraged;
+            shop.OnPerkBought -= HandlePerkBought;
             orbCollected.OnRaised -= HandleOrbCollected;
             projectileShotDown.OnRaised -= HandleProjectileShotDown;
             explosions.OnRaised -= HandleExplosion;
@@ -93,6 +99,16 @@ namespace Soulbreak.Fx
             var go = new GameObject("Lance", typeof(LineRenderer), typeof(TracerFx));
             go.GetComponent<TracerFx>().Init(beam.From, beam.To, tracerMaterial, beam.Color, beam.Width * 3.5f, 0.35f);
             Ring(beam.From, beam.Color, 0.5f, 2.2f, 0.3f);
+        }
+
+        // The reactor "absorbs" each purchase with a soul shockwave.
+        private void HandlePerkBought(Perks.PerkDefinition perk) =>
+            Ring(reactor.transform.position, new Color(1.6f, 0.7f, 3f), 1f, 7f, 0.6f, 0.1f);
+
+        private void HandleBossEnraged(Enemy boss)
+        {
+            Ring(boss.transform.position, new Color(4f, 0.4f, 0.6f), 1f, 12f, 0.8f, 0.08f);
+            Ring(boss.transform.position, new Color(4f, 1.5f, 0.4f), 0.5f, 7f, 0.6f, 0.15f);
         }
 
         private void HandleNova(Vector2 center, float radius) => Ring(center, novaColor, 0.5f, radius * 2.2f, 0.6f, 0.08f);

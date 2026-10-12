@@ -16,6 +16,7 @@ namespace Soulbreak.Economy
         [SerializeField] private int startingSouls = 0;
 
         public int Souls { get; private set; }
+        public int TotalEarned { get; private set; }
 
         public event Action<int> OnSoulsChanged;
         public event Action<int, Vector3> OnSoulsGained;   // (amount, world position) — for floating text
@@ -38,7 +39,7 @@ namespace Soulbreak.Economy
 
         private void HandleEnemyKilled(Enemy enemy)
         {
-            float amount = enemy.Config.soulReward * stats.Get(StatType.SoulGain) * combo.Multiplier;
+            float amount = enemy.Config.soulReward * enemy.RewardMultiplier * stats.Get(StatType.SoulGain) * combo.Multiplier;
             Add(Mathf.RoundToInt(amount), enemy.transform.position);
         }
 
@@ -52,6 +53,7 @@ namespace Soulbreak.Economy
         {
             if (amount <= 0) return;
             Souls += amount;
+            TotalEarned += amount;
             OnSoulsChanged?.Invoke(Souls);
             OnSoulsGained?.Invoke(amount, worldPosition);
         }

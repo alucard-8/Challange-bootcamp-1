@@ -15,6 +15,15 @@ namespace Soulbreak.Reactor
         public int ShieldCharges { get; private set; }
         public int MaxShieldCharges { get; private set; }
         public bool IsDestroyed => Health <= 0;
+        public bool ShieldSuppressed { get; private set; }
+
+        // Solar flares knock the shield offline for a while (charges are kept, just unusable).
+        public void SetShieldSuppressed(bool suppressed)
+        {
+            if (ShieldSuppressed == suppressed) return;
+            ShieldSuppressed = suppressed;
+            RaiseShield();
+        }
 
         public event Action<int, int> OnHealthChanged;   // (current, max)
         public event Action<int, int> OnShieldChanged;   // (current, max)
@@ -39,7 +48,7 @@ namespace Soulbreak.Reactor
         {
             if (IsDestroyed || amount <= 0) return;
 
-            if (ShieldCharges > 0)
+            if (ShieldCharges > 0 && !ShieldSuppressed)
             {
                 ShieldCharges--;
                 RaiseShield();

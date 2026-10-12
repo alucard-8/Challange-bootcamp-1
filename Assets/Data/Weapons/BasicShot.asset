@@ -17,3 +17,4 @@ MonoBehaviour:
   color: {r: 1.2, g: 2.2, b: 4, a: 1}
   drawsTracer: 1
   reloadTime: 3
+  headshotChannel: {fileID: 11400000, guid: 4c53407eada8b9145bb47f9029f1843d, type: 2}

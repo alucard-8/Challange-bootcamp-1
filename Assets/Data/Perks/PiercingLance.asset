@@ -20,8 +20,8 @@ MonoBehaviour:
   costGrowth: 80
   maxStacks: 2
   effects:
-  - {fileID: 9172929750687444728}
---- !u!114 &9172929750687444728
+  - {fileID: 5991134725022802962}
+--- !u!114 &5991134725022802962
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

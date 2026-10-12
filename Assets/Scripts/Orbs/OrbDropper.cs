@@ -30,7 +30,7 @@ namespace Soulbreak.Orbs
                 Vector2 p = pos + (drops > 1 ? Random.insideUnitCircle * 1.2f : Vector2.zero);
                 if (Random.value < cfg.healOrbChance + stats.Get(StatType.HealOrbChance))
                     Spawn(OrbType.Heal, 1, p, healColor);
-                else if (Random.value < cfg.soulOrbChance + stats.Get(StatType.OrbDropChance))
+                else if (Random.value < cfg.soulOrbChance + stats.Get(StatType.OrbDropChance) + (enemy.IsElite ? 0.6f : 0f))
                     Spawn(OrbType.Soul, Mathf.RoundToInt(cfg.soulOrbValue * stats.Get(StatType.OrbValue)), p, soulColor);
             }
         }

@@ -15,9 +15,26 @@ namespace Soulbreak.UI
         private CanvasGroup group;
         private Text text;
 
+        [SerializeField] private Meta.MetaRecorder recorder;
+
         private void Awake() => Build();
-        private void OnEnable() => game.OnStateChanged += HandleState;
-        private void OnDisable() => game.OnStateChanged -= HandleState;
+
+        private void OnEnable()
+        {
+            game.OnStateChanged += HandleState;
+            recorder.OnEssenceAwarded += HandleEssence;
+        }
+
+        private void OnDisable()
+        {
+            game.OnStateChanged -= HandleState;
+            recorder.OnEssenceAwarded -= HandleEssence;
+        }
+
+        private void HandleEssence(int amount) =>
+            essenceText.text = $"+{amount} SOUL ESSENCE   (total {Meta.MetaProgress.Essence})  -  spend it in ASCENSION";
+
+        private Text essenceText;
 
         private void HandleState(GameState state)
         {
@@ -51,6 +68,9 @@ namespace Soulbreak.UI
             text = UIFactory.Label(bg.transform, "", 40, TextAnchor.MiddleCenter, Color.white);
             text.rectTransform.Fill();
             text.gameObject.AddComponent<GlitchText>().burstChance = 0.6f;
+
+            essenceText = UIFactory.Label(bg.transform, "", 30, TextAnchor.MiddleCenter, new Color(0.85f, 0.55f, 1f), FontStyle.Bold, "Essence");
+            essenceText.rectTransform.Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 250), new Vector2(1400, 50));
 
             var restart = UIFactory.Button(bg.transform, "RESTART", new Color(0.1f, 0.42f, 0.55f, 0.95f), () => game.Restart(), out _, 32);
             ((RectTransform)restart.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(-190, 150), new Vector2(340, 80));

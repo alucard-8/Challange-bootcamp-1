@@ -1,5 +1,9 @@
 using System.IO;
+using Soulbreak.Audio;
+using Soulbreak.Core.Events;
 using Soulbreak.Economy;
+using Soulbreak.MapEvents;
+using Soulbreak.Meta;
 using Soulbreak.Enemies;
 using Soulbreak.Fx;
 using Soulbreak.GameFlow;
@@ -128,10 +132,98 @@ namespace Soulbreak.EditorTools
             var menuInput = view.gameObject.AddComponent<Soulbreak.Menu.MainMenuInput>();
             Set(menuInput, "view", view); Set(menuInput, "ambience", amb);
 
+            var ascension = new GameObject("Ascension").AddComponent<Soulbreak.Menu.AscensionView>();
+            Set(ascension, "catalog", MetaCatalogAsset()); Set(ascension, "menuReactor", reactor);
+            Set(view, "ascension", ascension);
+
+            var music = new GameObject("Music").AddComponent<MusicSynth>();
+            var mso = new SerializedObject(music);
+            mso.FindProperty("startIntensity").floatValue = 0.12f;
+            mso.ApplyModifiedPropertiesWithoutUndo();
+            camGo.AddComponent<AudioListener>();
+
             EditorSceneManager.SaveScene(scene, MenuScenePath);
         }
 
         private static VolumeProfile pauseProfile;
+
+        // Purple "Overdrive" look: tinted, saturated, extra bloom and chromatic split.
+        private static VolumeProfile OverdriveProfileAsset()
+        {
+            const string path = "Assets/Settings/OverdriveVolume.asset";
+            AssetDatabase.DeleteAsset(path);
+            var profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            AssetDatabase.CreateAsset(profile, path);
+            var color = profile.Add<ColorAdjustments>(true);
+            color.colorFilter.Override(new Color(1f, 0.75f, 1.15f));
+            color.saturation.Override(25f);
+            color.contrast.Override(12f);
+            var bloom = profile.Add<Bloom>(true);
+            bloom.intensity.Override(2.8f);
+            var ca = profile.Add<ChromaticAberration>(true);
+            ca.intensity.Override(0.55f);
+            var vig = profile.Add<Vignette>(true);
+            vig.intensity.Override(0.45f);
+            vig.color.Override(new Color(0.35f, 0f, 0.5f));
+            foreach (var c in profile.components) AssetDatabase.AddObjectToAsset(c, profile);
+            EditorUtility.SetDirty(profile);
+            return profile;
+        }
+
+        private static SynergyDefinition[] Synergies()
+        {
+            Folder("Assets/Data", "Synergies");
+            SynergyDefinition S(string name, string desc, ShotPattern a, ShotPattern b, ShotPattern trigger, ShotPattern bonus, float mult)
+            {
+                string path = $"Assets/Data/Synergies/{name.Replace(" ", "")}.asset";
+                var s = AssetDatabase.LoadAssetAtPath<SynergyDefinition>(path);
+                if (s == null) { s = ScriptableObject.CreateInstance<SynergyDefinition>(); AssetDatabase.CreateAsset(s, path); }
+                s.displayName = name; s.description = desc; s.moduleA = a; s.moduleB = b; s.trigger = trigger; s.bonus = bonus;
+                s.bonusDamageMultiplier = mult;
+                EditorUtility.SetDirty(s);
+                return s;
+            }
+
+            return new[]
+            {
+                S("Event Horizon", "Black Holes unleash chain lightning", vortexShot, chainShot, vortexShot, chainShot, 1.2f),
+                S("Thunder Cannon", "Soul Cannon blasts also chain lightning", cannonShot, chainShot, cannonShot, chainShot, 1f),
+                S("Swarm Volley", "Triple Shot also releases seekers", tripleShot, seekerShot, tripleShot, seekerShot, 0.8f),
+                S("Blade Lance", "Piercing Lance also summons orbital blades", lanceShot, bladesShot, lanceShot, bladesShot, 0.8f),
+                S("Seeking Storm", "Seekers come with a lance strike", seekerShot, lanceShot, seekerShot, lanceShot, 0.7f),
+            };
+        }
+
+        private static MetaCatalog MetaCatalogAsset()
+        {
+            Folder("Assets", "Resources");
+            const string path = "Assets/Data/MetaCatalog.asset";
+            var cat = AssetDatabase.LoadAssetAtPath<MetaCatalog>(path);
+            if (tripleShot == null && cat != null) return cat;   // menu-only rebuild: keep the existing catalog
+            if (cat == null) { cat = ScriptableObject.CreateInstance<MetaCatalog>(); AssetDatabase.CreateAsset(cat, path); }
+
+            MetaItem T(string id, string name, string desc, int cost, ShotPattern p) =>
+                new MetaItem { id = id, displayName = name, description = desc, cost = cost, type = MetaItemType.StartingTechnique, technique = p };
+            MetaItem K(string id, string name, string desc, int cost, Color core, Color shield) =>
+                new MetaItem { id = id, displayName = name, description = desc, cost = cost, type = MetaItemType.ReactorSkin, coreColor = core, shieldColor = shield };
+
+            cat.items = new[]
+            {
+                T("start_triple", "Triple Shot", "Start every run with a Triple Shot module.", 60, tripleShot),
+                T("start_seeker", "Seeker Swarm", "Start with homing seekers.", 100, seekerShot),
+                T("start_cannon", "Soul Cannon", "Start with the explosive Soul Cannon.", 140, cannonShot),
+                T("start_chain", "Chain Lightning", "Start with Chain Lightning.", 200, chainShot),
+                T("start_lance", "Piercing Lance", "Start with the Piercing Lance.", 260, lanceShot),
+                T("start_vortex", "Black Hole", "Start with a Black Hole.", 350, vortexShot),
+                K("skin_azure", "Azure Core", "The original soul reactor.", 0, new Color(0.6f, 1.6f, 3f), new Color(0.5f, 2.5f, 3f)),
+                K("skin_crimson", "Crimson Heart", "A furious red core.", 120, new Color(3.2f, 0.5f, 0.6f), new Color(3f, 1.2f, 0.5f)),
+                K("skin_gold", "Gilded Sun", "Molten gold and white light.", 220, new Color(3.2f, 2.2f, 0.6f), new Color(3.4f, 3f, 1.6f)),
+                K("skin_void", "Void Bloom", "Deep violet void energy.", 350, new Color(1.8f, 0.5f, 3.6f), new Color(0.9f, 2.8f, 2.4f)),
+                K("skin_toxic", "Toxic Spring", "Radioactive green.", 300, new Color(0.7f, 3.4f, 0.9f), new Color(2.2f, 3.4f, 0.6f)),
+            };
+            EditorUtility.SetDirty(cat);
+            return cat;
+        }
 
         // Heavy desaturated, vignetted, warped look blended in while paused.
         private static VolumeProfile PauseProfileAsset()
@@ -251,6 +343,9 @@ namespace Soulbreak.EditorTools
             public ExplosionEventChannel explosions;
             public ChainEventChannel chains;
             public BeamEventChannel beams;
+            public Vector2EventChannel headshots;
+            public EnemyEventChannel bossEnraged;
+            public AnnouncementEventChannel announcements;
         }
 
         private static ChannelSet ch;
@@ -279,6 +374,9 @@ namespace Soulbreak.EditorTools
                 explosions = Channel<ExplosionEventChannel>("Explosions", "Raised by explosive weapons (cannon, black hole)."),
                 chains = Channel<ChainEventChannel>("ChainLightning", "Raised by Chain Lightning with the points it jumped through."),
                 beams = Channel<BeamEventChannel>("Beams", "Raised by the Piercing Lance."),
+                headshots = Channel<Vector2EventChannel>("Headshots", "Raised when a shot hits an enemy's weak point (eye)."),
+                bossEnraged = Channel<EnemyEventChannel>("BossEnraged", "Raised when a boss drops below 50% health and enters phase 2."),
+                announcements = Channel<AnnouncementEventChannel>("Announcements", "Arena announcer messages (streaks, synergies, map events)."),
             };
 
             tripleShot.explodedChannel = ch.explosions;
@@ -286,6 +384,8 @@ namespace Soulbreak.EditorTools
             seekerShot.explodedChannel = ch.explosions;
             vortexShot.explodedChannel = ch.explosions;
             chainShot.chainChannel = ch.chains;
+            ((HitscanShotPattern)basicShot).headshotChannel = ch.headshots;
+            EditorUtility.SetDirty(basicShot);
             lanceShot.beamChannel = ch.beams;
             foreach (var s in new ShotPattern[] { tripleShot, cannonShot, seekerShot, vortexShot, chainShot, lanceShot })
                 EditorUtility.SetDirty(s);
@@ -341,6 +441,8 @@ namespace Soulbreak.EditorTools
             return mat;
         }
 
+        private static EnemyConfig gruntConfig, rejuvenatorConfig;
+
         private static WaveEnemy[] Enemies(Sprite quad, Material enemyMat, Material orbMat, out EnemyConfig boss)
         {
             EnemyConfig E(string name, Color c, float size, int hp, float speed, int dmg, int souls,
@@ -367,6 +469,12 @@ namespace Soulbreak.EditorTools
             spitter.stopDistance = 4.5f; spitter.fireInterval = 2.2f; spitter.projectileDamage = 1; spitter.projectileSpeed = 3f;
             boss = E("SoulTyrant", new Color(3f, 0.4f, 1.5f), 3.6f, 40, 0.45f, 5, 150, 1f, 40, 1f, 12);
             boss.isBoss = true;
+            boss.displayName = "Soul Tyrant";
+            boss.minion = grunt;
+            gruntConfig = grunt;
+
+            rejuvenatorConfig = E("Rejuvenator", new Color(0.5f, 3.2f, 1.4f), 2.2f, 25, 0.35f, 3, 40, 1f, 30, 0.5f, 8);
+            rejuvenatorConfig.displayName = "Rejuvenator";
 
             return new[]
             {
@@ -677,8 +785,123 @@ namespace Soulbreak.EditorTools
             Set(fx, "projectileShotDown", ch.projectileShotDown); Set(fx, "explosions", ch.explosions);
             Set(fx, "chains", ch.chains); Set(fx, "beams", ch.beams);
 
+            WireFeatures(sys, cam, quad, orbMat, reactorGo, reactor, reactorView, stats, ammo, shooter, nova, waves, splitter,
+                         combo, wallet, shop, gm, fx, hudGo, hud, shopView, weapons, pause, player, gameOver);
+
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+        }
+
+        // Hit stop, overdrive, streaks, announcer, danger UI, boss bar, synergies, map events, audio, meta.
+        private static void WireFeatures(Transform sys, Camera cam, Sprite quad, Material orbMat, GameObject reactorGo,
+            Reactor.Reactor reactor, ReactorView reactorView, PlayerStats stats, AmmoSystem ammo, PlayerShooter shooter,
+            NovaAbility nova, WaveManager waves, EnemySplitter splitter, ComboSystem combo, SoulWallet wallet, PerkShop shop,
+            GameManager gm, FxSystem fx, GameObject hudGo, HUDCanvas hud, ShopView shopView, WeaponRing weapons,
+            PauseController pause, PlayerController player, GameOverView gameOver)
+        {
+            T Sys<T>(string name) where T : Component
+            {
+                var go = new GameObject(name);
+                go.transform.SetParent(sys);
+                return go.AddComponent<T>();
+            }
+
+            // Time
+            var time = Sys<TimeScaleService>("TimeScaleService");
+            Set(pause, "time", time); Set(gm, "time", time);
+
+            // Enemy registry + extra channels
+            var registry = Sys<EnemyRegistry>("EnemyRegistry");
+            Set(registry, "spawned", ch.enemySpawned); Set(registry, "killed", ch.enemyKilled); Set(registry, "reachedTarget", ch.enemyReached);
+            Set(waves, "registry", registry);
+            var wso = new SerializedObject(waves);
+            wso.FindProperty("channels.bossEnraged").objectReferenceValue = ch.bossEnraged;
+            wso.ApplyModifiedPropertiesWithoutUndo();
+            Set(splitter, "eliteSplitInto", gruntConfig);
+            Set(fx, "shop", shop); Set(fx, "bossEnraged", ch.bossEnraged);
+
+            // Hit stop + impact flash
+            var hitStop = Sys<HitStop>("HitStop");
+            Set(hitStop, "time", time); Set(hitStop, "reactor", reactor); Set(hitStop, "headshots", ch.headshots);
+            Set(hitStop, "enemyKilled", ch.enemyKilled); Set(hitStop, "bossEnraged", ch.bossEnraged);
+
+            // Overdrive
+            var overdrive = Sys<OverdriveSystem>("OverdriveSystem");
+            Set(overdrive, "enemyKilled", ch.enemyKilled); Set(overdrive, "time", time);
+            Set(shooter, "overdrive", overdrive); Set(player, "overdrive", overdrive);
+            var odVol = new GameObject("Overdrive Volume").AddComponent<Volume>();
+            odVol.isGlobal = true; odVol.priority = 5f; odVol.weight = 0f; odVol.sharedProfile = OverdriveProfileAsset();
+            var odFx = Sys<OverdriveEffect>("OverdriveEffect");
+            Set(odFx, "overdrive", overdrive); Set(odFx, "volume", odVol);
+
+            // Kill streaks
+            var streaks = Sys<StreakRewards>("StreakRewards");
+            Set(streaks, "combo", combo); Set(streaks, "wallet", wallet); Set(streaks, "payoutPoint", reactorGo.transform);
+            Set(streaks, "announcements", ch.announcements);
+
+            // Synergies
+            var synergies = Sys<SynergySystem>("SynergySystem");
+            Set(synergies, "ring", weapons); Set(synergies, "shooter", shooter); Set(synergies, "stats", stats);
+            Set(synergies, "announcements", ch.announcements);
+            SetArray(synergies, "synergies", Synergies());
+            Set(shopView, "synergies", synergies);
+
+            // Map events
+            var events = Sys<MapEventSystem>("MapEventSystem");
+            Set(events, "waves", waves); Set(events, "reactor", reactor); Set(events, "wallet", wallet); Set(events, "stats", stats);
+            Set(events, "enemyKilled", ch.enemyKilled); Set(events, "announcements", ch.announcements);
+            Set(events, "urnSprite", quad); Set(events, "urnMaterial", orbMat); Set(events, "rejuvenatorConfig", rejuvenatorConfig);
+
+            // HUD additions
+            var flash = hudGo.AddComponent<ScreenFlashView>();
+            Set(flash, "hud", hud); Set(flash, "hitStop", hitStop);
+            var odView = hudGo.AddComponent<OverdriveView>();
+            Set(odView, "hud", hud); Set(odView, "overdrive", overdrive);
+            var announcer = hudGo.AddComponent<AnnouncerView>();
+            Set(announcer, "hud", hud); Set(announcer, "announcements", ch.announcements);
+            var headshotView = hudGo.AddComponent<HeadshotPopupView>();
+            Set(headshotView, "hud", hud); Set(headshotView, "headshots", ch.headshots);
+            var danger = hudGo.AddComponent<DangerView>();
+            Set(danger, "hud", hud); Set(danger, "registry", registry); Set(danger, "reactor", reactor);
+            Set(danger, "vignetteMaterial", Mat("UIVignette", "Soulbreak/UIVignette"));
+            var bossBar = hudGo.AddComponent<BossHealthView>();
+            Set(bossBar, "hud", hud); Set(bossBar, "spawned", ch.enemySpawned); Set(bossBar, "bossEnraged", ch.bossEnraged);
+
+            // Audio
+            var audio = Sys<AudioDirector>("AudioDirector");
+            Set(audio, "shooter", shooter); Set(audio, "ammo", ammo); Set(audio, "nova", nova); Set(audio, "overdrive", overdrive);
+            Set(audio, "reactor", reactor); Set(audio, "waves", waves); Set(audio, "shop", shop); Set(audio, "combo", combo);
+            Set(audio, "enemyKilled", ch.enemyKilled); Set(audio, "bossEnraged", ch.bossEnraged); Set(audio, "orbCollected", ch.orbCollected);
+            Set(audio, "projectileShotDown", ch.projectileShotDown); Set(audio, "explosions", ch.explosions);
+            Set(audio, "headshots", ch.headshots); Set(audio, "announcements", ch.announcements);
+            var aso = new SerializedObject(audio);
+            var sounds = aso.FindProperty("patternSounds");
+            var map = new (ShotPattern p, Sfx s)[]
+            {
+                (basicShot, Sfx.Laser), (tripleShot, Sfx.Bolt), (cannonShot, Sfx.Cannon), (seekerShot, Sfx.Missile),
+                (chainShot, Sfx.Zap), (lanceShot, Sfx.Lance), (bladesShot, Sfx.Blade), (vortexShot, Sfx.Vortex),
+            };
+            sounds.arraySize = map.Length;
+            for (int i = 0; i < map.Length; i++)
+            {
+                sounds.GetArrayElementAtIndex(i).FindPropertyRelative("pattern").objectReferenceValue = map[i].p;
+                sounds.GetArrayElementAtIndex(i).FindPropertyRelative("sound").enumValueIndex = (int)map[i].s;
+            }
+            aso.ApplyModifiedPropertiesWithoutUndo();
+
+            var music = Sys<MusicSynth>("Music");
+            var musicDir = Sys<MusicDirector>("MusicDirector");
+            Set(musicDir, "music", music); Set(musicDir, "game", gm); Set(musicDir, "waves", waves); Set(musicDir, "registry", registry);
+            Set(musicDir, "pause", pause); Set(musicDir, "overdrive", overdrive); Set(musicDir, "reactor", reactorGo.transform);
+            if (cam.GetComponent<AudioListener>() == null) cam.gameObject.AddComponent<AudioListener>();
+
+            // Meta progression
+            var catalog = MetaCatalogAsset();
+            var loadout = Sys<StartingLoadout>("StartingLoadout");
+            Set(loadout, "catalog", catalog); Set(loadout, "ring", weapons); Set(loadout, "reactorView", reactorView);
+            var recorder = Sys<MetaRecorder>("MetaRecorder");
+            Set(recorder, "game", gm); Set(recorder, "wallet", wallet); Set(recorder, "waves", waves);
+            Set(gameOver, "recorder", recorder);
         }
 
         private static T Get<T>(GameObject go) where T : Component

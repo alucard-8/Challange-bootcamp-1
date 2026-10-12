@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 294b647f6b3431f46aa3e10a55f9158a, type: 3}
+  m_Name: EventHorizon
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Weapons.SynergyDefinition
+  displayName: Event Horizon
+  description: Black Holes unleash chain lightning
+  moduleA: {fileID: 11400000, guid: 39915cdcbec8b6842ad895cc24aa337b, type: 2}
+  moduleB: {fileID: 11400000, guid: aab89e0d360185c428bb253bda8046b3, type: 2}
+  trigger: {fileID: 11400000, guid: 39915cdcbec8b6842ad895cc24aa337b, type: 2}
+  bonus: {fileID: 11400000, guid: aab89e0d360185c428bb253bda8046b3, type: 2}
+  bonusDamageMultiplier: 1.2

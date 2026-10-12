@@ -6,7 +6,7 @@ namespace Soulbreak.Player
 {
     public enum StatType
     {
-        Damage, CritChance, CritMultiplier, SplashRadius,
+        Damage, CritChance, CritMultiplier, SplashRadius, HeadshotMultiplier,
         ClipSize, ReloadTime,
         SoulGain, OrbValue, OrbLifetime, OrbDropChance, HealOrbChance, ComboWindow, Interest,
         NovaCooldown, NovaRadius
@@ -31,6 +31,7 @@ namespace Soulbreak.Player
             new StatValue(StatType.CritChance, 0.05f),
             new StatValue(StatType.CritMultiplier, 2f),
             new StatValue(StatType.SplashRadius, 0f),
+            new StatValue(StatType.HeadshotMultiplier, 2f),
             new StatValue(StatType.ClipSize, 6),
             new StatValue(StatType.ReloadTime, 1.2f),
             new StatValue(StatType.SoulGain, 1f),

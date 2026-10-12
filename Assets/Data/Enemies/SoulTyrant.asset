@@ -21,6 +21,8 @@ MonoBehaviour:
   speed: 0.45
   damage: 5
   isBoss: 1
+  minion: {fileID: 11400000, guid: 81bb031ba0a1f874b8c0df9886d7a4b0, type: 2}
+  displayName: Soul Tyrant
   stopDistance: 0
   fireInterval: 2
   projectileDamage: 1

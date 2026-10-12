@@ -11,5 +11,6 @@ namespace Soulbreak.Enemies
         public EnemyEventChannel killed;
         public EnemyEventChannel reachedTarget;
         public EnemyProjectileEventChannel projectileShotDown;
+        public EnemyEventChannel bossEnraged;
     }
 }

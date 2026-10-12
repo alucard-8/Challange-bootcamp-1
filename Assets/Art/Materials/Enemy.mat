@@ -33,8 +33,10 @@ Material:
     - _Flash: 0
     - _HealthFrac: 1
     - _Seed: 0
+    - _ShieldBubble: 0
     - _Spikes: 6
     m_Colors:
+    - _AuraColor: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 2, g: 0.5, b: 0.5, a: 1}
     - _EdgeColor: {r: 4, g: 2, b: 0.6, a: 1}
   m_BuildTextureStacks: []

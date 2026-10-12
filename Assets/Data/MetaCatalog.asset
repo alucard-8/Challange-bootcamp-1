@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df8f12986c267ef44bd59e7f35c6f571, type: 3}
+  m_Name: MetaCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Meta.MetaCatalog
+  items:
+  - id: start_triple
+    displayName: Triple Shot
+    description: Start every run with a Triple Shot module.
+    type: 0
+    cost: 60
+    technique: {fileID: 11400000, guid: 9c678d7d01db67849b750837157fedf6, type: 2}
+    coreColor: {r: 0.6, g: 1.6, b: 3, a: 1}
+    shieldColor: {r: 0.5, g: 2.5, b: 3, a: 1}
+  - id: start_seeker
+    displayName: Seeker Swarm
+    description: Start with homing seekers.
+    type: 0
+    cost: 100
+    technique: {fileID: 11400000, guid: 68d15c7052d8dfd4bbaeca3e34faffb5, type: 2}
+    coreColor: {r: 0.6, g: 1.6, b: 3, a: 1}
+    shieldColor: {r: 0.5, g: 2.5, b: 3, a: 1}
+  - id: start_cannon
+    displayName: Soul Cannon
+    description: Start with the explosive Soul Cannon.
+    type: 0
+    cost: 140
+    technique: {fileID: 11400000, guid: ef3c66feaf970c249b0ba226d747559a, type: 2}
+    coreColor: {r: 0.6, g: 1.6, b: 3, a: 1}
+    shieldColor: {r: 0.5, g: 2.5, b: 3, a: 1}
+  - id: start_chain
+    displayName: Chain Lightning
+    description: Start with Chain Lightning.
+    type: 0
+    cost: 200
+    technique: {fileID: 11400000, guid: aab89e0d360185c428bb253bda8046b3, type: 2}
+    coreColor: {r: 0.6, g: 1.6, b: 3, a: 1}
+    shieldColor: {r: 0.5, g: 2.5, b: 3, a: 1}
+  - id: start_lance
+    displayName: Piercing Lance
+    description: Start with the Piercing Lance.
+    type: 0
+    cost: 260
+    technique: {fileID: 11400000, guid: 00fdcf6d14e681a4e899dc62107d406a, type: 2}
+    coreColor: {r: 0.6, g: 1.6, b: 3, a: 1}
+    shieldColor: {r: 0.5, g: 2.5, b: 3, a: 1}
+  - id: start_vortex
+    displayName: Black Hole
+    description: Start with a Black Hole.
+    type: 0
+    cost: 350
+    technique: {fileID: 11400000, guid: 39915cdcbec8b6842ad895cc24aa337b, type: 2}
+    coreColor: {r: 0.6, g: 1.6, b: 3, a: 1}
+    shieldColor: {r: 0.5, g: 2.5, b: 3, a: 1}
+  - id: skin_azure
+    displayName: Azure Core
+    description: The original soul reactor.
+    type: 1
+    cost: 0
+    technique: {fileID: 0}
+    coreColor: {r: 0.6, g: 1.6, b: 3, a: 1}
+    shieldColor: {r: 0.5, g: 2.5, b: 3, a: 1}
+  - id: skin_crimson
+    displayName: Crimson Heart
+    description: A furious red core.
+    type: 1
+    cost: 120
+    technique: {fileID: 0}
+    coreColor: {r: 3.2, g: 0.5, b: 0.6, a: 1}
+    shieldColor: {r: 3, g: 1.2, b: 0.5, a: 1}
+  - id: skin_gold
+    displayName: Gilded Sun
+    description: Molten gold and white light.
+    type: 1
+    cost: 220
+    technique: {fileID: 0}
+    coreColor: {r: 3.2, g: 2.2, b: 0.6, a: 1}
+    shieldColor: {r: 3.4, g: 3, b: 1.6, a: 1}
+  - id: skin_void
+    displayName: Void Bloom
+    description: Deep violet void energy.
+    type: 1
+    cost: 350
+    technique: {fileID: 0}
+    coreColor: {r: 1.8, g: 0.5, b: 3.6, a: 1}
+    shieldColor: {r: 0.9, g: 2.8, b: 2.4, a: 1}
+  - id: skin_toxic
+    displayName: Toxic Spring
+    description: Radioactive green.
+    type: 1
+    cost: 300
+    technique: {fileID: 0}
+    coreColor: {r: 0.7, g: 3.4, b: 0.9, a: 1}
+    shieldColor: {r: 2.2, g: 3.4, b: 0.6, a: 1}

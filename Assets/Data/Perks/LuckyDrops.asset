@@ -20,8 +20,8 @@ MonoBehaviour:
   costGrowth: 50
   maxStacks: 4
   effects:
-  - {fileID: 6863705408261578440}
---- !u!114 &6863705408261578440
+  - {fileID: 4560341873235847699}
+--- !u!114 &4560341873235847699
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -33,6 +33,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
   m_Name: Lucky Drops - StatPerkEffect
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 9
+  stat: 10
   operation: 0
   value: 0.1

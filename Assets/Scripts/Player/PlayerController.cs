@@ -11,6 +11,7 @@ namespace Soulbreak.Player
         [SerializeField] private PlayerShooter shooter;
         [SerializeField] private AmmoSystem ammo;
         [SerializeField] private NovaAbility nova;
+        [SerializeField] private OverdriveSystem overdrive;
 
         private void Update()
         {
@@ -22,6 +23,7 @@ namespace Soulbreak.Player
             if (InputReader.FirePressed() && !overUI) shooter.Fire();
             if (InputReader.ReloadPressed()) ammo.Reload();
             if (InputReader.AbilityPressed()) nova.TryUse();
+            if (InputReader.OverdrivePressed()) overdrive.TryActivate();
         }
     }
 }

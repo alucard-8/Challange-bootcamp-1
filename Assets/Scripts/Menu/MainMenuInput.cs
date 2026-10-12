@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Soulbreak.Menu
 {
-    // Input layer for the main menu: Enter plays, Esc closes How-to-play, mouse drives the parallax.
+    // Input layer for the main menu: Enter plays, Esc closes open panels, mouse drives the parallax.
     public class MainMenuInput : MonoBehaviour
     {
         [SerializeField] private MainMenuView view;
@@ -13,7 +13,11 @@ namespace Soulbreak.Menu
         {
             ambience.LookAt(InputReader.PointerPosition());
 
-            if (view.IsHowToOpen)
+            if (view.IsAscensionOpen)
+            {
+                if (InputReader.PausePressed()) view.CloseAscension();
+            }
+            else if (view.IsHowToOpen)
             {
                 if (InputReader.PausePressed()) view.CloseHowTo();
             }

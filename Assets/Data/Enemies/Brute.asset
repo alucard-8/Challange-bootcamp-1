@@ -21,6 +21,8 @@ MonoBehaviour:
   speed: 0.8
   damage: 2
   isBoss: 0
+  minion: {fileID: 0}
+  displayName: 
   stopDistance: 0
   fireInterval: 2
   projectileDamage: 1

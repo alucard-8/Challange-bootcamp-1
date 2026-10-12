@@ -12,13 +12,14 @@ namespace Soulbreak.Enemies
         [Min(0)] public float weight = 1f;
     }
 
-    // Runs waves: spawns a budget of enemies, then reports the wave as cleared once all are dead.
-    // It doesn't know the shop exists — GameManager connects "wave cleared" to "open shop".
+    // Runs waves: spawns a budget of enemies (some rolled as elites), then reports the wave as cleared
+    // once the EnemyRegistry is empty. It doesn't know the shop exists — GameManager connects them.
     public class WaveManager : MonoBehaviour
     {
         [SerializeField] private Transform target;
-        [Tooltip("Channels handed to every enemy this manager spawns; also used to count living enemies.")]
+        [Tooltip("Channels handed to every enemy this manager spawns.")]
         [SerializeField] private EnemyChannels channels;
+        [SerializeField] private EnemyRegistry registry;
         [SerializeField] private WaveEnemy[] roster;
         [SerializeField] private EnemyConfig bossConfig;
         [SerializeField] private int bossEvery = 5;
@@ -33,29 +34,16 @@ namespace Soulbreak.Enemies
         [SerializeField] private float healthGrowth = 0.1f;
         [SerializeField] private float speedGrowth = 0.03f;
 
+        [Header("Elites")]
+        [SerializeField] private int eliteFirstWave = 3;
+        [SerializeField] private float eliteBaseChance = 0.06f;
+        [SerializeField] private float eliteChancePerWave = 0.02f;
+        [SerializeField] private float eliteMaxChance = 0.35f;
+
         public int Wave { get; private set; }
         public bool InCombat { get; private set; }
         public bool IsBossWave => bossConfig != null && bossEvery > 0 && Wave % bossEvery == 0;
         public int RemainingToSpawn { get; private set; }
-        public int AliveCount { get; private set; }
-
-        private void OnEnable()
-        {
-            channels.spawned.OnRaised += HandleSpawned;
-            channels.killed.OnRaised += HandleGone;
-            channels.reachedTarget.OnRaised += HandleGone;
-        }
-
-        private void OnDisable()
-        {
-            channels.spawned.OnRaised -= HandleSpawned;
-            channels.killed.OnRaised -= HandleGone;
-            channels.reachedTarget.OnRaised -= HandleGone;
-        }
-
-        // Counting through the channels also catches enemies spawned by others (e.g. splitter children).
-        private void HandleSpawned(Enemy e) => AliveCount++;
-        private void HandleGone(Enemy e) => AliveCount = Mathf.Max(0, AliveCount - 1);
 
         public event Action<int, bool> OnWaveStarted;   // (wave, isBoss)
         public event Action<int> OnWaveCleared;
@@ -73,10 +61,13 @@ namespace Soulbreak.Enemies
             if (IsBossWave)
             {
                 RemainingToSpawn /= 2;
-                Spawn(bossConfig);
+                Spawn(bossConfig, EnemyModifier.None);
             }
             OnWaveStarted?.Invoke(Wave, IsBossWave);
         }
+
+        // Lets other systems (map events) add an enemy to the current wave.
+        public Enemy SpawnExtra(EnemyConfig config) => Spawn(config, EnemyModifier.None);
 
         private void Update()
         {
@@ -88,15 +79,27 @@ namespace Soulbreak.Enemies
                 if (timer <= 0f)
                 {
                     timer = Mathf.Max(minInterval, baseInterval - intervalPerWave * (Wave - 1));
-                    Spawn(PickEnemy());
+                    Spawn(PickEnemy(), RollModifiers());
                     RemainingToSpawn--;
                 }
             }
-            else if (AliveCount == 0)
+            else if (registry.Count == 0)
             {
                 InCombat = false;
                 OnWaveCleared?.Invoke(Wave);
             }
+        }
+
+        private EnemyModifier RollModifiers()
+        {
+            if (Wave < eliteFirstWave) return EnemyModifier.None;
+            float chance = Mathf.Min(eliteMaxChance, eliteBaseChance + eliteChancePerWave * (Wave - eliteFirstWave));
+            if (UnityEngine.Random.value > chance) return EnemyModifier.None;
+
+            var all = EnemyModifierInfo.All;
+            var mods = all[UnityEngine.Random.Range(0, all.Length)];
+            if (Wave >= 10 && UnityEngine.Random.value < 0.35f) mods |= all[UnityEngine.Random.Range(0, all.Length)];
+            return mods;
         }
 
         private EnemyConfig PickEnemy()
@@ -119,13 +122,13 @@ namespace Soulbreak.Enemies
             return pool.Count > 0 ? pool[pool.Count - 1].config : roster[0].config;
         }
 
-        private void Spawn(EnemyConfig config)
+        private Enemy Spawn(EnemyConfig config, EnemyModifier mods)
         {
-            if (config == null || target == null) return;
+            if (config == null || target == null) return null;
             Vector2 pos = (Vector2)target.position + UnityEngine.Random.insideUnitCircle.normalized * spawnRadius;
             float hp = 1f + healthGrowth * (Wave - 1);
             float spd = 1f + speedGrowth * (Wave - 1);
-            EnemyFactory.Create(config, pos, target, channels, hp, spd);
+            return EnemyFactory.Create(config, pos, target, channels, hp, spd, mods);
         }
     }
 }
