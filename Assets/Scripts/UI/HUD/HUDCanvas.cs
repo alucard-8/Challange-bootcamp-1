@@ -20,22 +20,14 @@ namespace Soulbreak.UI
     {
         [SerializeField] private GameManager game;
 
-        public RectTransform Root { get; private set; }
-        private CanvasGroup group;
+        [SerializeField] private RectTransform root;
+        [SerializeField] private CanvasGroup group;
 
-        private void Awake()
-        {
-            Root = (RectTransform)UIFactory.Canvas("HUD Canvas", transform, 0).transform;
-            group = Root.gameObject.AddComponent<CanvasGroup>();
-            group.blocksRaycasts = false;
-
-            UIFactory.Label(Root, "LMB shoot   R reload   SPACE nova   ESC pause", 20, TextAnchor.LowerLeft, new Color(1, 1, 1, 0.35f))
-                .rectTransform.Place(new Vector2(0, 0), new Vector2(0, 0), new Vector2(26, 26), new Vector2(700, 30));
-        }
+        public RectTransform Root => root;
 
         private void Update()
         {
-            float target = game.State == GameState.Shop ? 0f : 1f;
+            float target = game.State == GameState.Combat ? 1f : 0f;   // hide during shop and game over
             group.alpha = Mathf.MoveTowards(group.alpha, target, Time.unscaledDeltaTime * 4f);
         }
     }

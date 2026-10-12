@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b730626940fa9e46955ef20732505a9, type: 3}
+  m_Name: Comet
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Enemies.CometMovement
+  slingshotTangential: 2.4
+  slingshotRadial: 0.35
+  turnsBeforeDive: 1
+  diveSpeedMultiplier: 2.2

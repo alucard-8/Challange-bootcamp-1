@@ -10,15 +10,8 @@ namespace Soulbreak.UI
         [SerializeField] private HUDCanvas hud;
         [SerializeField] private HitStop hitStop;
 
-        private Image flash;
+        [SerializeField] private Image flash;
         private float alpha;
-
-        private void Awake()
-        {
-            flash = UIFactory.Panel(hud.Root, new Color(1, 1, 1, 0), "ImpactFlash");
-            flash.rectTransform.Fill();
-            flash.transform.SetAsFirstSibling();
-        }
 
         private void OnEnable() => hitStop.OnImpact += HandleImpact;
         private void OnDisable() => hitStop.OnImpact -= HandleImpact;

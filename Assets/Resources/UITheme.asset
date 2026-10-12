@@ -15,6 +15,7 @@ MonoBehaviour:
   osFontName: Bahnschrift
   panelMaterial: {fileID: 2100000, guid: 114ea36cacba4c3479cde7847b4eceb1, type: 2}
   cardMaterial: {fileID: 2100000, guid: 86dd08bb4eb348e4c968cba42fbdb5e3, type: 2}
+  previewMaterial: {fileID: 2100000, guid: 8538888bfed1dd549bfaa5fa686b01a9, type: 2}
   panelColor: {r: 0.05, g: 0.03, b: 0.11, a: 0.78}
   buttonColor: {r: 0.16, g: 0.1, b: 0.3, a: 0.95}
   accent: {r: 0.45, g: 0.85, b: 1, a: 1}

@@ -23,6 +23,12 @@ namespace Soulbreak.Enemies
         public EnemyConfig minion;
         public string displayName = "";
 
+        [Header("Movement")]
+        [Tooltip("Movement strategy. Empty = straight line toward the target.")]
+        public MovementPattern movement;
+        [Tooltip("Boss only: pulls other enemies toward the target (black hole)")]
+        [Min(0)] public float gravityPull = 0f;
+
         [Header("Ranged (stopDistance > 0 makes it a shooter)")]
         [Min(0)] public float stopDistance = 0f;
         [Min(0.1f)] public float fireInterval = 2f;

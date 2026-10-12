@@ -16,6 +16,15 @@ namespace Soulbreak.Orbs
         [SerializeField, ColorUsage(false, true)] private Color healColor = new Color(0.6f, 3f, 1.2f);
         [SerializeField] private float size = 0.7f;
 
+        [Header("Ammo drops")]
+        [SerializeField] private AmmoSystem ammo;
+        [SerializeField] private Transform magnetTarget;
+        [SerializeField, ColorUsage(false, true)] private Color ammoColor = new Color(3f, 1.9f, 0.4f);
+        [SerializeField, Range(0, 1)] private float ammoChance = 0.1f;
+        [SerializeField, Range(0, 1)] private float lowAmmoChance = 0.35f;   // when the clip is under a third or reloading
+
+        public void SetColors(Color soul, Color heal) { soulColor = soul; healColor = heal; }
+
         private void OnEnable() => enemyKilled.OnRaised += HandleEnemyKilled;
         private void OnDisable() => enemyKilled.OnRaised -= HandleEnemyKilled;
 
@@ -33,9 +42,36 @@ namespace Soulbreak.Orbs
                 else if (Random.value < cfg.soulOrbChance + stats.Get(StatType.OrbDropChance) + (enemy.IsElite ? 0.6f : 0f))
                     Spawn(OrbType.Soul, Mathf.RoundToInt(cfg.soulOrbValue * stats.Get(StatType.OrbValue)), p, soulColor);
             }
+            RollAmmo(pos, cfg.isBoss || enemy.IsElite);
         }
 
-        private void Spawn(OrbType type, int value, Vector2 pos, Color color)
+        // Tutorial: drop a specific orb somewhere (ammo orbs still fly to the core on their own).
+        public Orb SpawnFor(OrbType type, Vector2 pos)
+        {
+            switch (type)
+            {
+                case OrbType.Ammo:
+                    var orb = Spawn(OrbType.Ammo, 1, pos, ammoColor);
+                    orb.transform.localScale = Vector3.one * size * 0.8f;
+                    if (magnetTarget != null) orb.Magnetize(magnetTarget, Random.insideUnitCircle.normalized * 3f);
+                    return orb;
+                case OrbType.Heal: return Spawn(OrbType.Heal, 1, pos, healColor);
+                default: return Spawn(OrbType.Soul, 25, pos, soulColor);
+            }
+        }
+
+        // Ammo charges: rarer when the clip is full, likely when you're running dry. Bosses/elites always drop one.
+        private void RollAmmo(Vector2 pos, bool guaranteed)
+        {
+            if (ammo == null || magnetTarget == null) return;
+            bool low = ammo.IsReloading || ammo.Current <= ammo.Max / 3;
+            if (!guaranteed && Random.value >= (low ? lowAmmoChance : ammoChance)) return;
+            var orb = Spawn(OrbType.Ammo, 1, pos, ammoColor);
+            orb.transform.localScale = Vector3.one * size * 0.8f;
+            orb.Magnetize(magnetTarget, Random.insideUnitCircle.normalized * 5f);
+        }
+
+        private Orb Spawn(OrbType type, int value, Vector2 pos, Color color)
         {
             var go = new GameObject($"{type}Orb");
             go.transform.position = pos;
@@ -50,7 +86,9 @@ namespace Soulbreak.Orbs
             col.isTrigger = true;
             col.radius = 0.5f;
 
-            go.AddComponent<Orb>().Init(type, value, stats.Get(StatType.OrbLifetime), color, orbCollected);
+            var orb = go.AddComponent<Orb>();
+            orb.Init(type, value, stats.Get(StatType.OrbLifetime), color, orbCollected);
+            return orb;
         }
     }
 }

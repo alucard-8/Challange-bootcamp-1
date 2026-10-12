@@ -55,7 +55,7 @@ namespace Soulbreak.Enemies
         {
             Wave++;
             InCombat = true;
-            RemainingToSpawn = baseCount + countPerWave * (Wave - 1);
+            RemainingToSpawn = Mathf.Max(1, Mathf.RoundToInt((baseCount + countPerWave * (Wave - 1)) * diffCount));
             timer = 1f;
 
             if (IsBossWave)
@@ -65,6 +65,12 @@ namespace Soulbreak.Enemies
             }
             OnWaveStarted?.Invoke(Wave, IsBossWave);
         }
+
+        // Configuration (used by the mode applier before the first wave).
+        public void SetRoster(WaveEnemy[] newRoster, EnemyConfig newBoss) { roster = newRoster; bossConfig = newBoss; }
+
+        private float diffHealth = 1f, diffSpeed = 1f, diffCount = 1f, diffElite = 1f;
+        public void SetDifficulty(float health, float speed, float count, float elite) { diffHealth = health; diffSpeed = speed; diffCount = count; diffElite = elite; }
 
         // Lets other systems (map events) add an enemy to the current wave.
         public Enemy SpawnExtra(EnemyConfig config) => Spawn(config, EnemyModifier.None);
@@ -93,7 +99,7 @@ namespace Soulbreak.Enemies
         private EnemyModifier RollModifiers()
         {
             if (Wave < eliteFirstWave) return EnemyModifier.None;
-            float chance = Mathf.Min(eliteMaxChance, eliteBaseChance + eliteChancePerWave * (Wave - eliteFirstWave));
+            float chance = Mathf.Min(eliteMaxChance * diffElite, (eliteBaseChance + eliteChancePerWave * (Wave - eliteFirstWave)) * diffElite);
             if (UnityEngine.Random.value > chance) return EnemyModifier.None;
 
             var all = EnemyModifierInfo.All;
@@ -126,8 +132,8 @@ namespace Soulbreak.Enemies
         {
             if (config == null || target == null) return null;
             Vector2 pos = (Vector2)target.position + UnityEngine.Random.insideUnitCircle.normalized * spawnRadius;
-            float hp = 1f + healthGrowth * (Wave - 1);
-            float spd = 1f + speedGrowth * (Wave - 1);
+            float hp = (1f + healthGrowth * (Wave - 1)) * diffHealth;
+            float spd = (1f + speedGrowth * (Wave - 1)) * diffSpeed;
             return EnemyFactory.Create(config, pos, target, channels, hp, spd, mods);
         }
     }

@@ -26,6 +26,8 @@ namespace Soulbreak.GameFlow
 
         public event Action<GameState> OnStateChanged;
 
+        private float collapseTimer = -1f;
+
         private void OnEnable()
         {
             reactor.OnDestroyed += HandleReactorDestroyed;
@@ -51,6 +53,11 @@ namespace Soulbreak.GameFlow
         private void Update()
         {
             if (State == GameState.Combat) SurvivalTime += Time.deltaTime;
+            if (State == GameState.GameOver && collapseTimer >= 0f)
+            {
+                collapseTimer += Time.unscaledDeltaTime;
+                if (collapseTimer > 1.4f) { time.Set("gameover", 0f); collapseTimer = -1f; }
+            }
 
         }
 
@@ -73,7 +80,8 @@ namespace Soulbreak.GameFlow
         private void HandleReactorDestroyed()
         {
             SetState(GameState.GameOver);
-            time.Set("gameover", 0f);
+            time.Set("gameover", 0.2f);   // slow-motion collapse, frozen after a moment (see Update)
+            collapseTimer = 0f;
         }
 
         private void SetState(GameState state)

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1264def015e865b41abff8511b7be528, type: 3}
+  m_Name: HypergiantRounds
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.PerkDefinition
+  displayName: Hypergiant Rounds
+  description: +2 damage and +10% critical chance.
+  category: 0
+  rarity: 2
+  baseCost: 160
+  costGrowth: 120
+  maxStacks: 3
+  effects:
+  - {fileID: -677947657526801048, guid: 14eb6494c1fe5924da606b03a4acd14a, type: 2}
+  - {fileID: 6102110593311297834, guid: 14eb6494c1fe5924da606b03a4acd14a, type: 2}

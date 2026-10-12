@@ -14,6 +14,11 @@ Shader "Soulbreak/Reactor"
         _Flash ("Hit Flash", Range(0, 1)) = 0
         _Cracks ("Cracks", Range(0, 1)) = 0
         _Alarm ("Alarm", Range(0, 1)) = 0
+        _UpOffense ("Upgrades: Offense", Float) = 0
+        _UpDefense ("Upgrades: Defense", Float) = 0
+        _UpEconomy ("Upgrades: Economy", Float) = 0
+        _Tier ("Tier", Float) = 0
+        _TierPulse ("Tier Pulse", Range(0, 1)) = 0
     }
 
     SubShader
@@ -41,6 +46,11 @@ Shader "Soulbreak/Reactor"
                 float _Flash;
                 float _Cracks;
                 float _Alarm;
+                float _UpOffense;
+                float _UpDefense;
+                float _UpEconomy;
+                float _Tier;
+                float _TierPulse;
             CBUFFER_END
 
             // Cellular noise edge distance: small near cell borders = crack lines.
@@ -96,6 +106,40 @@ Shader "Soulbreak/Reactor"
                 col += _Color.rgb * aura * (0.3 + 0.7 * _Health01);
 
                 float alpha = saturate(core + shell + ringMask * lerp(0.25, 1.0, lit) + aura);
+
+                // ---------- Upgrades: the core gets more "equipped" as you buy perks ----------
+                float a01 = ang / 6.2831853 + 0.5;
+                // Offense: emitter spikes sprouting from the shell (more + longer with each offense perk)
+                float off = min(_UpOffense, 8.0);
+                float spikeCount = 4.0 + 2.0 * off;
+                float sa = frac(a01 * spikeCount + t * 0.05);
+                float tri = saturate(1.0 - abs(sa - 0.5) * 2.0);
+                float spikeLen = (0.05 + 0.018 * off) * tri * tri;
+                float spikes = step(0.5, off) * smoothstep(coreR + spikeLen, coreR + spikeLen - 0.015, d) * step(coreR, d);
+                col += _Color.rgb * spikes * (1.6 + 0.6 * sin(t * 6.0 + a01 * 40.0));
+
+                // Defense: armor plates locking in between the core and the shield ring
+                float def = min(_UpDefense, 8.0);
+                float plateSeg = a01 * 8.0;
+                float plateOn = step(floor(plateSeg) + 0.5, def);
+                float plateGap = smoothstep(0.0, 0.06, frac(plateSeg)) * smoothstep(1.0, 0.94, frac(plateSeg));
+                float plate = smoothstep(0.035, 0.02, abs(d - 0.56)) * plateGap * plateOn;
+                float plateEdge = smoothstep(0.035, 0.03, abs(d - 0.56)) - smoothstep(0.03, 0.02, abs(d - 0.56));
+                col = lerp(col, float3(0.35, 0.45, 0.6) + _ShieldColor.rgb * 0.25 * (0.6 + 0.4 * sin(t * 2.0 + plateSeg)), plate);
+                col += _ShieldColor.rgb * plateEdge * plateOn * plateGap * 1.5;
+
+                // Economy: golden halo with orbiting soul sparks
+                float eco = saturate(_UpEconomy);
+                float halo = smoothstep(0.02, 0.0, abs(d - 0.9)) * eco;
+                float sparks = pow(0.5 + 0.5 * sin(a01 * 6.2831853 * 6.0 - t * 3.0), 20.0) * smoothstep(0.05, 0.0, abs(d - 0.9)) * eco;
+                col += float3(3.0, 2.0, 0.6) * (halo * 0.8 + sparks * 2.5);
+
+                // Tier: brighter core per tier + an expanding pulse ring on tier-up
+                col *= 1.0 + 0.12 * min(_Tier, 6.0) * core;
+                float pulseR = 0.4 + (1.0 - _TierPulse) * 0.55;
+                float pulse = smoothstep(0.05, 0.0, abs(d - pulseR)) * _TierPulse;
+                col += float3(2.5, 2.5, 3.5) * pulse;
+                alpha = saturate(alpha + spikes + plate + halo + sparks + pulse);
 
                 // Cracks spreading over the core as it loses health (glowing hot red/orange)
                 float crack = smoothstep(0.06, 0.0, CrackLines(p * 6.0));

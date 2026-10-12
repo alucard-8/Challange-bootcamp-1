@@ -12,18 +12,8 @@ namespace Soulbreak.UI
         [SerializeField] private HUDCanvas hud;
         [SerializeField] private OverdriveSystem overdrive;
 
-        private Text label;
-        private RectTransform fill;
-
-        private void Awake()
-        {
-            var panel = UIFactory.StyledPanel(hud.Root, HudColors.Panel, Purple, "OverdrivePanel").rectTransform
-                .Place(new Vector2(1, 0), new Vector2(1, 0), new Vector2(-24, 116), new Vector2(300, 80));
-            label = UIFactory.Label(panel, "OVERDRIVE", 26, TextAnchor.MiddleLeft, Purple, FontStyle.Bold);
-            label.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -8), new Vector2(270, 34));
-            fill = UIFactory.Bar(panel, new Color(0, 0, 0, 0.6f), Purple, "OverdriveBar");
-            fill.parent.GetComponent<RectTransform>().Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -50), new Vector2(264, 14));
-        }
+        [SerializeField] private Text label;
+        [SerializeField] private RectTransform fill;
 
         private void Update()
         {

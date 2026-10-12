@@ -21,6 +21,8 @@ namespace Soulbreak.Fx
 
         [Header("Event channels")]
         [SerializeField] private EnemyEventChannel bossEnraged;
+        [SerializeField] private EnemyDamageEventChannel enemyDamaged;
+        [SerializeField] private Material sparkMaterial;
         [SerializeField] private EnemyEventChannel enemyKilled;
         [SerializeField] private OrbEventChannel orbCollected;
         [SerializeField] private EnemyProjectileEventChannel projectileShotDown;
@@ -41,6 +43,8 @@ namespace Soulbreak.Fx
         [SerializeField, ColorUsage(true, true)] private Color shieldHitColor = new Color(0.6f, 2.5f, 3f, 1f);
         [SerializeField, ColorUsage(true, true)] private Color coreHitColor = new Color(4f, 0.5f, 0.5f, 1f);
 
+        public void SetEnemyMaterial(Material material) => enemyMaterial = material;
+
         private void OnEnable()
         {
             shooter.OnShotFired += HandleShot;
@@ -48,6 +52,7 @@ namespace Soulbreak.Fx
             reactor.OnHit += HandleReactorHit;
             enemyKilled.OnRaised += HandleEnemyKilled;
             bossEnraged.OnRaised += HandleBossEnraged;
+            enemyDamaged.OnRaised += HandleEnemyDamaged;
             shop.OnPerkBought += HandlePerkBought;
             orbCollected.OnRaised += HandleOrbCollected;
             projectileShotDown.OnRaised += HandleProjectileShotDown;
@@ -63,6 +68,7 @@ namespace Soulbreak.Fx
             reactor.OnHit -= HandleReactorHit;
             enemyKilled.OnRaised -= HandleEnemyKilled;
             bossEnraged.OnRaised -= HandleBossEnraged;
+            enemyDamaged.OnRaised -= HandleEnemyDamaged;
             shop.OnPerkBought -= HandlePerkBought;
             orbCollected.OnRaised -= HandleOrbCollected;
             projectileShotDown.OnRaised -= HandleProjectileShotDown;
@@ -99,6 +105,20 @@ namespace Soulbreak.Fx
             var go = new GameObject("Lance", typeof(LineRenderer), typeof(TracerFx));
             go.GetComponent<TracerFx>().Init(beam.From, beam.To, tracerMaterial, beam.Color, beam.Width * 3.5f, 0.35f);
             Ring(beam.From, beam.Color, 0.5f, 2.2f, 0.3f);
+        }
+
+        // Every hit: a spark burst in the enemy's color; shield blocks deflect with a cyan ring instead.
+        private void HandleEnemyDamaged(EnemyDamage hit)
+        {
+            if (hit.Blocked)
+            {
+                Ring(hit.Position, new Color(0.6f, 2.4f, 3.6f), 0.4f, 1.8f, 0.25f, 0.2f);
+                SparkFx.Burst(hit.Position, new Color(0.6f, 0.9f, 1f), 5, 3f, quad, sparkMaterial, 0.14f);
+                return;
+            }
+            var c = hit.Enemy != null ? hit.Enemy.Config.color : Color.white;
+            float m = Mathf.Max(1f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
+            SparkFx.Burst(hit.Position, new Color(c.r / m, c.g / m, c.b / m), hit.Killed ? 10 : 6, hit.Killed ? 6f : 4f, quad, sparkMaterial);
         }
 
         // The reactor "absorbs" each purchase with a soul shockwave.

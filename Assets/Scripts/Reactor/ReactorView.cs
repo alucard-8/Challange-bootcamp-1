@@ -15,6 +15,23 @@ namespace Soulbreak.Reactor
         private static readonly int CoreColorId = Shader.PropertyToID("_Color");
         private static readonly int ShieldColorId = Shader.PropertyToID("_ShieldColor");
 
+        private static readonly int UpOffenseId = Shader.PropertyToID("_UpOffense");
+        private static readonly int UpDefenseId = Shader.PropertyToID("_UpDefense");
+        private static readonly int UpEconomyId = Shader.PropertyToID("_UpEconomy");
+        private static readonly int TierId = Shader.PropertyToID("_Tier");
+        private static readonly int TierPulseId = Shader.PropertyToID("_TierPulse");
+
+        // Visual upgrade levels (fed by CoreUpgradeView). Works for both the reactor and star shaders.
+        public void SetUpgrades(float offense, float defense, float economy, int tier, float tierPulse)
+        {
+            block.SetFloat(UpOffenseId, offense);
+            block.SetFloat(UpDefenseId, defense);
+            block.SetFloat(UpEconomyId, economy);
+            block.SetFloat(TierId, tier);
+            block.SetFloat(TierPulseId, tierPulse);
+            Apply();
+        }
+
         // Reactor skins (meta progression) recolor the core and shield.
         public void SetColors(Color core, Color shield)
         {

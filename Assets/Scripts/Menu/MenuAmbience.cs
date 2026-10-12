@@ -74,6 +74,8 @@ namespace Soulbreak.Menu
 
         public void ZoomIn() => zooming = true;
 
+        public void SetEnemyMaterial(Material material) => enemyMaterial = material;
+
         // Where the player is pointing (screen space) — fed by MainMenuInput, used for camera parallax.
         public void LookAt(Vector2 screenPoint) => lookScreenPoint = screenPoint;
         private Vector2 lookScreenPoint;

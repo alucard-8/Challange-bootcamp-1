@@ -45,7 +45,7 @@ namespace Soulbreak.Fx
             float shake = trauma * trauma;
             float t = Time.unscaledTime * 25f;
             var offset = new Vector3(Mathf.PerlinNoise(t, 0f) - 0.5f, Mathf.PerlinNoise(0f, t) - 0.5f, 0f) * 2f;
-            transform.localPosition = basePos + offset * maxOffset * shake;
+            transform.localPosition = basePos + offset * maxOffset * shake * Core.GameSettings.ScreenShake;
             trauma = Mathf.Max(0f, trauma - decay * Time.unscaledDeltaTime);
         }
     }

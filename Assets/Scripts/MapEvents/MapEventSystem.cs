@@ -37,6 +37,8 @@ namespace Soulbreak.MapEvents
         [SerializeField] private EnemyConfig rejuvenatorConfig;
         [SerializeField] private float buffDuration = 20f;
 
+        public void SetRejuvenator(EnemyConfig config) => rejuvenatorConfig = config;
+
         private static readonly Color Gold = new Color(1f, 0.8f, 0.3f);
         private static readonly Color Orange = new Color(1f, 0.5f, 0.15f);
         private static readonly Color Green = new Color(0.4f, 1f, 0.6f);

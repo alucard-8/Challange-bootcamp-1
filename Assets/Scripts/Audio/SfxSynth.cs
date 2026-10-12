@@ -9,6 +9,7 @@ namespace Soulbreak.Audio
         Laser, Bolt, Cannon, Missile, Zap, Lance, Blade, Vortex,
         Explosion, Kill, BigKill, Headshot, ReactorHit, ShieldHit, Nova,
         Orb, Buy, Fail, WaveStart, WaveClear, Streak, Overdrive, Click, Reload, Enrage, Alarm,
+        UIHover, UIClick, UIOpen, UIClose, Tally, NewBest, Collapse,
     }
 
     // Generates every sound effect procedurally (no audio files needed): oscillators + noise +
@@ -59,6 +60,13 @@ namespace Soulbreak.Audio
                 case Sfx.Reload: return Make(id, 0.22f, t => (N() * 0.2f * Env(t, 0, 0.04f) + Sq(t * (t < 0.12f ? 600 : 900)) * 0.1f) * Env(t, 0.001f, 0.22f));
                 case Sfx.Enrage: return Make(id, 1.3f, t => (Saw(t * 55) * 0.35f + Saw(t * 58) * 0.35f + Lp(0.2f) * 0.35f) * Env(t, 0.05f, 1.3f) * (0.7f + 0.3f * Mathf.Sin(t * 40)));
                 case Sfx.Alarm: return Make(id, 0.5f, t => Sq(t * Arp(t, 0.25f, 880, 660)) * 0.13f * Env(t, 0.005f, 0.5f));
+                case Sfx.UIHover: return Make(id, 0.05f, t => Sin(t * 1900) * 0.12f * Env(t, 0.002f, 0.05f));
+                case Sfx.UIClick: return Make(id, 0.09f, t => (Sin(Sw(t, 1400, 700, 0.09f)) * 0.25f + N() * 0.05f * Env(t, 0, 0.01f)) * Env(t, 0.001f, 0.09f));
+                case Sfx.UIOpen: return Make(id, 0.28f, t => (Lp(0.08f) * 0.35f + Sin(Sw(t, 300, 900, 0.28f)) * 0.12f) * Env(t, 0.06f, 0.28f));
+                case Sfx.UIClose: return Make(id, 0.22f, t => (Lp(0.08f) * 0.3f + Sin(Sw(t, 800, 280, 0.22f)) * 0.1f) * Env(t, 0.02f, 0.22f));
+                case Sfx.Tally: return Make(id, 0.06f, t => Sq(t * 1500) * 0.08f * Env(t, 0.001f, 0.06f));
+                case Sfx.NewBest: return Make(id, 1.0f, t => (Saw(t * Arp(t, 0.09f, 523, 659, 784, 1047, 1319)) * 0.14f + Sin(t * Arp(t, 0.09f, 1047, 1319, 1568, 2093, 2637)) * 0.12f) * Env(t, 0.003f, 1.0f));
+                case Sfx.Collapse: return Make(id, 2.0f, t => (Lp(0.05f) * 0.7f + Sin(Sw(t, 90, 25, 2f)) * 0.6f + Saw(Sw(t, 300, 40, 2f)) * 0.08f) * Env(t, 0.01f, 2.0f));
             }
             return Make(id, 0.05f, t => 0f);
         }

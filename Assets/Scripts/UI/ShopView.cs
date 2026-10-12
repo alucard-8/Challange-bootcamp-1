@@ -32,25 +32,41 @@ namespace Soulbreak.UI
             new Color(0.45f, 1f, 0.6f),       // Weapon
         };
 
+        [System.Serializable]
         private class Card
         {
             public RectTransform Root;
             public Image Background, RarityBar;
-            public Text Category, Name, Description, Owned, Rarity, Hotkey, ButtonText;
+            public Text Category, Name, Description, Synergy, Owned, Rarity, Hotkey, ButtonText, Stamp;
             public Button Buy;
+            public Image BuyImage;
+            public UIButtonFx Fx;
+            [System.NonSerialized] public float Hover;
             public CanvasGroup Group, Intro;
         }
 
         private readonly List<Vector2> cardBase = new List<Vector2>();
         private float showTime;
 
-        private CanvasGroup group;
-        private Text titleText, soulsText, rerollText;
-        private Button rerollButton;
-        private RectTransform cardRow;
-        private readonly List<Card> cards = new List<Card>();
+        [SerializeField] private CanvasGroup group;
+        [SerializeField] private Text titleText, soulsText, rerollText;
+        [SerializeField] private Button rerollButton, nextButton;
+        [SerializeField] private RectTransform cardRow;
+        [SerializeField] private List<Card> cards = new List<Card>();   // one per possible offer, unused ones hidden
 
-        private void Awake() => Build();
+        private void Awake()
+        {
+            rerollButton.onClick.AddListener(() => shop.TryReroll());
+            nextButton.onClick.AddListener(shop.Close);
+            for (int i = 0; i < cards.Count; i++)
+            {
+                int index = i;
+                cards[i].Buy.onClick.AddListener(() => shop.TryBuy(index));
+                // each card animates its own shader values, so it needs its own material instance
+                if (cards[i].Background.material != null) cards[i].Background.material = new Material(cards[i].Background.material);
+            }
+            Hide();
+        }
 
         private void OnEnable()
         {
@@ -75,18 +91,25 @@ namespace Soulbreak.UI
             // Open animation: overlay fades in, cards fly up one after another.
             showTime += Time.unscaledDeltaTime;
             group.alpha = Mathf.Clamp01(showTime * 4f);
-            for (int i = 0; i < cards.Count; i++)
+            for (int i = 0; i < cards.Count && i < cardBase.Count; i++)
             {
                 float t = Mathf.Clamp01((showTime - 0.12f - i * 0.07f) / 0.45f);
                 float ease = 1f - Mathf.Pow(1f - t, 3f);
                 cards[i].Intro.alpha = ease;
-                cards[i].Root.anchoredPosition = cardBase[i] + Vector2.down * 120f * (1f - ease);
+                // Hover: card lifts and the shader edge brightens.
+                var c = cards[i];
+                c.Hover = Mathf.MoveTowards(c.Hover, c.Fx.IsHovered ? 1f : 0f, Time.unscaledDeltaTime * 6f);
+                float h = c.Hover * c.Hover * (3f - 2f * c.Hover);
+                c.Root.anchoredPosition = cardBase[i] + Vector2.down * 120f * (1f - ease) + Vector2.up * 16f * h;
+                var mat = c.Background.material;
+                if (mat != null && mat.HasProperty("_Hover")) mat.SetFloat("_Hover", h);
             }
         }
 
         private void Show()
         {
             showTime = 0f;
+            Audio.UIAudio.Play(Audio.Sfx.UIOpen);
             group.alpha = 0f;
             group.blocksRaycasts = group.interactable = true;
             Refresh();
@@ -105,12 +128,12 @@ namespace Soulbreak.UI
 
         private void Refresh()
         {
-            soulsText.text = $"{wallet.Souls} SOULS";
+            soulsText.text = $"{wallet.Souls} {Lex.T("souls", "SOULS")}";
             rerollText.text = $"REROLL  ({shop.RerollCost})";
             rerollButton.interactable = wallet.Souls >= shop.RerollCost;
 
             var offers = shop.Offers;
-            EnsureCards(offers.Count);
+            LayoutCards(Mathf.Min(offers.Count, cards.Count));
 
             for (int i = 0; i < cards.Count; i++)
             {
@@ -132,115 +155,47 @@ namespace Soulbreak.UI
                 var mat = card.Background.material;
                 if (mat != null && mat.HasProperty("_Style"))
                 {
-                    mat.SetColor("_Accent", technique != null && technique.module != null ? (Color)technique.module.color * 0.45f + rarity * 0.55f : rarity);
+                    var accent = technique != null && technique.module != null ? (Color)technique.module.color * 0.45f + rarity * 0.55f : rarity;
+                    float peak = Mathf.Max(accent.r, Mathf.Max(accent.g, accent.b));
+                    if (peak > 1f) accent /= peak;   // module colors are HDR; keep the card face readable
+                    accent.a = 1f;
+                    mat.SetColor("_Accent", accent);
                     mat.SetFloat("_Style", technique != null ? 1f : 0f);
                     mat.SetFloat("_Icon", technique != null && technique.module != null ? technique.module.icon : 0f);
                     mat.SetFloat("_Dim", offer.Sold ? 1f : 0f);
+                    mat.SetFloat("_Rarity", (int)perk.rarity);
+                    mat.SetFloat("_Category", (int)perk.category);
                 }
                 card.Rarity.text = perk.rarity.ToString().ToUpper();
                 card.Rarity.color = rarity;
-                card.Category.text = perk.IsTechnique ? "TECHNIQUE" : $"BUFF  -  {perk.category.ToString().ToUpper()}";
+                card.Category.text = perk.IsTechnique ? "TECHNIQUE" : perk.category.ToString().ToUpper();
                 card.Category.color = cat;
                 card.Name.text = perk.displayName;
                 var tech = perk.TechniqueEffect;
-                card.Description.text = perk.description + (synergies != null && tech != null ? synergies.HintFor(tech.module) : "");
-                card.Owned.text = perk.maxStacks > 0 ? $"Owned {stacks}/{perk.maxStacks}" : (stacks > 0 ? $"Owned {stacks}" : "");
+                card.Description.text = perk.description;
+                card.Synergy.text = synergies != null && tech != null ? synergies.HintFor(tech.module).Trim() : "";
+                card.Owned.text = perk.maxStacks > 0 ? $"OWNED {stacks}/{perk.maxStacks}" : (stacks > 0 ? $"OWNED {stacks}" : "");
                 card.Hotkey.text = $"[{i + 1}]";
 
                 card.Background.color = Color.Lerp(new Color(0.07f, 0.05f, 0.13f, 0.97f), rarity, 0.08f);
                 card.Buy.interactable = !offer.Sold && affordable;
-                card.ButtonText.text = offer.Sold ? "SOLD" : $"BUY   {offer.Cost}";
-                card.Group.alpha = offer.Sold ? 0.4f : 1f;
+                card.BuyImage.color = Color.Lerp(new Color(0.22f, 0.13f, 0.36f), rarity, affordable ? 0.45f : 0.1f);
+                card.ButtonText.text = offer.Sold ? "SOLD" : affordable ? $"BUY  -  {offer.Cost}" : $"NEED {offer.Cost}";
+                card.ButtonText.color = offer.Sold || affordable ? Color.white : new Color(1f, 0.45f, 0.45f);
+                card.Stamp.gameObject.SetActive(offer.Sold);
+                card.Group.alpha = offer.Sold ? 0.55f : 1f;
             }
         }
 
-        private void EnsureCards(int count)
+        // Centers however many cards are on offer.
+        private void LayoutCards(int count)
         {
-            while (cards.Count < count) cards.Add(MakeCard(cards.Count));
-
-            const float w = 310f, gap = 28f;
-            float total = cards.Count * w + (cards.Count - 1) * gap;
+            const float gap = 30f;
+            float w = cards[0].Root.sizeDelta.x;
+            float total = count * w + (count - 1) * gap;
             cardBase.Clear();
             for (int i = 0; i < cards.Count; i++)
-            {
-                var pos = new Vector2(-total / 2f + w / 2f + i * (w + gap), 0f);
-                cards[i].Root.Place(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), pos, new Vector2(w, 440f));
-                cardBase.Add(pos);
-            }
-        }
-
-        // ---------- Layout ----------
-        private void Build()
-        {
-            var root = (RectTransform)UIFactory.Canvas("Shop Canvas", transform, 10).transform;
-            var bg = UIFactory.Panel(root, new Color(0.02f, 0.01f, 0.05f, 0.88f), "ShopOverlay");
-            bg.rectTransform.Fill();
-            bg.raycastTarget = true;   // blocks clicks reaching the game
-            group = bg.gameObject.AddComponent<CanvasGroup>();
-
-            titleText = UIFactory.Label(bg.transform, "SOUL SHOP", 78, TextAnchor.MiddleCenter, Color.white, FontStyle.Bold);
-            titleText.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -60), new Vector2(1200, 100));
-            titleText.gameObject.AddComponent<GlitchText>().burstChance = 0.5f;
-            var sub = UIFactory.Label(bg.transform, "Spend souls on perks. Press 1-5 or click to buy.", 26, TextAnchor.MiddleCenter, new Color(1, 1, 1, 0.55f));
-            sub.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -150), new Vector2(1200, 40));
-            soulsText = UIFactory.Label(bg.transform, "0 SOULS", 44, TextAnchor.MiddleCenter, new Color(0.78f, 0.5f, 1f), FontStyle.Bold);
-            soulsText.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -205), new Vector2(800, 60));
-
-            cardRow = UIFactory.Rect("Cards", bg.transform);
-            cardRow.Place(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, -20), new Vector2(1800, 460));
-
-            rerollButton = UIFactory.Button(bg.transform, "REROLL", new Color(0.28f, 0.18f, 0.45f), () => shop.TryReroll(), out rerollText);
-            ((RectTransform)rerollButton.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(-200, 70), new Vector2(340, 80));
-
-            var next = UIFactory.Button(bg.transform, "NEXT WAVE  >", new Color(0.1f, 0.45f, 0.55f), () => shop.Close(), out _, 32);
-            ((RectTransform)next.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(200, 70), new Vector2(340, 80));
-
-            Hide();
-        }
-
-        private Card MakeCard(int index)
-        {
-            var c = new Card();
-            // Wrapper handles the fly-in alpha; the card itself handles sold-dimming and hover.
-            var holder = UIFactory.Rect($"Card{index}", cardRow);
-            c.Root = holder;
-            c.Intro = holder.gameObject.AddComponent<CanvasGroup>();
-
-            c.Background = UIFactory.Panel(holder, new Color(0.07f, 0.05f, 0.13f, 0.97f), "Body");
-            if (UIFactory.Theme.cardMaterial != null) c.Background.material = new Material(UIFactory.Theme.cardMaterial);
-            c.Background.rectTransform.Fill();
-            c.Background.raycastTarget = true;
-            c.Group = c.Background.gameObject.AddComponent<CanvasGroup>();
-            c.Background.gameObject.AddComponent<UIButtonFx>().hoverScale = 1.04f;
-
-            c.RarityBar = UIFactory.StyledPanel(c.Background.transform, Color.white, new Color(1, 1, 1, 0), "RarityBar", 4f, true);
-            c.RarityBar.rectTransform.anchorMin = new Vector2(0.08f, 1);
-            c.RarityBar.rectTransform.anchorMax = new Vector2(0.92f, 1);
-            c.RarityBar.rectTransform.pivot = new Vector2(0.5f, 1);
-            c.RarityBar.rectTransform.sizeDelta = new Vector2(0, 8);
-            c.RarityBar.rectTransform.anchoredPosition = new Vector2(0, -10);
-            var parent = c.Background.rectTransform;
-
-            c.Category = UIFactory.Label(parent, "", 17, TextAnchor.UpperLeft, Color.white, FontStyle.Bold);
-            c.Category.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(22, -26), new Vector2(200, 26));
-            c.Rarity = UIFactory.Label(parent, "", 17, TextAnchor.UpperRight, Color.white, FontStyle.Bold);
-            c.Rarity.rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-22, -26), new Vector2(160, 26));
-
-            c.Name = UIFactory.Label(parent, "", 34, TextAnchor.UpperLeft, Color.white, FontStyle.Bold);
-            c.Name.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(22, -64), new Vector2(266, 90));
-
-            c.Description = UIFactory.Label(parent, "", 23, TextAnchor.UpperLeft, new Color(1, 1, 1, 0.75f));
-            c.Description.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(22, -160), new Vector2(266, 150));
-
-            c.Owned = UIFactory.Label(parent, "", 20, TextAnchor.LowerLeft, new Color(1, 1, 1, 0.45f));
-            c.Owned.rectTransform.Place(new Vector2(0, 0), new Vector2(0, 0), new Vector2(22, 100), new Vector2(200, 26));
-            c.Hotkey = UIFactory.Label(parent, "", 20, TextAnchor.LowerRight, new Color(1, 1, 1, 0.45f));
-            c.Hotkey.rectTransform.Place(new Vector2(1, 0), new Vector2(1, 0), new Vector2(-22, 100), new Vector2(80, 26));
-
-            int captured = index;
-            c.Buy = UIFactory.Button(parent, "BUY", new Color(0.35f, 0.2f, 0.55f), () => shop.TryBuy(captured), out c.ButtonText);
-            ((RectTransform)c.Buy.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 22), new Vector2(266, 64));
-            return c;
+                cardBase.Add(new Vector2(-total / 2f + w / 2f + i * (w + gap), 0f));
         }
     }
 }

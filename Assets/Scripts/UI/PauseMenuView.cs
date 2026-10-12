@@ -14,24 +14,65 @@ namespace Soulbreak.UI
         [SerializeField] private GameManager game;
         [SerializeField] private WaveManager waves;
         [SerializeField] private SoulWallet wallet;
+        [SerializeField] private SettingsView settings;
+        [SerializeField] private Menu.IndexView index;
+        [SerializeField] private HowToView howTo;
+        [SerializeField] private Meta.CodexCatalog codex;
 
-        private CanvasGroup group;
-        private RectTransform panel, hint;
-        private Text statsText;
-        private Image dim;
+        // Esc closes the top-most popup first; returns false when nothing was open.
+        public bool CloseTopPanel()
+        {
+            if (howTo != null && howTo.IsOpen) { howTo.Close(); return true; }
+            if (index != null && index.IsOpen) { index.Close(); return true; }
+            if (settings.IsOpen) { settings.Close(); return true; }
+            return false;
+        }
+
+        // Unpausing (or leaving the pause menu any other way) closes every popup.
+        private void CloseAll()
+        {
+            if (howTo != null) howTo.Close();
+            if (index != null) index.Close();
+            settings.Close();
+        }
+
+        [SerializeField] private CanvasGroup group;
+        [SerializeField] private RectTransform panel, hint;
+        [SerializeField] private Text statsText;
+        [SerializeField] private Image dim;
+        [SerializeField] private Button[] menuButtons;   // resume, settings, index, restart, main menu, quit
+        [SerializeField] private Button helpButton;
         private const float PanelWidth = 560f;
 
-        private void Awake() => Build();
+        private void Awake()
+        {
+            System.Action[] actions =
+            {
+                () => pause.SetPaused(false),
+                () => settings.Open(),
+                () => index.Open(),
+                () => game.Restart(),
+                () => game.ToMainMenu(),
+                GameManager.Quit,
+            };
+            for (int i = 0; i < menuButtons.Length && i < actions.Length; i++)
+            {
+                var action = actions[i];
+                menuButtons[i].onClick.AddListener(() => action());
+            }
+            helpButton.onClick.AddListener(() => howTo.Open());
+        }
 
         private void OnEnable() => pause.OnPauseChanged += HandlePause;
         private void OnDisable() => pause.OnPauseChanged -= HandlePause;
 
         private void HandlePause(bool paused)
         {
-            if (!paused) return;
+            Audio.UIAudio.Play(paused ? Audio.Sfx.UIOpen : Audio.Sfx.UIClose);
+            if (!paused) { CloseAll(); return; }
             statsText.text =
                 $"WAVE        <b>{Mathf.Max(1, waves.Wave)}</b>\n" +
-                $"SOULS       <b>{wallet.Souls}</b>\n" +
+                $"{Lex.T("souls", "SOULS"),-12}<b>{wallet.Souls}</b>\n" +
                 $"TIME          <b>{game.SurvivalTime:0}s</b>";
         }
 
@@ -46,54 +87,6 @@ namespace Soulbreak.UI
             float slide = 1f - Mathf.Pow(1f - b, 3f);
             panel.anchoredPosition = new Vector2(Mathf.Lerp(-PanelWidth - 40f, 70f, slide), 0f);
             hint.anchoredPosition = new Vector2(Mathf.Lerp(400f, -70f, slide), 70f);
-        }
-
-        private void Build()
-        {
-            var root = (RectTransform)UIFactory.Canvas("Pause Canvas", transform, 20).transform;
-            group = root.gameObject.AddComponent<CanvasGroup>();
-            group.alpha = 0f;
-
-            dim = UIFactory.Panel(root, Color.clear, "Dim");
-            dim.rectTransform.Fill();
-            dim.raycastTarget = true;
-
-            var theme = UIFactory.Theme;
-            panel = UIFactory.StyledPanel(root, new Color(0.04f, 0.02f, 0.09f, 0.92f), theme.accent, "PausePanel", 22f).rectTransform;
-            panel.anchorMin = new Vector2(0, 0.5f);
-            panel.anchorMax = new Vector2(0, 0.5f);
-            panel.pivot = new Vector2(0, 0.5f);
-            panel.sizeDelta = new Vector2(PanelWidth, 820f);
-
-            var title = UIFactory.Label(panel, "PAUSED", 110, TextAnchor.UpperLeft, Color.white, FontStyle.Bold, "Title");
-            title.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(48, -40), new Vector2(480, 130));
-            title.gameObject.AddComponent<GlitchText>();
-
-            var sub = UIFactory.Label(panel, "THE REACTOR HOLDS ITS BREATH", 22, TextAnchor.UpperLeft, new Color(1, 1, 1, 0.45f));
-            sub.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(52, -170), new Vector2(480, 30));
-
-            statsText = UIFactory.Label(panel, "", 30, TextAnchor.UpperLeft, theme.soul);
-            statsText.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(52, -230), new Vector2(460, 140));
-
-            string[] labels = { "RESUME", "RESTART", "MAIN MENU", "QUIT" };
-            System.Action[] actions =
-            {
-                () => pause.SetPaused(false),
-                () => game.Restart(),
-                () => game.ToMainMenu(),
-                GameManager.Quit,
-            };
-            for (int i = 0; i < labels.Length; i++)
-            {
-                var color = i == 0 ? new Color(0.1f, 0.42f, 0.55f, 0.95f) : theme.buttonColor;
-                var btn = UIFactory.Button(panel, labels[i], color, actions[i], out _, 32);
-                ((RectTransform)btn.transform).Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(48, -400 - i * 95), new Vector2(460, 78));
-            }
-
-            hint = UIFactory.Label(root, "ESC  resume\nLMB  shoot through the ring\nR  reload     SPACE  nova", 24, TextAnchor.LowerRight,
-                                   new Color(1, 1, 1, 0.5f)).rectTransform;
-            hint.anchorMin = hint.anchorMax = hint.pivot = new Vector2(1, 0);
-            hint.sizeDelta = new Vector2(600, 120);
         }
     }
 }

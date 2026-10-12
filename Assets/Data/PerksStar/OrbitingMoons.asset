@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1264def015e865b41abff8511b7be528, type: 3}
+  m_Name: OrbitingMoons
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.PerkDefinition
+  displayName: Orbiting Moons
+  description: 'Technique: 3 moons orbit the star for 6s, slicing anything they touch.'
+  category: 4
+  rarity: 2
+  baseCost: 150
+  costGrowth: 100
+  maxStacks: 2
+  effects:
+  - {fileID: 8481823989099352424, guid: a24c708ec03dfa140b670ffdca6510df, type: 2}

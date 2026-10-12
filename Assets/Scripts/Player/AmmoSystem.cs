@@ -8,6 +8,7 @@ namespace Soulbreak.Player
     public class AmmoSystem : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private Orbs.OrbEventChannel orbCollected;
 
         public int Current { get; private set; }
         public int Max => Mathf.Max(1, stats.GetInt(StatType.ClipSize));
@@ -18,11 +19,32 @@ namespace Soulbreak.Player
         public event Action<float> OnReloadStarted;    // duration
         public event Action OnReloadFinished;
         public event Action OnDryFire;
+        public event Action OnAmmoPickup;
 
         private float reloadTimer, reloadDuration;
 
-        private void OnEnable() => stats.OnStatChanged += HandleStatChanged;
-        private void OnDisable() => stats.OnStatChanged -= HandleStatChanged;
+        private void OnEnable()
+        {
+            stats.OnStatChanged += HandleStatChanged;
+            if (orbCollected != null) orbCollected.OnRaised += HandleOrb;
+        }
+
+        private void OnDisable()
+        {
+            stats.OnStatChanged -= HandleStatChanged;
+            if (orbCollected != null) orbCollected.OnRaised -= HandleOrb;
+        }
+
+        // Ammo charge picked up: skip the reload and fill the clip instantly.
+        private void HandleOrb(Orbs.Orb orb)
+        {
+            if (orb.Type != Orbs.OrbType.Ammo) return;
+            bool wasReloading = IsReloading;
+            IsReloading = false;
+            Refill();
+            if (wasReloading) OnReloadFinished?.Invoke();
+            OnAmmoPickup?.Invoke();
+        }
 
         private void Start() => Refill();
 

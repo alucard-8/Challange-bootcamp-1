@@ -1,5 +1,20 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7738807974387363892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
+  m_Name: Momentum - StatPerkEffect
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
+  stat: 12
+  operation: 0
+  value: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20,19 +35,4 @@ MonoBehaviour:
   costGrowth: 40
   maxStacks: 3
   effects:
-  - {fileID: 4396100323586962768}
---- !u!114 &4396100323586962768
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18c1e832a8951fd4695540847a4a73ed, type: 3}
-  m_Name: Momentum - StatPerkEffect
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.StatPerkEffect
-  stat: 12
-  operation: 0
-  value: 1
+  - {fileID: -7738807974387363892}

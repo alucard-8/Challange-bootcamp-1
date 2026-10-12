@@ -14,22 +14,11 @@ namespace Soulbreak.UI
         [SerializeField] private float showTime = 1.8f;
 
         private readonly Queue<Announcement> queue = new Queue<Announcement>();
-        private Text title, subtitle;
-        private CanvasGroup group;
-        private RectTransform rt;
+        [SerializeField] private Text title;
+        [SerializeField] private Text subtitle;
+        [SerializeField] private CanvasGroup group;
+        [SerializeField] private RectTransform rt;
         private float timer;
-
-        private void Awake()
-        {
-            rt = UIFactory.Rect("Announcer", hud.Root).Place(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, -230), new Vector2(1400, 170));
-            group = rt.gameObject.AddComponent<CanvasGroup>();
-            group.alpha = 0f;
-            title = UIFactory.Label(rt, "", 78, TextAnchor.UpperCenter, Color.white, FontStyle.Bold, "Title");
-            title.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), Vector2.zero, new Vector2(1400, 100));
-            title.gameObject.AddComponent<GlitchText>().burstChance = 3f;
-            subtitle = UIFactory.Label(rt, "", 28, TextAnchor.UpperCenter, new Color(1, 1, 1, 0.8f), FontStyle.Bold, "Subtitle");
-            subtitle.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -100), new Vector2(1400, 50));
-        }
 
         private void OnEnable() => announcements.OnRaised += Enqueue;
         private void OnDisable() => announcements.OnRaised -= Enqueue;

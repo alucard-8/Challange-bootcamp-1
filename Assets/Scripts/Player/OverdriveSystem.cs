@@ -42,6 +42,14 @@ namespace Soulbreak.Player
             if (Meter >= Max) OnReady?.Invoke();
         }
 
+        // Tutorial / cheats: fill the meter.
+        public void Fill()
+        {
+            if (IsActive || Meter >= Max) return;
+            Meter = Max;
+            OnReady?.Invoke();
+        }
+
         public bool TryActivate()
         {
             if (!IsReady || Time.timeScale == 0f) return false;

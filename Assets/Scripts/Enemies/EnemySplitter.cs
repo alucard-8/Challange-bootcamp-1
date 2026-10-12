@@ -11,6 +11,8 @@ namespace Soulbreak.Enemies
         [SerializeField] private int eliteSplitCount = 3;
         [SerializeField] private float spread = 0.6f;
 
+        public void SetEliteSplit(EnemyConfig child) => eliteSplitInto = child;
+
         private void OnEnable() => enemyKilled.OnRaised += HandleKilled;
         private void OnDisable() => enemyKilled.OnRaised -= HandleKilled;
 

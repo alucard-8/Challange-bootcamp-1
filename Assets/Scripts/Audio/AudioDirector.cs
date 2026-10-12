@@ -68,6 +68,7 @@ namespace Soulbreak.Audio
             shooter.OnShotFired += HandleShot;
             ammo.OnReloadStarted += HandleReload;
             ammo.OnDryFire += HandleDryFire;
+            ammo.OnAmmoPickup += HandleAmmoPickup;
             nova.OnUsed += HandleNova;
             overdrive.OnStarted += HandleOverdrive;
             reactor.OnHit += HandleReactorHit;
@@ -91,6 +92,7 @@ namespace Soulbreak.Audio
             shooter.OnShotFired -= HandleShot;
             ammo.OnReloadStarted -= HandleReload;
             ammo.OnDryFire -= HandleDryFire;
+            ammo.OnAmmoPickup -= HandleAmmoPickup;
             nova.OnUsed -= HandleNova;
             overdrive.OnStarted -= HandleOverdrive;
             reactor.OnHit -= HandleReactorHit;
@@ -112,6 +114,7 @@ namespace Soulbreak.Audio
         // ---------- handlers ----------
         private void HandleShot(Vector2 from, Vector2 to, bool crit, ShotPattern pattern) => Play(SoundFor(pattern), crit ? 1f : 0.8f);
         private void HandleReload(float duration) => Play(Sfx.Reload, 0.6f);
+        private void HandleAmmoPickup() { Play(Sfx.Reload, 0.9f); Play(Sfx.Buy, 0.5f); }
         private void HandleDryFire() => Play(Sfx.Click, 0.6f);
         private void HandleNova(Vector2 c, float r) => Play(Sfx.Nova, 1f, 0f);
         private void HandleOverdrive() => Play(Sfx.Overdrive, 1f, 0f);
@@ -152,7 +155,7 @@ namespace Soulbreak.Audio
             var src = pool[next];
             next = (next + 1) % pool.Count;
             src.pitch = 1f + UnityEngine.Random.Range(-pitchVariance, pitchVariance);
-            src.PlayOneShot(SfxSynth.Get(id), vol * volume);
+            src.PlayOneShot(SfxSynth.Get(id), vol * volume * Core.GameSettings.Sfx);
         }
     }
 }

@@ -16,6 +16,67 @@ namespace Soulbreak.Meta
             public string technique = "";
             public string skin = "";
             public int bestWave;
+            public string mode = "";
+            public List<string> secrets = new List<string>();
+            public int difficulty = 1;   // Normal
+            public int bestScore;
+            public int lastScore;
+            public int lastWave;
+            public int runs;
+            public List<string> seenEnemies = new List<string>();
+            public List<string> seenPerks = new List<string>();
+        }
+
+        // ---------- Index (discovered enemies & perks) ----------
+        public static bool IsDiscovered(bool enemy, string id) => Seen(enemy).Contains(id);
+
+        // Returns true the first time something is discovered.
+        public static bool Discover(bool enemy, string id)
+        {
+            var list = Seen(enemy);
+            if (string.IsNullOrEmpty(id) || list.Contains(id)) return false;
+            list.Add(id);
+            Save();
+            return true;
+        }
+
+        public static void DiscoverAll(CodexCatalog codex)
+        {
+            foreach (var e in codex.enemies) if (e != null && !Seen(true).Contains(e.name)) Seen(true).Add(e.name);
+            foreach (var p in codex.perks) if (p != null && !Seen(false).Contains(p.name)) Seen(false).Add(p.name);
+            Save();
+        }
+
+        private static List<string> Seen(bool enemy)
+        {
+            if (Data.seenEnemies == null) Data.seenEnemies = new List<string>();
+            if (Data.seenPerks == null) Data.seenPerks = new List<string>();
+            return enemy ? Data.seenEnemies : Data.seenPerks;
+        }
+
+        // ---------- Difficulty & scores ----------
+        public static Difficulty SelectedDifficulty
+        {
+            get => (Difficulty)Mathf.Clamp(Data.difficulty, 0, 3);
+            set { Data.difficulty = (int)value; Save(); }
+        }
+
+        public static int BestScore => Data.bestScore;
+        public static int LastScore => Data.lastScore;
+        public static int LastWave => Data.lastWave;
+        public static int Runs => Data.runs;
+
+        // Records a finished run. Returns true if it's a new best score.
+        public static bool RecordRun(int score, int wave)
+        {
+            Data.lastScore = score;
+            Data.lastWave = wave;
+            Data.runs++;
+            bool best = score > Data.bestScore;
+            if (best) Data.bestScore = score;
+            if (wave > Data.bestWave) Data.bestWave = wave;
+            Save();
+            return best;
         }
 
         private const string Key = "soulbreak.meta.v1";
@@ -38,7 +99,35 @@ namespace Soulbreak.Meta
         public static int BestWave => Data.bestWave;
         public static string EquippedTechnique => Data.technique;
         public static string EquippedSkin => Data.skin;
-        public static bool IsUnlocked(MetaItem item) => item.cost == 0 || Data.unlocked.Contains(item.id);
+        public static bool IsUnlocked(MetaItem item) =>
+            item.type == MetaItemType.GameMode ? IsSecretUnlocked(item.id) : item.cost == 0 || Data.unlocked.Contains(item.id);
+
+        // ---------- Game modes & secrets ----------
+        public static string SelectedMode
+        {
+            get => Data.mode;
+            set { Data.mode = value ?? ""; Save(); }
+        }
+
+        public static bool IsSecretUnlocked(string id) => Data.secrets.Contains(id);
+
+        public static void UnlockSecret(string id)
+        {
+            if (Data.secrets.Contains(id)) return;
+            Data.secrets.Add(id);
+            Save();
+        }
+
+        // Admin: unlock every skin, technique and secret mode in the catalog.
+        public static void UnlockAll(MetaCatalog catalog)
+        {
+            foreach (var i in catalog.items)
+            {
+                if (i.type == MetaItemType.GameMode) { if (!Data.secrets.Contains(i.id)) Data.secrets.Add(i.id); }
+                else if (!Data.unlocked.Contains(i.id)) Data.unlocked.Add(i.id);
+            }
+            Save();
+        }
 
         public static void AddEssence(int amount)
         {
@@ -68,12 +157,20 @@ namespace Soulbreak.Meta
         {
             if (!IsUnlocked(item)) return;
             if (item.type == MetaItemType.StartingTechnique) Data.technique = Data.technique == item.id ? "" : item.id;
+            else if (item.type == MetaItemType.GameMode) Data.mode = Data.mode == item.modeId ? "" : item.modeId;
             else Data.skin = item.id;
             Save();
         }
 
-        public static bool IsEquipped(MetaItem item) =>
-            item.type == MetaItemType.StartingTechnique ? Data.technique == item.id : Data.skin == item.id;
+        public static bool IsEquipped(MetaItem item)
+        {
+            switch (item.type)
+            {
+                case MetaItemType.StartingTechnique: return Data.technique == item.id;
+                case MetaItemType.GameMode: return Data.mode == item.modeId;
+                default: return Data.skin == item.id;
+            }
+        }
 
         private static void Save()
         {

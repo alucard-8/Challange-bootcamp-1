@@ -16,22 +16,19 @@ namespace Soulbreak.UI
         [SerializeField] private float edgeMargin = 46f;
 
         private readonly List<Image> arrows = new List<Image>();
-        private Image vignette;
+        [SerializeField] private Image vignette;
+        [SerializeField] private Image arrowTemplate;
         private float lowHealth;
         private Camera cam;
 
         private void Awake()
         {
             cam = Camera.main;
-            vignette = UIFactory.Panel(hud.Root, new Color(1f, 0.1f, 0.15f, 0f), "DangerVignette");
-            vignette.rectTransform.Fill();
-            vignette.material = vignetteMaterial;
-            vignette.transform.SetAsFirstSibling();
         }
 
         private void OnEnable() => reactor.OnHealthChanged += HandleHealth;
         private void OnDisable() => reactor.OnHealthChanged -= HandleHealth;
-        private void HandleHealth(int cur, int max) => lowHealth = max > 0 ? Mathf.Clamp01(1f - (float)cur / max / 0.4f) : 0f;
+        private void HandleHealth(int cur, int max) => lowHealth = max > 0 ? Mathf.Clamp01(1f - (float)cur / max / 0.3f) * 0.8f : 0f;
 
         private void LateUpdate()
         {
@@ -44,7 +41,7 @@ namespace Soulbreak.UI
             {
                 if (e == null) continue;
                 float dist = Vector2.Distance(e.transform.position, reactor.transform.position);
-                danger = Mathf.Max(danger, Mathf.Clamp01((3.5f - dist) / 2f));
+                danger = Mathf.Max(danger, Mathf.Clamp01((2.6f - dist) / 1.4f));
 
                 Vector3 vp = cam.WorldToViewportPoint(e.transform.position);
                 bool onScreen = vp.x > 0f && vp.x < 1f && vp.y > 0f && vp.y < 1f;
@@ -66,21 +63,15 @@ namespace Soulbreak.UI
 
             float strength = Mathf.Max(danger, lowHealth);
             var vc = vignette.color;
-            vc.a = Mathf.MoveTowards(vc.a, strength * 0.85f, Time.unscaledDeltaTime * 2f);
+            vc.a = Mathf.MoveTowards(vc.a, strength * 0.35f, Time.unscaledDeltaTime * 1.5f);
             vignette.color = vc;
-            if (vignette.material != null) vignette.material.SetFloat("_PulseSpeed", 3f + strength * 7f);
+            if (vignette.material != null) vignette.material.SetFloat("_PulseSpeed", 2f + strength * 3f);
         }
 
         // Arrow = a small rotated square with two edges showing (a chevron-like tip).
         private Image GetArrow(int i)
         {
-            while (arrows.Count <= i)
-            {
-                var img = UIFactory.StyledPanel(hud.Root, Color.white, new Color(1, 1, 1, 0.9f), "EnemyArrow", 4f);
-                img.rectTransform.anchorMin = img.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                img.rectTransform.sizeDelta = new Vector2(20f, 20f);
-                arrows.Add(img);
-            }
+            while (arrows.Count <= i) arrows.Add(UIFactory.Spawn(arrowTemplate, hud.Root));
             arrows[i].enabled = true;
             return arrows[i];
         }

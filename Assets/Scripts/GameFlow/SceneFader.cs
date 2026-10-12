@@ -11,12 +11,13 @@ namespace Soulbreak.GameFlow
         public const string Game = "SampleScene";
     }
 
-    // Persistent full-screen fader: fade out -> load scene -> fade in. Created on first use.
+    // Persistent full-screen fader: fade out -> load scene -> fade in.
+    // The overlay is the Resources/SceneFader prefab, spawned on first use and kept across scenes.
     public class SceneFader : MonoBehaviour
     {
         private static SceneFader instance;
-        private CanvasGroup group;
-        private Image image;
+        [SerializeField] private CanvasGroup group;
+        [SerializeField] private Image image;
         private bool busy;
 
         public static bool IsBusy => instance != null && instance.busy;
@@ -26,23 +27,10 @@ namespace Soulbreak.GameFlow
             get
             {
                 if (instance != null) return instance;
-                var go = new GameObject("SceneFader", typeof(Canvas), typeof(CanvasGroup));
-                DontDestroyOnLoad(go);
-                var canvas = go.GetComponent<Canvas>();
-                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvas.sortingOrder = 1000;
-                instance = go.AddComponent<SceneFader>();
-                instance.group = go.GetComponent<CanvasGroup>();
+                instance = Instantiate(Resources.Load<SceneFader>("SceneFader"));
+                DontDestroyOnLoad(instance.gameObject);
                 instance.group.alpha = 0f;
                 instance.group.blocksRaycasts = false;
-
-                var img = new GameObject("Fade", typeof(RectTransform), typeof(Image));
-                img.transform.SetParent(go.transform, false);
-                var rt = (RectTransform)img.transform;
-                rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
-                rt.offsetMin = rt.offsetMax = Vector2.zero;
-                instance.image = img.GetComponent<Image>();
-                instance.image.color = Color.black;
                 return instance;
             }
         }

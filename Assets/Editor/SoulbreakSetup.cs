@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using Soulbreak.Audio;
 using Soulbreak.Core.Events;
@@ -76,6 +77,7 @@ namespace Soulbreak.EditorTools
 
             var roster = Enemies(quad, enemyMat, orbMat, out var boss);
             var perks = Perks();
+            BuildModes(quad, orbMat, roster, boss, perks, reactorMat, bgMat, enemyMat);
             var volumeProfile = VolumeProfileAsset();
             AssetDatabase.SaveAssets();
 
@@ -127,13 +129,13 @@ namespace Soulbreak.EditorTools
             Set(amb, "orbMaterial", mats.orb); Set(amb, "tracerMaterial", mats.tracer);
             var ambSo = new SerializedObject(amb); ambSo.FindProperty("ringDiameter").floatValue = 4.1f; ambSo.ApplyModifiedPropertiesWithoutUndo();
 
-            var view = new GameObject("MainMenu").AddComponent<Soulbreak.Menu.MainMenuView>();
+            var view = UIPrefab<Soulbreak.Menu.MainMenuView>("MainMenu");
             Set(view, "ambience", amb);
             var menuInput = view.gameObject.AddComponent<Soulbreak.Menu.MainMenuInput>();
-            Set(menuInput, "view", view); Set(menuInput, "ambience", amb);
+            Set(menuInput, "view", view); Set(menuInput, "ambience", amb); Set(menuInput, "catalog", MetaCatalogAsset());
 
-            var ascension = new GameObject("Ascension").AddComponent<Soulbreak.Menu.AscensionView>();
-            Set(ascension, "catalog", MetaCatalogAsset()); Set(ascension, "menuReactor", reactor);
+            var ascension = UIPrefab<Soulbreak.Menu.AscensionView>("Ascension");
+            Set(ascension, "menuReactor", reactor);
             Set(view, "ascension", ascension);
 
             var music = new GameObject("Music").AddComponent<MusicSynth>();
@@ -142,7 +144,165 @@ namespace Soulbreak.EditorTools
             mso.ApplyModifiedPropertiesWithoutUndo();
             camGo.AddComponent<AudioListener>();
 
+            // Mode theming + the secret that unlocks Star Core mode
+            var modeApplier = view.gameObject.AddComponent<Soulbreak.Menu.MenuModeApplier>();
+            Set(modeApplier, "core", reactor); Set(modeApplier, "background", bg); Set(modeApplier, "ambience", amb);
+            Set(modeApplier, "music", music); Set(modeApplier, "view", view);
+            var egg = view.gameObject.AddComponent<Soulbreak.Menu.ReactorEasterEgg>();
+            Set(egg, "core", reactor.transform); Set(egg, "view", view);
+            Set(menuInput, "easterEgg", egg);
+
+            var menuSettings = UIPrefab<SettingsView>("Settings");
+            var difficultyView = UIPrefab<Soulbreak.Menu.DifficultyView>("Difficulty");
+            Set(difficultyView, "menu", view); Set(view, "difficulty", difficultyView);
+            Set(view, "settings", menuSettings);
+
+            var index = UIPrefab<Soulbreak.Menu.IndexView>("Index");
+            Set(view, "index", index); Set(menuInput, "index", index); Set(menuInput, "codex", CodexAsset());
+            var menuHowTo = UIPrefab<HowToView>("HowTo");
+            Set(view, "howToView", menuHowTo);
+
             EditorSceneManager.SaveScene(scene, MenuScenePath);
+        }
+
+        // ---------------- Game modes ----------------
+        private static void BuildModes(Sprite quad, Material orbMat, WaveEnemy[] reactorRoster, EnemyConfig reactorBoss,
+                                       PerkDefinition[] reactorPerks, Material reactorMat, Material bgMat, Material enemyMat)
+        {
+            Folder("Assets/Data", "Modes"); Folder("Assets/Data", "Movement"); Folder("Assets/Data", "EnemiesStar");
+            Folder("Assets", "Resources");
+
+            var starMat = Mat("Star", "Soulbreak/Star");
+            var planetMat = Mat("Planet", "Soulbreak/Planet");
+            var spaceMat = Mat("SpaceBackground", "Soulbreak/SpaceBackground");
+            var vortexMat = Mat("Vortex", "Soulbreak/Vortex");
+
+            T Asset<T>(string path) where T : ScriptableObject
+            {
+                var a = AssetDatabase.LoadAssetAtPath<T>(path);
+                if (a == null) { a = ScriptableObject.CreateInstance<T>(); AssetDatabase.CreateAsset(a, path); }
+                EditorUtility.SetDirty(a);
+                return a;
+            }
+
+            // Movement strategies
+            var spiral = Asset<SpiralMovement>("Assets/Data/Movement/Spiral.asset");
+            spiral.tangential = 1.1f; spiral.radial = 0.5f;
+            var orbiter = Asset<SpiralMovement>("Assets/Data/Movement/WideOrbit.asset");
+            orbiter.tangential = 0.7f; orbiter.radial = 0.65f;
+            var comet = Asset<CometMovement>("Assets/Data/Movement/Comet.asset");
+
+            // Star-mode enemies (planet shader; _Spikes = surface type: 0-3 rocky, 4-7 gas, 8+ icy)
+            EnemyConfig P(string name, string display, Color c, float size, int hp, float speed, int dmg, int souls,
+                          float orbChance, int orbValue, float heal, float surface, MovementPattern move)
+            {
+                var e = Asset<EnemyConfig>($"Assets/Data/EnemiesStar/{name}.asset");
+                e.displayName = display; e.sprite = quad; e.material = planetMat; e.color = c; e.size = size; e.spikes = surface;
+                e.maxHealth = hp; e.speed = speed; e.damage = dmg; e.isBoss = false; e.movement = move; e.gravityPull = 0f;
+                e.stopDistance = 0f; e.splitInto = null; e.splitCount = 0; e.projectileMaterial = orbMat; e.minion = null;
+                e.soulReward = souls; e.soulOrbChance = orbChance; e.soulOrbValue = orbValue; e.healOrbChance = heal;
+                return e;
+            }
+
+            var asteroid = P("Asteroid", "Asteroid", new Color(1.3f, 1.0f, 0.8f), 1.0f, 1, 1.5f, 1, 5, 0.2f, 12, 0.03f, 1, null);
+            var rocky = P("RockyPlanet", "Rocky Planet", new Color(2.4f, 1.1f, 0.6f), 1.3f, 2, 1.2f, 1, 7, 0.25f, 14, 0.04f, 2, spiral);
+            var cometCfg = P("Comet", "Comet", new Color(0.9f, 2.2f, 3.4f), 0.85f, 1, 2.2f, 1, 8, 0.3f, 15, 0.04f, 9, comet);
+            var iceGiant = P("IceGiant", "Ice Giant", new Color(0.6f, 1.6f, 3f), 2.0f, 6, 0.75f, 2, 22, 0.6f, 30, 0.15f, 10, spiral);
+            var moonlet = P("Moonlet", "Moonlet", new Color(1.6f, 1.5f, 1.4f), 0.65f, 1, 2.0f, 1, 2, 0.05f, 8, 0.01f, 3, spiral);
+            var carrier = P("MoonCarrier", "Moon Carrier", new Color(2f, 1.6f, 1.1f), 1.6f, 3, 1.0f, 1, 10, 0.3f, 15, 0.05f, 0, spiral);
+            carrier.splitInto = moonlet; carrier.splitCount = 3;
+            var gasGiant = P("GasGiant", "Gas Giant", new Color(2.8f, 1.7f, 0.7f), 1.9f, 4, 0.9f, 1, 14, 0.4f, 20, 0.05f, 5, orbiter);
+            gasGiant.stopDistance = 4.8f; gasGiant.fireInterval = 2.2f; gasGiant.projectileDamage = 1; gasGiant.projectileSpeed = 3f;
+            var blackHole = P("BlackHole", "The Devourer", new Color(2.2f, 0.6f, 4.5f), 3.4f, 45, 0.35f, 6, 160, 1f, 40, 1f, 0, null);
+            blackHole.isBoss = true; blackHole.material = vortexMat; blackHole.gravityPull = 1.6f; blackHole.minion = asteroid;
+            var protostar = P("Protostar", "Protostar", new Color(0.6f, 3.2f, 1.6f), 2.1f, 25, 0.35f, 3, 40, 1f, 30, 0.5f, 9, spiral);
+
+            var starRoster = new[]
+            {
+                new WaveEnemy { config = rocky, firstWave = 1, weight = 8 },
+                new WaveEnemy { config = asteroid, firstWave = 1, weight = 6 },
+                new WaveEnemy { config = cometCfg, firstWave = 2, weight = 5 },
+                new WaveEnemy { config = iceGiant, firstWave = 3, weight = 3 },
+                new WaveEnemy { config = carrier, firstWave = 4, weight = 3 },
+                new WaveEnemy { config = gasGiant, firstWave = 5, weight = 3 },
+            };
+
+            // Star-mode perks: same effects/costs as the reactor perks, renamed for space.
+            var starPerks = StarPerks(reactorPerks);
+
+            LexiconEntry W(string k, string v) => new LexiconEntry { key = k, text = v };
+
+            var reactorMode = Asset<ModeProfile>("Assets/Data/Modes/SoulReactor.asset");
+            reactorMode.id = GameModeService.DefaultMode; reactorMode.displayName = "Soul Reactor";
+            reactorMode.title = "SOULBREAK"; reactorMode.tagline = "THE  REACTOR  MUST  NOT  FALL";
+            reactorMode.roster = reactorRoster; reactorMode.boss = reactorBoss; reactorMode.eliteSplitInto = gruntConfig;
+            reactorMode.rejuvenator = rejuvenatorConfig; reactorMode.catalog = reactorPerks;
+            reactorMode.coreMaterial = reactorMat; reactorMode.backgroundMaterial = bgMat; reactorMode.enemyMaterial = enemyMat;
+            reactorMode.soulOrbColor = new Color(1.6f, 0.7f, 3f); reactorMode.healOrbColor = new Color(0.6f, 3f, 1.2f);
+            reactorMode.musicVariant = 0;
+            reactorMode.words = new LexiconEntry[0];
+
+            var starMode = Asset<ModeProfile>("Assets/Data/Modes/StarCore.asset");
+            starMode.id = GameModeService.StarMode; starMode.displayName = "Star Core";
+            starMode.title = "STARBREAK"; starMode.tagline = "BURN  BRIGHTER  THAN  THEIR  GRAVITY";
+            starMode.roster = starRoster; starMode.boss = blackHole; starMode.eliteSplitInto = moonlet;
+            starMode.rejuvenator = protostar; starMode.catalog = starPerks;
+            starMode.coreMaterial = starMat; starMode.backgroundMaterial = spaceMat; starMode.enemyMaterial = planetMat;
+            starMode.soulOrbColor = new Color(3f, 2.4f, 1f); starMode.healOrbColor = new Color(0.6f, 2.6f, 3.2f);
+            starMode.musicVariant = 1;
+            starMode.words = new[]
+            {
+                W("core", "STAR"), W("shield", "FIELD"), W("souls", "STARDUST"), W("souls_banked", "Stardust gathered"),
+                W("nova", "SUPERNOVA"), W("shop_title", "STAR FORGE"),
+                W("shop_sub", "Forge stardust into power. Press 1-5 or click to buy."),
+                W("gameover", "STAR COLLAPSED"), W("defend", "Hold back the planets"),
+                W("pause_sub", "THE COSMOS HOLDS ITS BREATH"),
+                W("Triple Shot", "Solar Wind"), W("Soul Cannon", "Plasma Bomb"), W("Seeker Swarm", "Meteor Swarm"),
+                W("Chain Lightning", "Ion Arc"), W("Piercing Lance", "Solar Flare"), W("Orbital Blades", "Orbiting Moons"),
+                W("Black Hole", "Gravity Well"),
+            };
+
+            var library = Asset<ModeLibrary>("Assets/Resources/ModeLibrary.asset");
+            library.modes = new[] { reactorMode, starMode };
+        }
+
+        private static PerkDefinition[] StarPerks(PerkDefinition[] source)
+        {
+            const string dir = "Assets/Data/PerksStar";
+            Folder("Assets/Data", "PerksStar");
+            foreach (var guid in AssetDatabase.FindAssets("", new[] { dir }))
+                AssetDatabase.DeleteAsset(AssetDatabase.GUIDToAssetPath(guid));
+
+            var names = new System.Collections.Generic.Dictionary<string, string>
+            {
+                { "Sharpened Souls", "Hot Plasma" }, { "Critical Eye", "Sunspot Focus" }, { "Soul Rend", "Fusion Burst" },
+                { "Shrapnel", "Solar Shrapnel" }, { "Extended Clip", "Bigger Corona" }, { "Quick Hands", "Fast Fusion" },
+                { "Overcharged Rounds", "Hypergiant Rounds" }, { "Soul Hunger", "Stellar Hunger" }, { "Rich Orbs", "Rich Stardust" },
+                { "Lingering Orbs", "Lingering Nebula" }, { "Lucky Drops", "Lucky Comets" }, { "Momentum", "Orbital Momentum" },
+                { "Soul Bank", "Stellar Nursery" }, { "Patch Up", "Fuse Hydrogen" }, { "Recharge", "Recharge Field" },
+                { "Reinforced Core", "Dense Core" }, { "Capacitor", "Magnetic Pole" }, { "Healing Light", "Healing Aurora" },
+                { "Nova Overcharge", "Supernova Overcharge" }, { "Wide Nova", "Wide Supernova" },
+                { "Triple Shot Module", "Solar Wind" }, { "Soul Cannon Module", "Plasma Bomb" }, { "Seeker Swarm Module", "Meteor Swarm" },
+                { "Chain Lightning", "Ion Arc" }, { "Piercing Lance", "Solar Flare" }, { "Orbital Blades", "Orbiting Moons" },
+                { "Black Hole", "Gravity Well" }, { "Soul Reaper", "Big Bang" },
+            };
+
+            string Spacey(string s) => s.Replace("souls", "stardust").Replace("Soul ", "Star ").Replace("soul", "stardust")
+                                        .Replace("reactor", "star").Replace("core health", "star mass").Replace("orbs", "stardust clouds")
+                                        .Replace("Nova", "Supernova").Replace("blades", "moons").Replace("Black Hole", "Gravity Well");
+
+            var result = new PerkDefinition[source.Length];
+            for (int i = 0; i < source.Length; i++)
+            {
+                var src = source[i];
+                var p = Object.Instantiate(src);
+                p.displayName = names.TryGetValue(src.displayName, out var n) ? n : src.displayName;
+                p.description = Spacey(src.description);
+                p.effects = src.effects;   // share the same effect strategies
+                AssetDatabase.CreateAsset(p, $"{dir}/{p.displayName.Replace(" ", "")}.asset");
+                result[i] = p;
+            }
+            return result;
         }
 
         private static VolumeProfile pauseProfile;
@@ -194,6 +354,34 @@ namespace Soulbreak.EditorTools
             };
         }
 
+        // Index contents: every enemy and perk asset in the project (bosses last, perks by rarity).
+        private static CodexCatalog CodexAsset()
+        {
+            const string path = "Assets/Data/CodexCatalog.asset";
+            var codex = AssetDatabase.LoadAssetAtPath<CodexCatalog>(path);
+            if (codex == null) { codex = ScriptableObject.CreateInstance<CodexCatalog>(); AssetDatabase.CreateAsset(codex, path); }
+
+            List<T> All<T>(string filter) where T : Object
+            {
+                var list = new List<T>();
+                foreach (var guid in AssetDatabase.FindAssets(filter, new[] { "Assets/Data" }))
+                {
+                    var a = AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
+                    if (a != null) list.Add(a);
+                }
+                return list;
+            }
+
+            var enemies = All<EnemyConfig>("t:EnemyConfig");
+            enemies.Sort((a, b) => a.isBoss != b.isBoss ? a.isBoss.CompareTo(b.isBoss) : a.maxHealth.CompareTo(b.maxHealth));
+            var perks = All<PerkDefinition>("t:PerkDefinition");
+            perks.Sort((a, b) => a.rarity != b.rarity ? a.rarity.CompareTo(b.rarity) : string.CompareOrdinal(a.displayName, b.displayName));
+            codex.enemies = enemies.ToArray();
+            codex.perks = perks.ToArray();
+            EditorUtility.SetDirty(codex);
+            return codex;
+        }
+
         private static MetaCatalog MetaCatalogAsset()
         {
             Folder("Assets", "Resources");
@@ -220,6 +408,13 @@ namespace Soulbreak.EditorTools
                 K("skin_gold", "Gilded Sun", "Molten gold and white light.", 220, new Color(3.2f, 2.2f, 0.6f), new Color(3.4f, 3f, 1.6f)),
                 K("skin_void", "Void Bloom", "Deep violet void energy.", 350, new Color(1.8f, 0.5f, 3.6f), new Color(0.9f, 2.8f, 2.4f)),
                 K("skin_toxic", "Toxic Spring", "Radioactive green.", 300, new Color(0.7f, 3.4f, 0.9f), new Color(2.2f, 3.4f, 0.6f)),
+                new MetaItem
+                {
+                    id = Soulbreak.Menu.ReactorEasterEgg.SecretId, displayName = "STAR CORE MODE", type = MetaItemType.GameMode,
+                    modeId = GameModeService.StarMode, cost = 0,
+                    description = "Become a newborn star. Planets spiral in, comets slingshot, a black hole hunts you.",
+                    unlockHint = "Something stirs inside the core... click it. A lot. Fast.",
+                },
             };
             EditorUtility.SetDirty(cat);
             return cat;
@@ -260,6 +455,7 @@ namespace Soulbreak.EditorTools
             if (theme == null) { theme = ScriptableObject.CreateInstance<UITheme>(); AssetDatabase.CreateAsset(theme, path); }
             theme.panelMaterial = mat;
             theme.cardMaterial = Mat("UICard", "Soulbreak/UICard");
+            theme.previewMaterial = Mat("UIPreview", "Soulbreak/UIPreview");
             EditorUtility.SetDirty(theme);
         }
 
@@ -346,6 +542,7 @@ namespace Soulbreak.EditorTools
             public Vector2EventChannel headshots;
             public EnemyEventChannel bossEnraged;
             public AnnouncementEventChannel announcements;
+            public EnemyDamageEventChannel enemyDamaged;
         }
 
         private static ChannelSet ch;
@@ -377,6 +574,7 @@ namespace Soulbreak.EditorTools
                 headshots = Channel<Vector2EventChannel>("Headshots", "Raised when a shot hits an enemy's weak point (eye)."),
                 bossEnraged = Channel<EnemyEventChannel>("BossEnraged", "Raised when a boss drops below 50% health and enters phase 2."),
                 announcements = Channel<AnnouncementEventChannel>("Announcements", "Arena announcer messages (streaks, synergies, map events)."),
+                enemyDamaged = Channel<EnemyDamageEventChannel>("EnemyDamaged", "Raised on every hit an enemy takes (damage numbers, sparks)."),
             };
 
             tripleShot.explodedChannel = ch.explosions;
@@ -672,10 +870,9 @@ namespace Soulbreak.EditorTools
             var shop = Sys<PerkShop>("PerkShop");
             var gm = Sys<GameManager>("GameManager");
             var fx = Sys<FxSystem>("FxSystem");
-            var hudGo = new GameObject("HUD");
-            hudGo.transform.SetParent(sys);
-            var hud = hudGo.AddComponent<HUDCanvas>();
-            var shopView = Sys<ShopView>("ShopView");
+            var hud = UIPrefab<HUDCanvas>("HUD", sys);
+            var hudGo = hud.gameObject;
+            var shopView = UIPrefab<ShopView>("Shop", sys);
             var shake = Get<CameraShake>(cam.gameObject);
             var weapons = Sys<Weapons.WeaponRing>("WeaponRing");
             Set(weapons, "basicShot", basicShot);
@@ -699,12 +896,12 @@ namespace Soulbreak.EditorTools
             var pause = Sys<PauseController>("PauseController");
             Set(pause, "game", gm);
             var pauseFx = Sys<PauseEffect>("PauseEffect");
-            Set(pauseFx, "pause", pause); Set(pauseFx, "volume", pauseVol);
-            var pauseMenu = Sys<PauseMenuView>("PauseMenu");
+            Set(pauseFx, "pause", pause); Set(pauseFx, "volume", pauseVol); Set(pauseFx, "game", gm);
+            var pauseMenu = UIPrefab<PauseMenuView>("PauseMenu", sys);
             Set(pauseMenu, "pause", pause); Set(pauseMenu, "game", gm); Set(pauseMenu, "waves", waves); Set(pauseMenu, "wallet", wallet);
 
             var admin = Sys<AdminCheats>("AdminCheats");
-            Set(admin, "shop", shop); Set(admin, "wallet", wallet);
+            Set(admin, "shop", shop); Set(admin, "wallet", wallet); Set(admin, "reactor", reactor);
 
             Set(ammo, "stats", stats);
             Set(shooter, "stats", stats); Set(shooter, "ammo", ammo); Set(shooter, "muzzle", reactorGo.transform); Set(shooter, "cam", cam);
@@ -740,20 +937,21 @@ namespace Soulbreak.EditorTools
 
             // HUD: one shared canvas + small single-purpose views
             Set(hud, "game", gm);
-            var reactorPanel = hudGo.AddComponent<ReactorPanelView>();
-            Set(reactorPanel, "hud", hud); Set(reactorPanel, "reactor", reactor); Set(reactorPanel, "waves", waves);
-            var soulView = hudGo.AddComponent<SoulCounterView>();
-            Set(soulView, "hud", hud); Set(soulView, "wallet", wallet);
-            var ammoView = hudGo.AddComponent<AmmoView>();
-            Set(ammoView, "hud", hud); Set(ammoView, "ammo", ammo);
-            var novaView = hudGo.AddComponent<NovaView>();
-            Set(novaView, "hud", hud); Set(novaView, "nova", nova);
-            var comboView = hudGo.AddComponent<ComboView>();
-            Set(comboView, "hud", hud); Set(comboView, "combo", combo);
-            var banner = hudGo.AddComponent<BannerView>();
-            Set(banner, "hud", hud); Set(banner, "waves", waves); Set(banner, "nova", nova);
-            var gameOver = hudGo.AddComponent<GameOverView>();
-            Set(gameOver, "hud", hud); Set(gameOver, "game", gm); Set(gameOver, "wallet", wallet);
+            var reactorPanel = hudGo.GetComponent<ReactorPanelView>();
+            Set(reactorPanel, "reactor", reactor); Set(reactorPanel, "waves", waves);
+            var soulView = hudGo.GetComponent<SoulCounterView>();
+            Set(soulView, "wallet", wallet);
+            var ammoView = hudGo.GetComponent<AmmoView>();
+            Set(ammoView, "ammo", ammo);
+            var novaView = hudGo.GetComponent<NovaView>();
+            Set(novaView, "nova", nova);
+            var comboView = hudGo.GetComponent<ComboView>();
+            Set(comboView, "combo", combo);
+            var banner = hudGo.GetComponent<BannerView>();
+            Set(banner, "waves", waves); Set(banner, "nova", nova);
+            var gameOver = hudGo.GetComponent<GameOverView>();
+            Set(gameOver, "game", gm);
+            Set(admin, "gameOverView", gameOver);
 
             Set(shopView, "shop", shop); Set(shopView, "wallet", wallet);
 
@@ -816,9 +1014,11 @@ namespace Soulbreak.EditorTools
             Set(waves, "registry", registry);
             var wso = new SerializedObject(waves);
             wso.FindProperty("channels.bossEnraged").objectReferenceValue = ch.bossEnraged;
+            wso.FindProperty("channels.damaged").objectReferenceValue = ch.enemyDamaged;
             wso.ApplyModifiedPropertiesWithoutUndo();
             Set(splitter, "eliteSplitInto", gruntConfig);
             Set(fx, "shop", shop); Set(fx, "bossEnraged", ch.bossEnraged);
+            Set(fx, "enemyDamaged", ch.enemyDamaged); Set(fx, "sparkMaterial", orbMat);
 
             // Hit stop + impact flash
             var hitStop = Sys<HitStop>("HitStop");
@@ -829,6 +1029,21 @@ namespace Soulbreak.EditorTools
             var overdrive = Sys<OverdriveSystem>("OverdriveSystem");
             Set(overdrive, "enemyKilled", ch.enemyKilled); Set(overdrive, "time", time);
             Set(shooter, "overdrive", overdrive); Set(player, "overdrive", overdrive);
+
+            // Ammo charges (drop from enemies, fly to the core) + first-run tutorial
+            Set(ammo, "orbCollected", ch.orbCollected);
+            var ammoDropper = Object.FindAnyObjectByType<OrbDropper>();
+            Set(ammoDropper, "ammo", ammo); Set(ammoDropper, "magnetTarget", reactorGo.transform);
+            var tutorial = hudGo.GetComponent<TutorialView>();
+            Set(tutorial, "game", gm); Set(tutorial, "shooter", shooter); Set(tutorial, "ammo", ammo);
+            Set(tutorial, "nova", nova); Set(tutorial, "overdrive", overdrive);
+            Set(tutorial, "enemyKilled", ch.enemyKilled); Set(tutorial, "orbCollected", ch.orbCollected);
+            Set(tutorial, "dropper", ammoDropper); Set(tutorial, "registry", registry);
+
+            // Index discoveries
+            var codexRecorder = Sys<CodexRecorder>("CodexRecorder");
+            Set(codexRecorder, "enemySpawned", ch.enemySpawned); Set(codexRecorder, "shop", shop);
+            Set(codexRecorder, "announcements", ch.announcements);
             var odVol = new GameObject("Overdrive Volume").AddComponent<Volume>();
             odVol.isGlobal = true; odVol.priority = 5f; odVol.weight = 0f; odVol.sharedProfile = OverdriveProfileAsset();
             var odFx = Sys<OverdriveEffect>("OverdriveEffect");
@@ -853,19 +1068,18 @@ namespace Soulbreak.EditorTools
             Set(events, "urnSprite", quad); Set(events, "urnMaterial", orbMat); Set(events, "rejuvenatorConfig", rejuvenatorConfig);
 
             // HUD additions
-            var flash = hudGo.AddComponent<ScreenFlashView>();
-            Set(flash, "hud", hud); Set(flash, "hitStop", hitStop);
-            var odView = hudGo.AddComponent<OverdriveView>();
-            Set(odView, "hud", hud); Set(odView, "overdrive", overdrive);
-            var announcer = hudGo.AddComponent<AnnouncerView>();
-            Set(announcer, "hud", hud); Set(announcer, "announcements", ch.announcements);
-            var headshotView = hudGo.AddComponent<HeadshotPopupView>();
-            Set(headshotView, "hud", hud); Set(headshotView, "headshots", ch.headshots);
-            var danger = hudGo.AddComponent<DangerView>();
-            Set(danger, "hud", hud); Set(danger, "registry", registry); Set(danger, "reactor", reactor);
-            Set(danger, "vignetteMaterial", Mat("UIVignette", "Soulbreak/UIVignette"));
-            var bossBar = hudGo.AddComponent<BossHealthView>();
-            Set(bossBar, "hud", hud); Set(bossBar, "spawned", ch.enemySpawned); Set(bossBar, "bossEnraged", ch.bossEnraged);
+            var flash = hudGo.GetComponent<ScreenFlashView>();
+            Set(flash, "hitStop", hitStop);
+            var odView = hudGo.GetComponent<OverdriveView>();
+            Set(odView, "overdrive", overdrive);
+            var announcer = hudGo.GetComponent<AnnouncerView>();
+            Set(announcer, "announcements", ch.announcements);
+            var headshotView = hudGo.GetComponent<HeadshotPopupView>();
+            Set(headshotView, "headshots", ch.headshots);
+            var danger = hudGo.GetComponent<DangerView>();
+            Set(danger, "registry", registry); Set(danger, "reactor", reactor);
+            var bossBar = hudGo.GetComponent<BossHealthView>();
+            Set(bossBar, "spawned", ch.enemySpawned); Set(bossBar, "bossEnraged", ch.bossEnraged);
 
             // Audio
             var audio = Sys<AudioDirector>("AudioDirector");
@@ -900,8 +1114,47 @@ namespace Soulbreak.EditorTools
             var loadout = Sys<StartingLoadout>("StartingLoadout");
             Set(loadout, "catalog", catalog); Set(loadout, "ring", weapons); Set(loadout, "reactorView", reactorView);
             var recorder = Sys<MetaRecorder>("MetaRecorder");
-            Set(recorder, "game", gm); Set(recorder, "wallet", wallet); Set(recorder, "waves", waves);
+            var runStats = Sys<RunStats>("RunStats");
+            Set(runStats, "enemyKilled", ch.enemyKilled); Set(runStats, "headshots", ch.headshots); Set(runStats, "combo", combo);
+            Set(recorder, "game", gm); Set(recorder, "wallet", wallet); Set(recorder, "waves", waves); Set(recorder, "stats", runStats);
+            var difficultyApplier = Sys<DifficultyApplier>("DifficultyApplier");
+            Set(difficultyApplier, "waves", waves); Set(difficultyApplier, "reactor", reactor);
             Set(gameOver, "recorder", recorder);
+
+            // Feedback: damage numbers, aim label, settings
+            var dmgNumbers = hudGo.GetComponent<DamageNumbersView>();
+            Set(dmgNumbers, "damaged", ch.enemyDamaged); Set(dmgNumbers, "stats", stats);
+            var aimLabel = hudGo.GetComponent<AimLabelView>();
+            Set(aimLabel, "shooter", shooter); Set(aimLabel, "ring", weapons);
+            Set(aimLabel, "game", gm); Set(aimLabel, "core", reactorGo.transform);
+            var settings = UIPrefab<SettingsView>("Settings", sys);
+            var pauseMenu = Object.FindAnyObjectByType<PauseMenuView>();
+            Set(pauseMenu, "settings", settings);
+            Set(pauseMenu, "index", UIPrefab<Soulbreak.Menu.IndexView>("Index", sys));
+            Set(pauseMenu, "howTo", UIPrefab<HowToView>("HowTo", sys));
+            Set(Object.FindAnyObjectByType<GameHotkeys>(), "pauseMenu", pauseMenu);
+
+            // Core upgrades (visual) + game mode
+            var upgrades = Sys<CoreUpgradeView>("CoreUpgradeView");
+            Set(upgrades, "shop", shop); Set(upgrades, "ring", weapons); Set(upgrades, "reactorView", reactorView);
+            Set(upgrades, "announcements", ch.announcements); Set(upgrades, "quad", quad); Set(upgrades, "satelliteMaterial", orbMat);
+
+            var modeApplier = Sys<ModeApplier>("ModeApplier");
+            Set(modeApplier, "waves", waves); Set(modeApplier, "splitter", splitter); Set(modeApplier, "mapEvents", events);
+            Set(modeApplier, "shop", shop); Set(modeApplier, "dropper", Object.FindAnyObjectByType<OrbDropper>());
+            Set(modeApplier, "fx", fx); Set(modeApplier, "music", music);
+            Set(modeApplier, "core", reactorGo.GetComponent<SpriteRenderer>());
+            Set(modeApplier, "background", GameObject.Find("Background").GetComponent<SpriteRenderer>());
+        }
+
+        // Places one of the UI prefabs (Assets/Prefabs/UI) in the open scene.
+        private static T UIPrefab<T>(string name, Transform parent = null) where T : Component
+        {
+            var asset = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/Prefabs/UI/{name}.prefab");
+            if (asset == null) throw new System.Exception($"Missing UI prefab '{name}' in Assets/Prefabs/UI.");
+            var go = (GameObject)PrefabUtility.InstantiatePrefab(asset);
+            if (parent != null) go.transform.SetParent(parent, false);
+            return go.GetComponent<T>();
         }
 
         private static T Get<T>(GameObject go) where T : Component

@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 105e4fd3ab9da334c88ccfa692cfe1c0, type: 3}
+  m_Name: BlackHole
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Enemies.EnemyConfig
+  sprite: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
+  material: {fileID: 2100000, guid: 691700f14694e1f42a3ccc1fca0099a6, type: 2}
+  color: {r: 2.2, g: 0.6, b: 4.5, a: 1}
+  size: 3.4
+  spikes: 0
+  maxHealth: 45
+  speed: 0.35
+  damage: 6
+  isBoss: 1
+  minion: {fileID: 11400000, guid: 02904d336e5d79947bbebb9707634ca4, type: 2}
+  displayName: The Devourer
+  movement: {fileID: 0}
+  gravityPull: 1.6
+  stopDistance: 0
+  fireInterval: 2
+  projectileDamage: 1
+  projectileSpeed: 3
+  projectileMaterial: {fileID: 2100000, guid: e74f4fd2d9bf92c43ae801c8b418266a, type: 2}
+  splitInto: {fileID: 0}
+  splitCount: 0
+  soulReward: 160
+  soulOrbChance: 1
+  soulOrbValue: 40
+  healOrbChance: 1

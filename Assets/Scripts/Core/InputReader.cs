@@ -81,6 +81,51 @@ namespace Soulbreak.Core
 #endif
         }
 
+        public static bool KillSelfPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current.f2Key.wasPressedThisFrame;
+#else
+            return Input.GetKeyDown(KeyCode.F2);
+#endif
+        }
+
+        public static bool PreviewGameOverPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current.f3Key.wasPressedThisFrame;
+#else
+            return Input.GetKeyDown(KeyCode.F3);
+#endif
+        }
+
+        public static bool SkipTutorialPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame;
+#else
+            return Input.GetKeyDown(KeyCode.T);
+#endif
+        }
+
+        public static bool LeftPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && (Keyboard.current.leftArrowKey.wasPressedThisFrame || Keyboard.current.aKey.wasPressedThisFrame);
+#else
+            return Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A);
+#endif
+        }
+
+        public static bool RightPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && (Keyboard.current.rightArrowKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame);
+#else
+            return Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D);
+#endif
+        }
+
         public static bool RestartPressed()
         {
 #if ENABLE_INPUT_SYSTEM

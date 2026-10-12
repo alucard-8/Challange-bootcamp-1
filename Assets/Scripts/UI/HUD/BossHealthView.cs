@@ -12,23 +12,11 @@ namespace Soulbreak.UI
         [SerializeField] private EnemyEventChannel bossEnraged;
 
         private Enemy boss;
-        private CanvasGroup group;
-        private RectTransform fill;
-        private Image fillImage;
-        private Text label;
+        [SerializeField] private CanvasGroup group;
+        [SerializeField] private RectTransform fill;
+        [SerializeField] private Image fillImage;
+        [SerializeField] private Text label;
         private float shown;
-
-        private void Awake()
-        {
-            var panel = UIFactory.Rect("BossBar", hud.Root).Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -100), new Vector2(900, 70));
-            group = panel.gameObject.AddComponent<CanvasGroup>();
-            group.alpha = 0f;
-            label = UIFactory.Label(panel, "", 28, TextAnchor.UpperCenter, Color.white, FontStyle.Bold);
-            label.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), Vector2.zero, new Vector2(900, 34));
-            fill = UIFactory.Bar(panel, new Color(0, 0, 0, 0.7f), new Color(1f, 0.35f, 0.75f), "Health");
-            fill.parent.GetComponent<RectTransform>().Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -38), new Vector2(880, 22));
-            fillImage = fill.GetComponent<Image>();
-        }
 
         private void OnEnable()
         {

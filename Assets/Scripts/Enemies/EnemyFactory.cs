@@ -30,6 +30,7 @@ namespace Soulbreak.Enemies
             if (config.stopDistance > 0f) go.AddComponent<EnemyRangedAttack>();
             if ((modifiers & EnemyModifier.Blink) != 0) go.AddComponent<EnemyBlink>();
             if (config.isBoss) go.AddComponent<BossBrain>();
+            if (config.gravityPull > 0f) go.AddComponent<GravityWell>();
             return enemy;
         }
     }

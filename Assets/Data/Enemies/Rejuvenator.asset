@@ -23,6 +23,8 @@ MonoBehaviour:
   isBoss: 0
   minion: {fileID: 0}
   displayName: Rejuvenator
+  movement: {fileID: 0}
+  gravityPull: 0
   stopDistance: 0
   fireInterval: 2
   projectileDamage: 1

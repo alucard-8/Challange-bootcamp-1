@@ -18,17 +18,37 @@ namespace Soulbreak.Menu
 
         public bool IsOpen { get; private set; }
 
-        private class Entry { public MetaItem item; public Text title, body; public Button button; public Text buttonText; public Image card; }
+        // One card per catalog item; the item is looked up by id so the prefab never holds stale data.
+        [System.Serializable]
+        private class Entry
+        {
+            public string itemId;
+            public Text title, body, buttonText;
+            public Button button;
+            public Image card, preview;
+            [System.NonSerialized] public MetaItem item;
+        }
 
-        private readonly List<Entry> entries = new List<Entry>();
-        private CanvasGroup group;
-        private Text essenceText;
+        [SerializeField] private List<Entry> entries = new List<Entry>();
+        [SerializeField] private CanvasGroup group;
+        [SerializeField] private Text essenceText;
+        [SerializeField] private Button backButton;
         private MaterialPropertyBlock block;
 
         private void Awake()
         {
             block = new MaterialPropertyBlock();
-            Build();
+            backButton.onClick.AddListener(Close);
+            foreach (var e in entries)
+            {
+                var entry = e;
+                entry.item = catalog.Find(entry.itemId);
+                entry.button.onClick.AddListener(() => Click(entry));
+                // each preview animates its own shader values
+                if (entry.preview.material != null) entry.preview.material = new Material(entry.preview.material);
+                if (entry.item != null) SetupPreview(entry);
+            }
+            entries.RemoveAll(x => x.item == null);
         }
 
         private void OnEnable() => MetaProgress.OnChanged += Refresh;
@@ -40,13 +60,26 @@ namespace Soulbreak.Menu
             PreviewSkin();
         }
 
-        public void Open() { IsOpen = true; Refresh(); }
-        public void Close() => IsOpen = false;
+        public void Open()
+        {
+            if (IsOpen) return;
+            IsOpen = true;
+            Refresh();
+            Audio.UIAudio.Play(Audio.Sfx.UIOpen);
+        }
+
+        public void Close()
+        {
+            if (!IsOpen) return;
+            IsOpen = false;
+            Audio.UIAudio.Play(Audio.Sfx.UIClose);
+        }
 
         private void Update()
         {
             group.alpha = Mathf.MoveTowards(group.alpha, IsOpen ? 1f : 0f, Time.unscaledDeltaTime * 5f);
             group.blocksRaycasts = group.interactable = IsOpen;
+            group.transform.localScale = Vector3.one * UIFactory.PopScale(group.alpha);
         }
 
         private void Click(Entry e)
@@ -76,75 +109,52 @@ namespace Soulbreak.Menu
             {
                 bool unlocked = MetaProgress.IsUnlocked(e.item);
                 bool equipped = MetaProgress.IsEquipped(e.item);
-                e.buttonText.text = !unlocked ? $"UNLOCK  {e.item.cost}" : equipped ? (e.item.type == MetaItemType.ReactorSkin ? "EQUIPPED" : "EQUIPPED  (click to remove)") : "EQUIP";
-                e.button.interactable = unlocked || MetaProgress.Essence >= e.item.cost;
+
+                if (e.item.type == MetaItemType.GameMode) SetupPreview(e);   // locked orb -> star once unlocked
+                if (e.item.type == MetaItemType.GameMode)
+                {
+                    // Secret mode: locked cards only show a hint about how to find it.
+                    e.title.text = unlocked ? e.item.displayName : "???";
+                    e.body.text = unlocked ? e.item.description : e.item.unlockHint;
+                    e.buttonText.text = !unlocked ? "SECRET" : equipped ? "ACTIVE  (click to leave)" : "PLAY THIS MODE";
+                    e.button.interactable = unlocked;
+                }
+                else
+                {
+                    e.buttonText.text = !unlocked ? $"UNLOCK  {e.item.cost}" : equipped ? (e.item.type == MetaItemType.ReactorSkin ? "EQUIPPED" : "EQUIPPED  (click to remove)") : "EQUIP";
+                    e.button.interactable = unlocked || MetaProgress.Essence >= e.item.cost;
+                }
                 e.card.color = equipped ? new Color(0.12f, 0.08f, 0.22f, 0.97f) : new Color(0.06f, 0.04f, 0.11f, 0.95f);
             }
         }
 
-        // ---------- Layout ----------
-        private void Build()
+        // Preview kinds understood by the UIPreview shader.
+        private const float KindSkin = 0f, KindTechnique = 1f, KindStar = 2f, KindLocked = 3f;
+
+        private static void SetupPreview(Entry e)
         {
-            var theme = UIFactory.Theme;
-            var root = (RectTransform)UIFactory.Canvas("Ascension Canvas", transform, 15).transform;
-            var bg = UIFactory.Panel(root, new Color(0.02f, 0.01f, 0.05f, 0.92f), "AscensionBg");
-            bg.rectTransform.Fill();
-            bg.raycastTarget = true;
-            group = bg.gameObject.AddComponent<CanvasGroup>();
-            group.alpha = 0f;
-
-            var title = UIFactory.Label(bg.transform, "ASCENSION", 90, TextAnchor.MiddleCenter, Color.white, FontStyle.Bold);
-            title.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -50), new Vector2(1200, 110));
-            title.gameObject.AddComponent<GlitchText>();
-            essenceText = UIFactory.Label(bg.transform, "", 32, TextAnchor.MiddleCenter, theme.soul, FontStyle.Bold);
-            essenceText.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -160), new Vector2(1200, 44));
-
-            var techs = new List<MetaItem>();
-            var skins = new List<MetaItem>();
-            foreach (var i in catalog.items) (i.type == MetaItemType.StartingTechnique ? techs : skins).Add(i);
-
-            Section(bg.transform, "STARTING TECHNIQUE", techs, 230f);
-            Section(bg.transform, "REACTOR SKIN", skins, 560f);
-
-            var back = UIFactory.Button(bg.transform, "BACK", theme.buttonColor, Close, out _, 30);
-            ((RectTransform)back.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 40), new Vector2(300, 72));
-        }
-
-        private void Section(Transform parent, string header, List<MetaItem> items, float top)
-        {
-            var h = UIFactory.Label(parent, header, 28, TextAnchor.MiddleCenter, new Color(1, 1, 1, 0.6f), FontStyle.Bold);
-            h.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -top), new Vector2(1200, 40));
-
-            const float w = 250f, gap = 18f;
-            float total = items.Count * w + (items.Count - 1) * gap;
-            for (int i = 0; i < items.Count; i++)
+            var m = e.preview.material;
+            if (m == null || !m.HasProperty("_Kind")) return;
+            var item = e.item;
+            switch (item.type)
             {
-                var item = items[i];
-                var e = new Entry { item = item };
-                Color accent = item.type == MetaItemType.ReactorSkin ? Normalize(item.coreColor) : (item.technique != null ? Normalize(item.technique.color) : Color.white);
-
-                e.card = UIFactory.StyledPanel(parent, new Color(0.06f, 0.04f, 0.11f, 0.95f), accent, item.id, 16f, true);
-                var rt = e.card.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1),
-                    new Vector2(-total / 2f + w / 2f + i * (w + gap), -top - 50f), new Vector2(w, 250f));
-                e.card.gameObject.AddComponent<UIButtonFx>().hoverScale = 1.04f;
-                e.card.raycastTarget = true;
-
-                e.title = UIFactory.Label(rt, item.displayName, 26, TextAnchor.UpperCenter, accent, FontStyle.Bold);
-                e.title.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -16), new Vector2(w - 24, 64));
-                e.body = UIFactory.Label(rt, item.description, 19, TextAnchor.UpperCenter, new Color(1, 1, 1, 0.7f));
-                e.body.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -80), new Vector2(w - 28, 100));
-
-                var captured = e;
-                e.button = UIFactory.Button(rt, "", new Color(0.3f, 0.18f, 0.5f, 0.95f), () => Click(captured), out e.buttonText, 20);
-                ((RectTransform)e.button.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 14), new Vector2(w - 28, 52));
-                entries.Add(e);
+                case MetaItemType.ReactorSkin:
+                    m.SetFloat("_Kind", KindSkin);
+                    m.SetColor("_Color", item.coreColor);
+                    m.SetColor("_Color2", item.shieldColor);
+                    break;
+                case MetaItemType.StartingTechnique:
+                    m.SetFloat("_Kind", KindTechnique);
+                    m.SetFloat("_Icon", item.technique != null ? item.technique.icon : 0);
+                    m.SetColor("_Color", item.technique != null ? item.technique.color : Color.white);
+                    break;
+                case MetaItemType.GameMode:
+                    m.SetFloat("_Kind", MetaProgress.IsUnlocked(item) ? KindStar : KindLocked);
+                    m.SetColor("_Color", new Color(3.2f, 1.8f, 0.6f));
+                    m.SetColor("_Color2", new Color(0.6f, 2.2f, 3.4f));
+                    break;
             }
         }
 
-        private static Color Normalize(Color c)
-        {
-            float m = Mathf.Max(1f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
-            return new Color(c.r / m, c.g / m, c.b / m, 1f);
-        }
     }
 }

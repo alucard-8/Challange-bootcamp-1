@@ -63,7 +63,7 @@ Shader "Soulbreak/UIVignette"
                 float round_ = length(p) * 0.75;
                 float d = max(edge, round_);
                 float pulse = 0.75 + 0.25 * sin(_Time.y * _PulseSpeed);
-                float glow = smoothstep(0.55, 1.05, d) * pulse;
+                float glow = smoothstep(0.75, 1.1, d) * pulse;   // thin frame at the very edge
                 return fixed4(i.color.rgb, glow * i.color.a);
             }
             ENDCG

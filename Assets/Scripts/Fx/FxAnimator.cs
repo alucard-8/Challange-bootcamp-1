@@ -26,7 +26,7 @@ namespace Soulbreak.Fx
 
         private void Update()
         {
-            age += Time.deltaTime;
+            age += Time.unscaledDeltaTime;   // finish even when time is frozen (game over)
             float t = Mathf.Clamp01(age / duration);
             Step(t);
             if (t >= 1f) Destroy(gameObject);

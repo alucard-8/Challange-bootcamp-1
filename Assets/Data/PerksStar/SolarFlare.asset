@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1264def015e865b41abff8511b7be528, type: 3}
+  m_Name: SolarFlare
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.PerkDefinition
+  displayName: Solar Flare
+  description: 'Technique: a giant beam that pierces everything in a line for 2x damage.'
+  category: 4
+  rarity: 1
+  baseCost: 120
+  costGrowth: 80
+  maxStacks: 2
+  effects:
+  - {fileID: 4526391606540477100, guid: 89915ddcec4527e4294942fc267ee81b, type: 2}

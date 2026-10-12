@@ -29,6 +29,7 @@ namespace Soulbreak.Enemies
 
         private float speed;
         private float speedBoost = 1f;
+        private MotionState motion;
 
         public void Init(EnemyConfig config, Transform target, EnemyChannels channels, float healthMultiplier,
                          float speedMultiplier, EnemyModifier modifiers = EnemyModifier.None)
@@ -58,8 +59,12 @@ namespace Soulbreak.Enemies
 
             Vector3 toTarget = Target.position - transform.position;
             InRange = Config.stopDistance > 0f && toTarget.magnitude <= Config.stopDistance;
-            if (!InRange)
-                transform.position = Vector3.MoveTowards(transform.position, Target.position, speed * speedBoost * Time.deltaTime);
+
+            float step = speed * speedBoost;
+            if (Config.movement != null)
+                transform.position = Config.movement.Step(this, transform.position, Target.position, step, Time.deltaTime, ref motion);
+            else if (!InRange)
+                transform.position = Vector3.MoveTowards(transform.position, Target.position, step * Time.deltaTime);
         }
 
         // The glowing eye in the middle of the shader is the weak point.
@@ -76,15 +81,26 @@ namespace Soulbreak.Enemies
             {
                 ShieldHits--;
                 OnDamaged?.Invoke(this);
+                RaiseDamaged(0, true);
                 return;
             }
 
             Health -= amount;
             OnDamaged?.Invoke(this);
+            RaiseDamaged(amount, false);
 
             if (Health > 0) return;
             if (Channels?.killed != null) Channels.killed.Raise(this);
             Destroy(gameObject);
+        }
+
+        private void RaiseDamaged(int amount, bool blocked)
+        {
+            if (Channels?.damaged == null) return;
+            Channels.damaged.Raise(new EnemyDamage
+            {
+                Enemy = this, Position = transform.position, Amount = amount, Blocked = blocked, Killed = Health <= 0,
+            });
         }
 
         private void OnTriggerEnter2D(Collider2D other)

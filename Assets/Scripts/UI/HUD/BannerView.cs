@@ -12,11 +12,10 @@ namespace Soulbreak.UI
         [SerializeField] private WaveManager waves;
         [SerializeField] private NovaAbility nova;
 
-        private Text text;
-        private CanvasGroup group;
+        [SerializeField] private Text text;
+        [SerializeField] private CanvasGroup group;
         private float timer, punch;
 
-        private void Awake() => Build();
 
         private void OnEnable()
         {
@@ -56,14 +55,6 @@ namespace Soulbreak.UI
             }
             punch = Mathf.Max(0f, punch - Time.unscaledDeltaTime * 3f);
             text.rectTransform.localScale = Vector3.one * (1f + 0.35f * punch * punch);
-        }
-
-        private void Build()
-        {
-            text = UIFactory.Label(hud.Root, "", 96, TextAnchor.MiddleCenter, Color.white, FontStyle.Bold, "Banner");
-            text.rectTransform.Place(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0, 220), new Vector2(1400, 260));
-            group = text.gameObject.AddComponent<CanvasGroup>();
-            group.alpha = 0f;
         }
     }
 }

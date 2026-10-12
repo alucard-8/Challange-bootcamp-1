@@ -19,7 +19,7 @@ namespace Soulbreak.Enemies
         private SpriteRenderer sr;
         private MaterialPropertyBlock block;
         private Vector3 baseScale;
-        private float flash, appear;
+        private float flash, appear, squash;
 
         private void Awake()
         {
@@ -46,10 +46,22 @@ namespace Soulbreak.Enemies
             Apply();
         }
 
-        private void HandleDamaged(Enemy e) => flash = 1f;
+        private void HandleDamaged(Enemy e)
+        {
+            flash = 1f;
+            squash = 1f;
+        }
 
         private void Update()
         {
+            // Hit squash: quick squeeze then spring back
+            if (squash > 0f && appear >= 1f)
+            {
+                squash = Mathf.Max(0f, squash - Time.deltaTime * 8f);
+                float s = 1f - 0.18f * squash * squash;
+                transform.localScale = new Vector3(baseScale.x * (2f - s), baseScale.y * s, 1f);
+            }
+
             // Spawn-in: grow from nothing with a small overshoot.
             if (appear < 1f)
             {

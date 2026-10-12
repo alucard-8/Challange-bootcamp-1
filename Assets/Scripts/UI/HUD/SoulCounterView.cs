@@ -4,16 +4,21 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Top-right rolling soul counter + "+N" popups where souls were earned.
+    // Top-right soul counter. Earned souls fly to it as glowing motes; the number only climbs as they
+    // land (with a bump), so you SEE souls arriving. Spending updates it immediately.
     public class SoulCounterView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;
         [SerializeField] private SoulWallet wallet;
 
-        private Text soulsText;
-        private int displayed, target;
+        [SerializeField] private Text soulsText;
+        [SerializeField] private RectTransform panel;
+        [SerializeField] private Text popupTemplate;
+        [SerializeField] private FlyingMote moteTemplate;
+        private int displayed, target, actual;
+        private bool initialized;
+        private float bump;
 
-        private void Awake() => Build();
 
         private void OnEnable()
         {
@@ -27,37 +32,56 @@ namespace Soulbreak.UI
             wallet.OnSoulsGained -= HandleSoulsGained;
         }
 
-        private void HandleSouls(int souls) => target = souls;
+        private void HandleSouls(int souls)
+        {
+            if (!initialized) { initialized = true; actual = target = displayed = souls; soulsText.text = $"{souls}"; return; }
+            if (souls < actual) target -= actual - souls;   // spending shows instantly; gains arrive by mote
+            actual = souls;
+        }
 
         private void HandleSoulsGained(int amount, Vector3 worldPos)
         {
             var cam = Camera.main;
-            if (cam == null) return;
+            if (cam == null) { target += amount; return; }
+
             Vector2 screen = cam.WorldToScreenPoint(worldPos);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(hud.Root, screen, null, out Vector2 local);
-            var t = UIFactory.Label(hud.Root, $"+{amount}", amount >= 30 ? 40 : 28, TextAnchor.MiddleCenter, HudColors.Soul, FontStyle.Bold, "SoulPopup");
-            t.rectTransform.anchorMin = t.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            t.rectTransform.sizeDelta = new Vector2(200f, 60f);
-            t.rectTransform.anchoredPosition = local;
-            t.gameObject.AddComponent<FloatingText>();
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(hud.Root, screen, null, out Vector2 from);
+
+            // "+N" popup where it was earned
+            var t = UIFactory.Spawn(popupTemplate, hud.Root);
+            t.text = $"+{amount}";
+            t.fontSize = amount >= 30 ? 40 : 28;
+            t.rectTransform.anchoredPosition = from;
+
+            // Motes flying to the counter, each carrying a share of the souls
+            Vector2 to = hud.Root.InverseTransformPoint(soulsText.rectTransform.position);
+            int motes = Mathf.Clamp(amount / 6, 1, 6);
+            int share = amount / motes, rest = amount - share * motes;
+            for (int i = 0; i < motes; i++)
+            {
+                int carried = share + (i == 0 ? rest : 0);
+                UIFactory.Spawn(moteTemplate, hud.Root).Launch(from, to, i * 0.05f, () => Arrive(carried));
+            }
+        }
+
+        private void Arrive(int amount)
+        {
+            target += amount;
+            bump = 1f;
         }
 
         private void Update()
         {
-            if (displayed == target) return;
-            int step = Mathf.Max(1, Mathf.Abs(target - displayed) / 8);
-            displayed += displayed < target ? Mathf.Min(step, target - displayed) : -Mathf.Min(step, displayed - target);
-            soulsText.text = $"{displayed}";
-        }
+            if (displayed != target)
+            {
+                int step = Mathf.Max(1, Mathf.Abs(target - displayed) / 6);
+                displayed += displayed < target ? Mathf.Min(step, target - displayed) : -Mathf.Min(step, displayed - target);
+                soulsText.text = $"{displayed}";
+            }
 
-        private void Build()
-        {
-            var tr = UIFactory.StyledPanel(hud.Root, HudColors.Panel, HudColors.Soul, "SoulPanel").rectTransform
-                .Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-24, -24), new Vector2(300, 110));
-            UIFactory.Label(tr, "SOULS", 22, TextAnchor.UpperRight, new Color(1, 1, 1, 0.6f))
-                .rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-20, -10), new Vector2(260, 28));
-            soulsText = UIFactory.Label(tr, "0", 56, TextAnchor.UpperRight, HudColors.Soul, FontStyle.Bold);
-            soulsText.rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-20, -36), new Vector2(260, 64));
+            bump = Mathf.Max(0f, bump - Time.unscaledDeltaTime * 6f);
+            panel.localScale = Vector3.one * (1f + 0.08f * bump);
+            soulsText.color = Color.Lerp(HudColors.Soul, Color.white, bump * 0.7f);
         }
     }
 }

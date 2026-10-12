@@ -35,6 +35,11 @@ Material:
     - _Health01: 1
     - _Shield: 3
     - _ShieldMax: 3
+    - _Tier: 0
+    - _TierPulse: 0
+    - _UpDefense: 0
+    - _UpEconomy: 0
+    - _UpOffense: 0
     m_Colors:
     - _Color: {r: 0.6, g: 1.6, b: 3, a: 1}
     - _HitColor: {r: 5, g: 0.6, b: 0.6, a: 1}

@@ -77,6 +77,24 @@ classes wired through events, and each step was tested before moving on.
 | **Procedural audio** | `SfxSynth` synthesizes every sound in code; `AudioDirector` maps events → sounds; `MusicSynth` is a procedural synthwave track whose layers follow `MusicDirector` intensity (waves, danger, boss, overdrive) and muffles while paused/shopping. |
 | **Meta progression** | `MetaProgress` (PlayerPrefs JSON) stores Soul Essence earned per run (`MetaRecorder`); the main-menu **Ascension** screen unlocks starting techniques and reactor skins (`MetaCatalog` asset); `StartingLoadout` applies them. |
 
+## Second mode: STAR CORE (secret)
+Click the main-menu core **7 times quickly**: it collapses and reignites as a star. The Ascension
+lobby shows a locked "???" card with a hint until then; afterwards that card toggles the mode.
+
+| Piece | How it's built |
+|---|---|
+| **ModeProfile** (ScriptableObject) | A whole mode as data: enemy roster + boss, perk catalog, core/background/enemy materials, orb colors, music variant and a wording lexicon ("CORE" → "STAR", "SOULS" → "STARDUST"). New mode = new asset (**Open/Closed**). |
+| **ModeApplier** | Mediator that runs first in the game scene and hands each system its data through a small setter (`SetRoster`, `SetCatalog`, `SetColors`...). No gameplay system knows modes exist. |
+| **MovementPattern** (Strategy) | `SpiralMovement` (planets on decaying orbits, gas giants holding orbit), `CometMovement` (slingshot loop then dive). Null = straight line, so Soul Reactor enemies are unchanged. |
+| **GravityWell** | Black-hole boss "The Devourer" drags other bodies toward the star. |
+| **Shaders** | `Star` (plasma, corona, sunspots, magnetosphere), `Planet` (lit from the star with terminator; rocky / gas bands / icy), `SpaceBackground` (parallax starfield + nebulae). They share the reactor/enemy property interface, so `ReactorView` / `EnemyView` drive them unchanged (**Liskov**-style substitutability for shaders). |
+
+## Core upgrades (both modes)
+`CoreUpgradeView` listens to the shop and the ring: offense perks grow **spikes** (prominences on the
+star), defense perks lock on **armor plates** (an asteroid belt), economy perks add a **golden halo**
+(bigger corona), every owned technique adds an **orbiting satellite/moon**, and every 4 perks the
+core reaches a new **tier** (brighter, pulse ring, announcement).
+
 ## System breakdown
 
 | System | Scripts |
@@ -124,6 +142,13 @@ bloom, vignette, chromatic aberration; a separate pause volume desaturates and w
 `Soulbreak → Setup Everything` (`Assets/Editor/SoulbreakSetup.cs`) creates every asset (sprites,
 materials, enemies, perks, weapon modules, event channels, UI theme, post-processing), wires the
 game scene, builds the main menu and registers both scenes in Build Settings. Safe to re-run.
+
+## UI
+
+- Every screen is a **prefab** in `Assets/Prefabs/UI` (HUD, Shop, PauseMenu, Settings, Index, HowTo, MainMenu, Ascension, Difficulty) with its own Canvas. The scene fader is `Resources/SceneFader.prefab`.
+- View scripts hold `[SerializeField]` references to their prefab objects, wire button listeners in `Awake`, and only animate / react to events.
+- Elements whose count changes at runtime (ammo and shield pips, damage numbers, soul motes, popups, edge arrows, confetti) are inactive templates inside the prefab, cloned with `UIFactory.Spawn`.
+- `UIFontApplier` (on each canvas) applies the Bahnschrift OS font at runtime, since OS fonts can't be stored in prefabs or redistributed.
 
 ## Controls
 - **Left click** — shoot through the weapon ring

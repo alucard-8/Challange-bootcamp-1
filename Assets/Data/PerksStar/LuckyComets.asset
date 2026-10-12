@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1264def015e865b41abff8511b7be528, type: 3}
+  m_Name: LuckyComets
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.PerkDefinition
+  displayName: Lucky Comets
+  description: +10% chance for enemies to drop stardust stardust clouds.
+  category: 1
+  rarity: 1
+  baseCost: 70
+  costGrowth: 50
+  maxStacks: 4
+  effects:
+  - {fileID: -348794477945652410, guid: 61f2e80c75a9df64e8b3afc9a047350c, type: 2}

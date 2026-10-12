@@ -30,9 +30,14 @@ namespace Soulbreak.Reactor
         public event Action<bool> OnHit;                 // true = shield absorbed it
         public event Action OnDestroyed;
 
+        private float healthMultiplier = 1f;
+
+        // Difficulty hook — must be called before Awake (DifficultyApplier runs first).
+        public void SetHealthMultiplier(float multiplier) => healthMultiplier = multiplier;
+
         private void Awake()
         {
-            MaxHealth = Health = config.maxHealth;
+            MaxHealth = Health = Mathf.Max(1, Mathf.RoundToInt(config.maxHealth * healthMultiplier));
             MaxShieldCharges = ShieldCharges = config.maxShieldCharges;
         }
 

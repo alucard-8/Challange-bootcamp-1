@@ -12,6 +12,7 @@ namespace Soulbreak.UI
         public float lift = 0f;
 
         private bool hover, pressed;
+        public bool IsHovered => hover;
         private Vector3 baseScale = Vector3.one;
         private Vector2 basePos;
         private RectTransform rt;
@@ -32,9 +33,21 @@ namespace Soulbreak.UI
             basePos = rt.anchoredPosition;
         }
 
-        public void OnPointerEnter(PointerEventData e) => hover = true;
+        public bool sounds = true;
+
+        public void OnPointerEnter(PointerEventData e)
+        {
+            hover = true;
+            if (sounds) Audio.UIAudio.Play(Audio.Sfx.UIHover, 0.35f);
+        }
+
         public void OnPointerExit(PointerEventData e) { hover = false; pressed = false; }
-        public void OnPointerDown(PointerEventData e) => pressed = true;
+
+        public void OnPointerDown(PointerEventData e)
+        {
+            pressed = true;
+            if (sounds) Audio.UIAudio.Play(Audio.Sfx.UIClick, 0.6f);
+        }
         public void OnPointerUp(PointerEventData e) => pressed = false;
 
         private void OnDisable() { hover = pressed = false; }

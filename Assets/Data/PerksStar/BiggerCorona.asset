@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1264def015e865b41abff8511b7be528, type: 3}
+  m_Name: BiggerCorona
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.PerkDefinition
+  displayName: Bigger Corona
+  description: +3 shots per clip.
+  category: 0
+  rarity: 0
+  baseCost: 45
+  costGrowth: 30
+  maxStacks: 5
+  effects:
+  - {fileID: -8653365291691249802, guid: d0ec5fd9229867242b586e30c40e54f0, type: 2}

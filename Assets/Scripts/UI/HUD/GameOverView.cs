@@ -1,81 +1,198 @@
-using Soulbreak.Economy;
+using System.Collections.Generic;
+using Soulbreak.Audio;
 using Soulbreak.GameFlow;
+using Soulbreak.Meta;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Game-over overlay: run summary + Restart / Main Menu buttons. Fades in when the reactor falls.
+    // Cinematic game-over: the screen darkens, the title slams in, then a run summary tallies up
+    // line by line, the score counts up, a NEW BEST stamp lands, essence is shown and the buttons appear.
+    // Click anywhere to skip the tally. Driven entirely by the MetaRecorder's RunResult event.
     public class GameOverView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;
         [SerializeField] private GameManager game;
-        [SerializeField] private SoulWallet wallet;
+        [SerializeField] private MetaRecorder recorder;
 
-        private CanvasGroup group;
-        private Text text;
+        private const float RowsStart = 1.3f, RowGap = 0.22f, RowCount = 0.35f;
 
-        [SerializeField] private Meta.MetaRecorder recorder;
-
-        private void Awake() => Build();
-
-        private void OnEnable()
+        [System.Serializable]
+        private class Row
         {
-            game.OnStateChanged += HandleState;
-            recorder.OnEssenceAwarded += HandleEssence;
+            public Text label, value;
+            public CanvasGroup group;
+            [System.NonSerialized] public float target, start;
+            [System.NonSerialized] public string format;
+            [System.NonSerialized] public bool ticked;
         }
 
-        private void OnDisable()
+        private const float ScoreCount = 1.6f;
+        private static readonly Color Gold = new Color(1f, 0.82f, 0.35f);
+
+        [SerializeField] private CanvasGroup root, titleGroup, panelGroup, buttonsGroup, stampGroup, essenceGroup, bestGroup;
+        private bool bestCrossed;
+        private float badgeTime = -1f;
+        [SerializeField] private Image backdrop;
+        [SerializeField] private Text title, subtitle, scoreText, stampText, essenceText, bestText;
+        [SerializeField] private RectTransform titleRt, panelRt, stampRt;
+        [SerializeField] private Button skipButton, retryButton, menuButton;
+        [SerializeField] private UIConfetti confetti;
+        [SerializeField] private List<Row> rows = new List<Row>();
+        private RunResult result;
+        private bool running;
+        private float time, scoreStart, essenceAt, buttonsAt;
+        private bool scoreTicked;
+
+        private void Awake()
         {
-            game.OnStateChanged -= HandleState;
-            recorder.OnEssenceAwarded -= HandleEssence;
+            skipButton.onClick.AddListener(Skip);
+            retryButton.onClick.AddListener(game.Restart);
+            menuButton.onClick.AddListener(game.ToMainMenu);
+        }
+        private void OnEnable() => recorder.OnRunRecorded += Begin;
+        private void OnDisable() => recorder.OnRunRecorded -= Begin;
+
+        private void Begin(RunResult r)
+        {
+            result = r;
+            running = true;
+            time = 0f;
+            root.alpha = 1f;
+            root.blocksRaycasts = true;
+            UIAudio.Play(Sfx.Collapse, 0.9f);
+
+            var diff = DifficultyTable.Get(r.Difficulty);
+            title.text = Lex.T("gameover", "REACTOR DESTROYED");
+            subtitle.text = $"<color=#{UIFactory.Hex(diff.Color)}>{diff.Name}</color>   -   WAVE {Mathf.Max(1, r.Wave)}";
+
+            SetRow(0, Mathf.Max(1, r.Wave), "{0:0}");
+            SetRow(1, r.Time, "{0:0}s");
+            SetRow(2, r.Kills, "{0:0}");
+            SetRow(3, r.EliteKills + r.BossKills, "{0:0}");
+            SetRow(4, r.Headshots, "{0:0}");
+            SetRow(5, r.BestStreak, "{0:0}");
+            SetRow(6, r.SoulsEarned, "{0:0}");
+
+            scoreStart = RowsStart + rows.Count * RowGap + 0.3f;
+            essenceAt = scoreStart + ScoreCount + 0.4f;
+            buttonsAt = essenceAt + 0.4f;
+            scoreTicked = bestCrossed = false;
+            badgeTime = -1f;
+            stampGroup.alpha = 0f;
+
+            // Show the record to beat; it disappears the moment the count passes it.
+            bestText.text = $"BEST   {(r.NewBest ? r.PreviousBest : MetaProgress.BestScore):N0}";
+            bestGroup.alpha = 1f;
+            essenceText.text = $"+{r.Essence} {Lex.T("essence", "SOUL ESSENCE")}      TOTAL  {MetaProgress.Essence}";
         }
 
-        private void HandleEssence(int amount) =>
-            essenceText.text = $"+{amount} SOUL ESSENCE   (total {Meta.MetaProgress.Essence})  -  spend it in ASCENSION";
-
-        private Text essenceText;
-
-        private void HandleState(GameState state)
+        // Debug preview (F3): plays the full game-over sequence with a fake run that beats your best.
+        // Nothing is saved — your real records are untouched.
+        public void PreviewNewBest()
         {
-            if (state != GameState.GameOver) return;
-            group.alpha = 0.01f;   // Update fades it in
-            group.blocksRaycasts = group.interactable = true;
-            text.text =
-                "<size=90><b>REACTOR DESTROYED</b></size>\n\n" +
-                $"Waves cleared  <b>{game.WavesCleared}</b>\n" +
-                $"Time survived  <b>{game.SurvivalTime:0}s</b>\n" +
-                $"Souls banked  <b>{wallet.Souls}</b>\n\n" +
-                "<size=30>R  restart</size>\n\n\n\n";
+            int best = MetaProgress.BestScore;
+            Begin(new RunResult
+            {
+                Score = best + Random.Range(300, 900), PreviousBest = best, NewBest = true,
+                Wave = 7, WavesCleared = 6, Time = 214f, Kills = 128, EliteKills = 9, BossKills = 1,
+                Headshots = 34, BestStreak = 27, SoulsEarned = 1840, Essence = 220,
+                Difficulty = MetaProgress.SelectedDifficulty,
+            });
+        }
+
+        private void SetRow(int i, float value, string format)
+        {
+            rows[i].target = value;
+            rows[i].format = format;
+            rows[i].start = RowsStart + i * RowGap;
+            rows[i].ticked = false;
+        }
+
+        // Click anywhere: jump to the end of the sequence.
+        private void Skip()
+        {
+            if (running && time < buttonsAt) time = buttonsAt;
         }
 
         private void Update()
         {
-            if (group.alpha > 0f && group.alpha < 1f)
-                group.alpha = Mathf.Min(1f, group.alpha + Time.unscaledDeltaTime * 2f);
+            if (!running) return;
+            time += Time.unscaledDeltaTime;
+
+            backdrop.color = new Color(0.03f, 0f, 0.04f, Mathf.Clamp01(time / 1.0f) * 0.9f);
+
+            // Title slam
+            float tk = Mathf.Clamp01((time - 0.5f) / 0.25f);
+            titleGroup.alpha = tk;
+            titleRt.localScale = Vector3.one * Mathf.Lerp(2.4f, 1f, 1f - (1f - tk) * (1f - tk));
+            if (tk > 0f && tk < 1f) titleRt.anchoredPosition = new Vector2(Random.Range(-6f, 6f), -150f + Random.Range(-4f, 4f));
+            else titleRt.anchoredPosition = new Vector2(0f, -150f);
+
+            // Summary panel slides up
+            float pk = Mathf.Clamp01((time - 1.0f) / 0.4f);
+            panelGroup.alpha = pk;
+            panelRt.anchoredPosition = new Vector2(0f, Mathf.Lerp(-120f, 0f, 1f - (1f - pk) * (1f - pk)) - 30f);
+
+            // Rows tally one by one
+            foreach (var r in rows)
+            {
+                float k = Mathf.Clamp01((time - r.start) / RowCount);
+                r.group.alpha = Mathf.Clamp01((time - r.start) / 0.12f);
+                r.value.text = string.Format(r.format, Mathf.Lerp(0f, r.target, k));
+                if (!r.ticked && time >= r.start) { r.ticked = true; UIAudio.Play(Sfx.Tally, 0.5f); }
+            }
+
+            // Score count-up (eased, slows near the end so you watch it pass the record)
+            float sk = Mathf.Clamp01((time - scoreStart) / ScoreCount);
+            float eased = 1f - Mathf.Pow(1f - sk, 3f);
+            int shown = Mathf.RoundToInt(Mathf.Lerp(0, result.Score, eased));
+            scoreText.text = $"{shown:N0}";
+            if (!scoreTicked && time >= scoreStart) { scoreTicked = true; UIAudio.Play(Sfx.Streak, 0.6f); }
+
+            // Passing the old best: the BEST line vanishes, a gold BEST! badge slams in beside the score with confetti
+            if (result.NewBest && !bestCrossed && time >= scoreStart && shown > result.PreviousBest) CrossBest();
+
+            float flash = badgeTime >= 0f ? Mathf.Clamp01(1f - (time - badgeTime) / 0.5f) : 0f;
+            scoreText.color = Color.Lerp(Gold, Color.white, flash);
+            scoreText.rectTransform.localScale = Vector3.one * (1f + 0.12f * Mathf.Sin(sk * Mathf.PI) + 0.25f * flash * flash);
+
+            bestGroup.alpha = Mathf.MoveTowards(bestGroup.alpha, bestCrossed ? 0f : 1f, Time.unscaledDeltaTime * 4f);
+
+            if (badgeTime >= 0f)
+            {
+                float bk = Mathf.Clamp01((time - badgeTime) / 0.22f);
+                stampGroup.alpha = bk;
+                float pulse = 1f + 0.05f * Mathf.Sin((time - badgeTime) * 5f);
+                stampRt.localScale = Vector3.one * Mathf.Lerp(2.4f, 1f, 1f - (1f - bk) * (1f - bk)) * pulse;
+                PlaceBadge();
+            }
+
+            essenceGroup.alpha = Mathf.Clamp01((time - essenceAt) / 0.3f);
+
+            float btn = Mathf.Clamp01((time - buttonsAt) / 0.3f);
+            buttonsGroup.alpha = btn;
+            buttonsGroup.interactable = buttonsGroup.blocksRaycasts = btn >= 1f;
         }
 
-        private void Build()
+        private void CrossBest()
         {
-            var bg = UIFactory.Panel(hud.Root, new Color(0.03f, 0f, 0.05f, 0.85f), "GameOver");
-            bg.rectTransform.Fill();
-            bg.raycastTarget = true;
-            group = bg.gameObject.AddComponent<CanvasGroup>();
-            group.alpha = 0f;
-            group.blocksRaycasts = group.interactable = false;
-            group.ignoreParentGroups = true;   // independent of the HUD fade
+            bestCrossed = true;
+            badgeTime = time;
+            UIAudio.Play(Sfx.NewBest, 0.9f);
+            PlaceBadge();
+            Vector2 at = scoreText.rectTransform.anchoredPosition;
+            UIConfetti.Burst(confetti, at, Gold, 44, 700f);
+            UIConfetti.Burst(confetti, stampRt.anchoredPosition, new Color(1f, 0.95f, 0.6f), 24, 420f);
+        }
 
-            text = UIFactory.Label(bg.transform, "", 40, TextAnchor.MiddleCenter, Color.white);
-            text.rectTransform.Fill();
-            text.gameObject.AddComponent<GlitchText>().burstChance = 0.6f;
-
-            essenceText = UIFactory.Label(bg.transform, "", 30, TextAnchor.MiddleCenter, new Color(0.85f, 0.55f, 1f), FontStyle.Bold, "Essence");
-            essenceText.rectTransform.Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 250), new Vector2(1400, 50));
-
-            var restart = UIFactory.Button(bg.transform, "RESTART", new Color(0.1f, 0.42f, 0.55f, 0.95f), () => game.Restart(), out _, 32);
-            ((RectTransform)restart.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(-190, 150), new Vector2(340, 80));
-            var menu = UIFactory.Button(bg.transform, "MAIN MENU", UIFactory.Theme.buttonColor, () => game.ToMainMenu(), out _, 32);
-            ((RectTransform)menu.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(190, 150), new Vector2(340, 80));
+        // Keep the badge just to the right of the (changing-width) score number.
+        private void PlaceBadge()
+        {
+            float half = Mathf.Min(scoreText.preferredWidth, scoreText.rectTransform.rect.width) * 0.5f;
+            var s = scoreText.rectTransform.anchoredPosition;
+            stampRt.anchoredPosition = new Vector2(s.x + half + 10f, s.y + 72f);   // sticker on the top-right of the number
         }
     }
 }

@@ -44,6 +44,8 @@ namespace Soulbreak.Perks
         private readonly Dictionary<PerkDefinition, int> stacks = new Dictionary<PerkDefinition, int>();
         private PerkContext context;
 
+        public void SetCatalog(PerkDefinition[] newCatalog) => catalog = newCatalog;
+
         private void Awake() => context = new PerkContext { Stats = stats, Reactor = reactor, Wallet = wallet, Weapons = weapons };
 
         public void Open()

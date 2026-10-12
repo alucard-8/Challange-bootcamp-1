@@ -27,6 +27,14 @@ namespace Soulbreak.Player
             if (CooldownRemaining <= 0f) OnReady?.Invoke();
         }
 
+        // Tutorial / cheats: make it ready right now.
+        public void ResetCooldown()
+        {
+            if (CooldownRemaining <= 0f) return;
+            CooldownRemaining = 0f;
+            OnReady?.Invoke();
+        }
+
         // Only fires if something is in range, so it isn't wasted between waves.
         public bool TryUse()
         {

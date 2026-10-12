@@ -13,13 +13,16 @@ namespace Soulbreak.Audio
         [SerializeField, Range(0f, 1f)] private float startIntensity = 0.15f;
 
         private const int Rate = 44100;
-        private static readonly int[][] Chords =
+        // Variant 0 (Soul Reactor): Am - F - C - G, square arp.
+        // Variant 1 (Star Core):   Dm - Bb - F - C (spacey), soft sine arp with shimmer.
+        private static readonly int[][][] Progressions =
         {
-            new[] { 57, 60, 64 },   // Am
-            new[] { 53, 57, 60 },   // F
-            new[] { 48, 52, 55 },   // C
-            new[] { 55, 59, 62 },   // G
+            new[] { new[] { 57, 60, 64 }, new[] { 53, 57, 60 }, new[] { 48, 52, 55 }, new[] { 55, 59, 62 } },
+            new[] { new[] { 50, 53, 57 }, new[] { 46, 50, 53 }, new[] { 53, 57, 60 }, new[] { 48, 52, 55 } },
         };
+
+        private volatile int variant;
+        public void SetVariant(int v) => variant = Mathf.Clamp(v, 0, Progressions.Length - 1);
 
         // Written from the main thread, read on the audio thread.
         private volatile float targetIntensity;
@@ -46,6 +49,15 @@ namespace Soulbreak.Audio
             src.volume = volume;
             src.ignoreListenerPause = true;
             src.Play();
+            source = src;
+        }
+
+        private AudioSource source;
+
+        // Follow the music volume setting live.
+        private void Update()
+        {
+            if (source != null) source.volume = volume * Core.GameSettings.Music;
         }
 
         private static float MidiToHz(int midi) => 440f * Mathf.Pow(2f, (midi - 69) / 12f);
@@ -71,7 +83,8 @@ namespace Soulbreak.Audio
                 float stepT = (float)(t - step * secondsPerStep);   // time since this 16th started
                 int bar = (int)(step / 16 % 4);
                 int s16 = (int)(step % 16);
-                int[] chord = Chords[bar];
+                int[] chord = Progressions[variant][bar];
+                bool star = variant == 1;
 
                 // Pad: detuned saws on the chord, softly low-passed
                 float pl = 0f, pr = 0f;
@@ -116,7 +129,8 @@ namespace Soulbreak.Audio
                 // Arpeggio: chord tones cycling on 16ths
                 int arpNote = chord[s16 % 3] + 24 + (s16 % 6 >= 3 ? 12 : 0);
                 arpPhase = Frac(arpPhase + MidiToHz(arpNote) / Rate);
-                float arp = (arpPhase < 0.5f ? 1f : -1f) * Mathf.Exp(-stepT * 22f) * 0.05f * Layer(intensity, 0.5f);
+                float arpWave = star ? Mathf.Sin(arpPhase * Mathf.PI * 2f) * 1.6f : (arpPhase < 0.5f ? 1f : -1f);
+                float arp = arpWave * Mathf.Exp(-stepT * (star ? 9f : 22f)) * 0.05f * Layer(intensity, star ? 0.2f : 0.5f);
 
                 // Lead: saw an octave above the arp, only at high intensity
                 leadPhase = Frac(leadPhase + MidiToHz(arpNote + 12) / Rate);

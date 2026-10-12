@@ -6,16 +6,26 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Observer: when the run ends, converts it into Soul Essence (10% of souls earned + 5 per wave)
-    // and records the best wave.
+    public struct RunResult
+    {
+        public int Score, Essence, Wave, WavesCleared, Kills, EliteKills, BossKills, Headshots, BestStreak, SoulsEarned;
+        public float Time;
+        public bool NewBest;
+        public int PreviousBest;
+        public Difficulty Difficulty;
+    }
+
+    // Observer: when the run ends, scores it (multiplied by difficulty), awards Soul Essence,
+    // saves best/last score and publishes the full result for the game-over screen.
     public class MetaRecorder : MonoBehaviour
     {
         [SerializeField] private GameManager game;
         [SerializeField] private SoulWallet wallet;
         [SerializeField] private WaveManager waves;
+        [SerializeField] private RunStats stats;
 
-        public event Action<int> OnEssenceAwarded;
-        public int LastAward { get; private set; }
+        public event Action<RunResult> OnRunRecorded;
+        public RunResult Last { get; private set; }
 
         private void OnEnable() => game.OnStateChanged += HandleState;
         private void OnDisable() => game.OnStateChanged -= HandleState;
@@ -23,10 +33,25 @@ namespace Soulbreak.Meta
         private void HandleState(GameState state)
         {
             if (state != GameState.GameOver) return;
-            LastAward = wallet.TotalEarned / 10 + game.WavesCleared * 5;
-            MetaProgress.AddEssence(LastAward);
-            MetaProgress.RecordWave(waves.Wave);
-            OnEssenceAwarded?.Invoke(LastAward);
+
+            var diff = DifficultyTable.Current;
+            int raw = stats.Kills * 10 + stats.EliteKills * 40 + stats.BossKills * 500 + stats.Headshots * 15
+                      + stats.BestStreak * 20 + game.WavesCleared * 150 + wallet.TotalEarned;
+            int score = Mathf.RoundToInt(raw * diff.ScoreMultiplier);
+            int essence = Mathf.RoundToInt((wallet.TotalEarned / 10 + game.WavesCleared * 5) * diff.ScoreMultiplier);
+
+            int previousBest = MetaProgress.BestScore;
+            MetaProgress.AddEssence(essence);
+            bool best = MetaProgress.RecordRun(score, waves.Wave);
+
+            Last = new RunResult
+            {
+                Score = score, Essence = essence, Wave = waves.Wave, WavesCleared = game.WavesCleared,
+                Kills = stats.Kills, EliteKills = stats.EliteKills, BossKills = stats.BossKills, Headshots = stats.Headshots,
+                BestStreak = stats.BestStreak, SoulsEarned = wallet.TotalEarned, Time = game.SurvivalTime,
+                NewBest = best, PreviousBest = previousBest, Difficulty = MetaProgress.SelectedDifficulty,
+            };
+            OnRunRecorded?.Invoke(Last);
         }
     }
 }

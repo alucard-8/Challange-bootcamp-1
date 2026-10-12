@@ -1,7 +1,8 @@
 // Shop card. Same rounded glowing frame as UIPanel, plus a style-specific animated face:
 //   _Style 0 = BUFF      : holographic diagonal sheen + sparkles drifting upward + warm bottom glow
-//   _Style 1 = TECHNIQUE : scrolling circuit grid with data pulses, crackling electric border,
-//                          and the module's ring icon drawn large in the background.
+//   _Style 1 = TECHNIQUE : scrolling circuit grid with data pulses, crackling electric border.
+// Both share a card face: art window (category sigil or module icon), rarity gems, divider,
+// corner brackets; epic+ get a running border dash, legendary a rainbow foil edge.
 // _Accent is the rarity color; fill = Image color.
 Shader "Soulbreak/UICard"
 {
@@ -14,6 +15,9 @@ Shader "Soulbreak/UICard"
         _Radius ("Corner Radius (px)", Float) = 18
         _BorderWidth ("Border Width (px)", Float) = 2
         _Dim ("Dim (sold)", Range(0, 1)) = 0
+        _Rarity ("Rarity (0-3)", Float) = 0
+        _Category ("Category (0-4)", Float) = 0
+        _Hover ("Hover", Range(0, 1)) = 0
 
         _StencilComp ("Stencil Comparison", Float) = 8
         _Stencil ("Stencil ID", Float) = 0
@@ -55,7 +59,55 @@ Shader "Soulbreak/UICard"
             struct v2f { float4 pos : SV_POSITION; float4 color : COLOR; float2 uv : TEXCOORD0; };
 
             fixed4 _Accent;
-            float _Style, _Icon, _Radius, _BorderWidth, _Dim;
+            float _Style, _Icon, _Radius, _BorderWidth, _Dim, _Rarity, _Category, _Hover;
+
+            float Ring(float2 q, float r, float w) { return smoothstep(w, w * 0.4, abs(length(q) - r)); }
+            float Seg(float2 q, float2 a, float2 b, float w)
+            {
+                float2 pa = q - a, ba = b - a;
+                float h = saturate(dot(pa, ba) / dot(ba, ba));
+                return smoothstep(w, w * 0.4, length(pa - ba * h));
+            }
+
+            // Buff sigils, one per category, drawn in a unit box (q in -1..1).
+            float Sigil(float2 q, float cat, float t)
+            {
+                float v = 0.0;
+                if (cat < 0.5)        // OFFENSE: crosshair
+                {
+                    v = Ring(q, 0.55, 0.06) + Ring(q, 0.12, 0.05);
+                    v += Seg(q, float2(0, 0.3), float2(0, 0.95), 0.06) + Seg(q, float2(0, -0.3), float2(0, -0.95), 0.06);
+                    v += Seg(q, float2(0.3, 0), float2(0.95, 0), 0.06) + Seg(q, float2(-0.3, 0), float2(-0.95, 0), 0.06);
+                }
+                else if (cat < 1.5)   // ECONOMY: faceted soul gem
+                {
+                    float dm = abs(q.x) + abs(q.y * 0.8);
+                    v = smoothstep(0.06, 0.02, abs(dm - 0.8)) + smoothstep(0.42, 0.38, dm) * 0.6;
+                    v += Seg(q, float2(-0.8, 0), float2(0.8, 0), 0.04) * 0.7;
+                }
+                else if (cat < 2.5)   // DEFENSE: hex shield
+                {
+                    float2 a = abs(q);
+                    float hex = max(a.x * 0.866 + a.y * 0.5, a.y);
+                    v = smoothstep(0.07, 0.02, abs(hex - 0.8)) + smoothstep(0.06, 0.02, abs(hex - 0.5)) * 0.6;
+                }
+                else if (cat < 3.5)   // ABILITY: four-point star
+                {
+                    float2 a = abs(q);
+                    float star = pow(a.x, 0.5) + pow(a.y, 0.5);
+                    v = smoothstep(1.02, 0.95, star) * (0.6 + 0.4 * sin(t * 4.0)) + Ring(q, 0.75, 0.04) * 0.5;
+                }
+                else                  // WEAPON: up-chevrons
+                {
+                    float2 r = float2(abs(q.x), q.y);
+                    for (int k = 0; k < 3; k++)
+                    {
+                        float y = 0.55 - k * 0.5 + frac(t * 0.6) * 0.1;
+                        v += Seg(r, float2(0, y), float2(0.7, y - 0.45), 0.08) * (1.0 - k * 0.25);
+                    }
+                }
+                return saturate(v);
+            }
 
             float Hash(float2 p) { p = frac(p * float2(123.34, 456.21)); p += dot(p, p + 45.32); return frac(p.x * p.y); }
 
@@ -119,11 +171,6 @@ Shader "Soulbreak/UICard"
                     float pulse = smoothstep(0.15, 0.0, abs(frac(g.y * 0.25 - t * 0.8 + Hash(float2(gc.x, 0))) - 0.5));
                     col += accent * line_ * (0.06 + 0.25 * lit * pulse);
 
-                    float2 iconCenter = float2(0.0, size.y * 0.06);
-                    float2 iq = (p - iconCenter) / (size.x * 0.3);
-                    iq = float2(iq.y, -iq.x) * float2(-1, 1);   // rotate so "outward" points up
-                    float icon = SoulbreakIcon(iq, _Icon, t);
-                    col += accent * icon * 0.22;
 
                     float scan = smoothstep(6.0, 0.0, abs(p.y - (frac(t * 0.35) * 2.0 - 1.0) * size.y * 0.6));
                     col += accent * scan * 0.12;
@@ -133,8 +180,62 @@ Shader "Soulbreak/UICard"
                     borderCol = accent * (1.0 + n * 1.5);
                 }
 
+                // ---------- Card face: art window, sigil, rarity gems, divider ----------
+                float top = size.y * 0.5;
+                float2 wc = float2(0.0, top - 116.0);
+                float2 wh = float2(size.x * 0.5 - 18.0, 64.0);
+                float2 wq = abs(p - wc) - (wh - 10.0);
+                float wd = length(max(wq, 0.0)) + min(max(wq.x, wq.y), 0.0) - 10.0;
+                float win = saturate(0.5 - wd);
+                float2 wuv = (p - wc) / wh;
+                // window: darker inset with a radial glow of the accent behind the sigil
+                col = lerp(col, col * 0.3 + accent * 0.12 * exp(-dot(wuv, wuv) * 2.0), win);
+                float rays = pow(saturate(0.5 + 0.5 * sin(atan2(wuv.y, wuv.x) * 8.0 + t * 0.8)), 6.0) * exp(-length(wuv) * 1.8);
+                col += accent * rays * 0.15 * win;
+                float2 sq = (p - wc) / 50.0;
+                float art = _Style < 0.5 ? Sigil(sq, _Category, t) : SoulbreakIcon(float2(sq.y, -sq.x) * float2(-1, 1) * 1.3, _Icon, t);
+                col += accent * art * (1.3 + 0.3 * sin(t * 2.0)) * win;
+                col += accent * smoothstep(2.0, 0.0, abs(wd)) * 0.9;             // window frame line
+
+                // rarity gems under the window: filled = rarity + 1
+                for (int gi = 0; gi < 4; gi++)
+                {
+                    float2 gp = p - float2((gi - 1.5) * 20.0, top - 194.0);
+                    float gd = abs(gp.x) + abs(gp.y);
+                    float filled = step((float)gi, _Rarity + 0.5);
+                    col += accent * smoothstep(7.5, 6.0, gd) * lerp(0.15, 1.6, filled);
+                }
+
+                // ornament divider between name and description
+                float dy = abs(p.y - (top - 254.0));
+                float dline = smoothstep(1.5, 0.0, dy) * smoothstep(size.x * 0.4, size.x * 0.1, abs(p.x));
+                float ddia = smoothstep(6.0, 4.5, abs(p.x) + dy);
+                col += accent * (dline * 0.6 + ddia * 1.2);
+
+                // corner brackets
+                float2 cq = abs(p) - (size * 0.5 - 12.0);
+                float brk = (step(abs(cq.x), 1.2) * step(-22.0, cq.y) * step(cq.y, 0.0))
+                          + (step(abs(cq.y), 1.2) * step(-22.0, cq.x) * step(cq.x, 0.0));
+                col += accent * saturate(brk) * 0.9;
+
+                // rarity border: epic+ get a bright dash running around the edge, legendary is rainbow foil
+                float ang = atan2(p.y, p.x) / 6.2831 + 0.5;
+                if (_Rarity > 1.5)
+                {
+                    float dash = smoothstep(0.08, 0.0, abs(frac(ang - t * 0.25) - 0.5) - 0.42);
+                    borderCol += float3(1, 1, 1) * dash * 1.5;
+                    bw += dash * 1.5;
+                }
+                if (_Rarity > 2.5)
+                    borderCol = lerp(borderCol, 0.6 + 0.6 * cos(6.2831 * (ang * 2.0 + t * 0.3 + float3(0.0, 0.33, 0.67))), 0.55) * 1.4;
+
+                // hover: thicker, brighter edge and a lifted face
+                bw += _Hover * 1.5;
+                borderCol *= 1.0 + _Hover * 0.6;
+                col *= 1.0 + _Hover * 0.08;
+
                 float border = saturate(bw + 0.5 + d) * inside;
-                float edgeGlow = exp(-max(-d, 0.0) / 20.0) * 0.35;
+                float edgeGlow = exp(-max(-d, 0.0) / 20.0) * (0.35 + _Hover * 0.4);
                 col = lerp(col + accent * edgeGlow, borderCol * 1.2, border);
                 col = lerp(col, dot(col, float3(0.3, 0.59, 0.11)) * 0.5, _Dim);
 
