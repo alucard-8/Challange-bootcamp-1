@@ -19,6 +19,19 @@ namespace Soulbreak.Perks
         [Min(0)] public int maxStacks = 0;
         public PerkEffect[] effects;
 
+        // A "technique" perk installs a weapon module; everything else is a buff.
+        public WeaponModulePerkEffect TechniqueEffect
+        {
+            get
+            {
+                foreach (var e in effects)
+                    if (e is WeaponModulePerkEffect w) return w;
+                return null;
+            }
+        }
+
+        public bool IsTechnique => TechniqueEffect != null;
+
         public void Apply(PerkContext context)
         {
             foreach (var effect in effects)

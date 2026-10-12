@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8431428311907122763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dffba37912225d94a851e0d97727f36a, type: 3}
+  m_Name: Patch Up - ReactorPerkEffect
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.ReactorPerkEffect
+  action: 0
+  amount: 3
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20,18 +34,4 @@ MonoBehaviour:
   costGrowth: 15
   maxStacks: 0
   effects:
-  - {fileID: 645727167283040339}
---- !u!114 &645727167283040339
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dffba37912225d94a851e0d97727f36a, type: 3}
-  m_Name: Patch Up - ReactorPerkEffect
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.ReactorPerkEffect
-  action: 0
-  amount: 3
+  - {fileID: -8431428311907122763}

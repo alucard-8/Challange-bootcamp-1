@@ -47,27 +47,10 @@ Shader "Soulbreak/RingSegment"
                 float _Pop;
             CBUFFER_END
 
+            #include "SoulbreakIcons.hlsl"
             #define TAU 6.2831853
 
-            float Circle(float2 q, float2 c, float r) { return smoothstep(r, r - 0.06, length(q - c)); }
-
-            // Triangle pointing to +x, centred at c.
-            float Tri(float2 q, float2 c, float s)
-            {
-                q = (q - c) / s;
-                float inside = step(-0.5, q.x) * step(q.x, 0.5) * step(abs(q.y), (0.5 - q.x) * 0.75);
-                float outline = inside * (1.0 - step(-0.3, q.x) * step(q.x, 0.3) * step(abs(q.y), (0.3 - q.x) * 0.6));
-                return outline;
-            }
-
-            float Icon(float2 q)
-            {
-                if (_Icon < 0.5) return Circle(q, 0, 0.12) * 0.5;                                    // basic: small dot
-                if (_Icon < 1.5) return Circle(q, float2(0.35, 0), 0.2) + Circle(q, float2(-0.25, 0.38), 0.2)
-                                      + Circle(q, float2(-0.25, -0.38), 0.2);                       // triple shot
-                if (_Icon < 2.5) return saturate(smoothstep(0.08, 0.0, abs(length(q) - 0.48)) + Circle(q, 0, 0.18)); // cannon
-                return saturate(Tri(q, float2(0.0, 0.4), 0.7) + Tri(q, float2(0.0, -0.4), 0.7));    // seekers
-            }
+            float Icon(float2 q) { return SoulbreakIcon(q, _Icon, _Time.y); }
 
             half4 frag(Varyings i) : SV_Target
             {

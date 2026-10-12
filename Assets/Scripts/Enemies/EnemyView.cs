@@ -16,7 +16,7 @@ namespace Soulbreak.Enemies
         private Enemy enemy;
         private SpriteRenderer sr;
         private MaterialPropertyBlock block;
-        private float flash;
+        private float flash, appear;
 
         private void Awake()
         {
@@ -44,6 +44,14 @@ namespace Soulbreak.Enemies
 
         private void Update()
         {
+            // Spawn-in: grow from nothing with a small overshoot.
+            if (appear < 1f)
+            {
+                appear = Mathf.Min(1f, appear + Time.deltaTime * 3f);
+                float s = 1f + 2.2f * Mathf.Pow(appear - 1f, 3f) + 1.2f * Mathf.Pow(appear - 1f, 2f);
+                transform.localScale = Vector3.one * enemy.Config.size * s;
+            }
+
             if (flash <= 0f) return;
             flash = Mathf.Max(0f, flash - Time.deltaTime * 10f);
             Apply();

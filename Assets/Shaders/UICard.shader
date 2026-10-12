@@ -1,0 +1,147 @@
+// Shop card. Same rounded glowing frame as UIPanel, plus a style-specific animated face:
+//   _Style 0 = BUFF      : holographic diagonal sheen + sparkles drifting upward + warm bottom glow
+//   _Style 1 = TECHNIQUE : scrolling circuit grid with data pulses, crackling electric border,
+//                          and the module's ring icon drawn large in the background.
+// _Accent is the rarity color; fill = Image color.
+Shader "Soulbreak/UICard"
+{
+    Properties
+    {
+        [PerRendererData] _MainTex ("Sprite Texture", 2D) = "white" {}
+        _Accent ("Accent", Color) = (0.45, 0.85, 1, 1)
+        _Style ("Style (0 buff, 1 technique)", Float) = 0
+        _Icon ("Icon", Float) = 0
+        _Radius ("Corner Radius (px)", Float) = 18
+        _BorderWidth ("Border Width (px)", Float) = 2
+        _Dim ("Dim (sold)", Range(0, 1)) = 0
+
+        _StencilComp ("Stencil Comparison", Float) = 8
+        _Stencil ("Stencil ID", Float) = 0
+        _StencilOp ("Stencil Operation", Float) = 0
+        _StencilWriteMask ("Stencil Write Mask", Float) = 255
+        _StencilReadMask ("Stencil Read Mask", Float) = 255
+        _ColorMask ("Color Mask", Float) = 15
+    }
+
+    SubShader
+    {
+        Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "PreviewType"="Plane" "CanUseSpriteAtlas"="True" }
+
+        Stencil
+        {
+            Ref [_Stencil]
+            Comp [_StencilComp]
+            Pass [_StencilOp]
+            ReadMask [_StencilReadMask]
+            WriteMask [_StencilWriteMask]
+        }
+
+        Cull Off
+        Lighting Off
+        ZWrite Off
+        ZTest [unity_GUIZTestMode]
+        Blend SrcAlpha OneMinusSrcAlpha
+        ColorMask [_ColorMask]
+
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            #include "SoulbreakIcons.hlsl"
+
+            struct appdata { float4 vertex : POSITION; float4 color : COLOR; float2 uv : TEXCOORD0; };
+            struct v2f { float4 pos : SV_POSITION; float4 color : COLOR; float2 uv : TEXCOORD0; };
+
+            fixed4 _Accent;
+            float _Style, _Icon, _Radius, _BorderWidth, _Dim;
+
+            float Hash(float2 p) { p = frac(p * float2(123.34, 456.21)); p += dot(p, p + 45.32); return frac(p.x * p.y); }
+
+            v2f vert(appdata v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.color = v.color;
+                #if !defined(UNITY_COLORSPACE_GAMMA)
+                o.color.rgb = GammaToLinearSpace(v.color.rgb);
+                #endif
+                o.uv = v.uv;
+                return o;
+            }
+
+            fixed4 frag(v2f i) : SV_Target
+            {
+                float t = _Time.y;
+                float2 fw = max(fwidth(i.uv), 1e-5);
+                float2 size = 1.0 / fw;
+                float2 p = (i.uv - 0.5) * size;
+
+                float r = min(_Radius, min(size.x, size.y) * 0.5);
+                float2 q = abs(p) - (size * 0.5 - r);
+                float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
+                float inside = saturate(0.5 - d);
+
+                float3 accent = _Accent.rgb;
+                float3 col = i.color.rgb * lerp(0.75, 1.25, i.uv.y);
+                float bw = _BorderWidth;
+                float3 borderCol = accent;
+
+                if (_Style < 0.5)
+                {
+                    // ---------- BUFF: holographic sheen + rising sparkles ----------
+                    float diag = (i.uv.x + i.uv.y) * 0.5;
+                    float sweepPos = frac(t * 0.25) * 2.2 - 0.6;
+                    float sheen = smoothstep(0.12, 0.0, abs(diag - sweepPos));
+                    float3 holo = 0.5 + 0.5 * cos(6.2831 * (diag * 1.5 + t * 0.1 + float3(0.0, 0.33, 0.67)));
+                    col += sheen * lerp(accent, holo, 0.5) * 0.35;
+
+                    float2 cellP = (p + float2(0.0, -t * 40.0)) / 34.0;
+                    float2 cell = floor(cellP);
+                    float h = Hash(cell);
+                    float2 spot = float2(Hash(cell + 7.1), Hash(cell + 3.7)) * 0.7 + 0.15;
+                    float sparkle = smoothstep(0.12, 0.0, length(frac(cellP) - spot)) * step(0.72, h);
+                    sparkle *= 0.5 + 0.5 * sin(t * 6.0 + h * 40.0);
+                    sparkle *= smoothstep(1.0, 0.3, i.uv.y);
+                    col += accent * sparkle * 0.9;
+
+                    col += accent * pow(saturate(1.0 - i.uv.y), 3.0) * 0.35;   // warm glow from below
+                }
+                else
+                {
+                    // ---------- TECHNIQUE: circuit grid + data pulses + big icon + electric border ----------
+                    float2 g = p / 26.0 + float2(0.0, t * 0.6);
+                    float2 gl = abs(frac(g) - 0.5);
+                    float line_ = smoothstep(0.04, 0.0, min(gl.x, gl.y) - 0.0);
+                    float2 gc = floor(g);
+                    float lit = step(0.6, Hash(gc + floor(t * 2.0) * 0.01));
+                    float pulse = smoothstep(0.15, 0.0, abs(frac(g.y * 0.25 - t * 0.8 + Hash(float2(gc.x, 0))) - 0.5));
+                    col += accent * line_ * (0.06 + 0.25 * lit * pulse);
+
+                    float2 iconCenter = float2(0.0, size.y * 0.06);
+                    float2 iq = (p - iconCenter) / (size.x * 0.3);
+                    iq = float2(iq.y, -iq.x) * float2(-1, 1);   // rotate so "outward" points up
+                    float icon = SoulbreakIcon(iq, _Icon, t);
+                    col += accent * icon * 0.22;
+
+                    float scan = smoothstep(6.0, 0.0, abs(p.y - (frac(t * 0.35) * 2.0 - 1.0) * size.y * 0.6));
+                    col += accent * scan * 0.12;
+
+                    float n = Hash(float2(floor(atan2(p.y, p.x) * 20.0), floor(t * 18.0)));
+                    bw += n * 2.5;
+                    borderCol = accent * (1.0 + n * 1.5);
+                }
+
+                float border = saturate(bw + 0.5 + d) * inside;
+                float edgeGlow = exp(-max(-d, 0.0) / 20.0) * 0.35;
+                col = lerp(col + accent * edgeGlow, borderCol * 1.2, border);
+                col = lerp(col, dot(col, float3(0.3, 0.59, 0.11)) * 0.5, _Dim);
+
+                float a = inside * max(i.color.a, border);
+                return fixed4(col, a);
+            }
+            ENDCG
+        }
+    }
+}

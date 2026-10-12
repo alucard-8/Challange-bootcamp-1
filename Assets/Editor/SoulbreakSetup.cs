@@ -28,9 +28,30 @@ namespace Soulbreak.EditorTools
         private const string EnemyDir = "Assets/Data/Enemies";
         private const string PerkDir = "Assets/Data/Perks";
 
+        private const string GameScenePath = "Assets/Scenes/SampleScene.unity";
+        private const string MenuScenePath = "Assets/Scenes/MainMenu.unity";
+
+        // Builds the game scene, then the main menu scene, then registers both in Build Settings.
+        [MenuItem("Soulbreak/Setup Everything")]
+        public static void RunAll()
+        {
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            EditorSceneManager.OpenScene(GameScenePath);
+            Run();
+            BuildMainMenu();
+            EditorBuildSettings.scenes = new[]
+            {
+                new EditorBuildSettingsScene(MenuScenePath, true),
+                new EditorBuildSettingsScene(GameScenePath, true),
+            };
+            Debug.Log("SOULBREAK: everything set up. Main menu is scene 0.");
+        }
+
         [MenuItem("Soulbreak/Setup Scene")]
         public static void Run()
         {
+            UIThemeAsset();
+            pauseProfile = PauseProfileAsset();
             Folder("Assets", "Art"); Folder(Art, "Materials"); Folder("Assets", "Data");
             Folder("Assets/Data", "Enemies"); Folder("Assets/Data", "Perks");
 
@@ -46,6 +67,7 @@ namespace Soulbreak.EditorTools
             needleMat = tracerMat;
             Shots(quad, orbMat);
             SetReloadTimes();
+            Techniques(quad, orbMat);
 
             var roster = Enemies(quad, enemyMat, orbMat, out var boss);
             var perks = Perks();
@@ -56,10 +78,104 @@ namespace Soulbreak.EditorTools
             Debug.Log("SOULBREAK: scene setup complete.");
         }
 
+        // ---------------- Main menu scene ----------------
+        [MenuItem("Soulbreak/Setup Main Menu")]
+        public static void BuildMainMenu()
+        {
+            var quad = SquareSprite();
+            var mats = new
+            {
+                orb = Mat("Orb", "Soulbreak/Orb"), ring = Mat("Ring", "Soulbreak/Ring"), enemy = Mat("Enemy", "Soulbreak/Enemy"),
+                reactor = Mat("Reactor", "Soulbreak/Reactor"), tracer = Mat("Tracer", "Soulbreak/Tracer"),
+                bg = Mat("Background", "Soulbreak/Background"), seg = Mat("RingSegment", "Soulbreak/RingSegment"),
+            };
+            UIThemeAsset();
+            var profile = AssetDatabase.LoadAssetAtPath<VolumeProfile>("Assets/Settings/SoulbreakVolume.asset") ?? VolumeProfileAsset();
+
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+            var camGo = new GameObject("Main Camera", typeof(Camera), typeof(UniversalAdditionalCameraData));
+            camGo.tag = "MainCamera";
+            camGo.transform.position = new Vector3(0, 0, -10);
+            var cam = camGo.GetComponent<Camera>();
+            cam.orthographic = true; cam.orthographicSize = 6f;
+            cam.clearFlags = CameraClearFlags.SolidColor; cam.backgroundColor = new Color(0.02f, 0.015f, 0.05f);
+            camGo.GetComponent<UniversalAdditionalCameraData>().renderPostProcessing = true;
+
+            var bg = new GameObject("Background").AddComponent<SpriteRenderer>();
+            bg.sprite = quad; bg.sharedMaterial = mats.bg; bg.sortingOrder = -100;
+            bg.transform.localScale = new Vector3(44f, 26f, 1f);
+
+            var vol = new GameObject("Global Volume").AddComponent<Volume>();
+            vol.isGlobal = true; vol.sharedProfile = profile;
+
+            new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+
+            var reactor = new GameObject("Reactor").AddComponent<SpriteRenderer>();
+            reactor.transform.position = new Vector3(0, 0.1f, 0);
+            reactor.transform.localScale = Vector3.one * 2.3f;
+            reactor.sprite = quad; reactor.sharedMaterial = mats.reactor; reactor.sortingOrder = 1;
+
+            var amb = new GameObject("MenuAmbience").AddComponent<Soulbreak.Menu.MenuAmbience>();
+            Set(amb, "reactor", reactor.transform); Set(amb, "cam", cam); Set(amb, "quad", quad);
+            Set(amb, "enemyMaterial", mats.enemy); Set(amb, "segmentMaterial", mats.seg); Set(amb, "ringMaterial", mats.ring);
+            Set(amb, "orbMaterial", mats.orb); Set(amb, "tracerMaterial", mats.tracer);
+            var ambSo = new SerializedObject(amb); ambSo.FindProperty("ringDiameter").floatValue = 4.1f; ambSo.ApplyModifiedPropertiesWithoutUndo();
+
+            var view = new GameObject("MainMenu").AddComponent<Soulbreak.Menu.MainMenuView>();
+            Set(view, "ambience", amb);
+
+            EditorSceneManager.SaveScene(scene, MenuScenePath);
+        }
+
+        private static VolumeProfile pauseProfile;
+
+        // Heavy desaturated, vignetted, warped look blended in while paused.
+        private static VolumeProfile PauseProfileAsset()
+        {
+            const string path = "Assets/Settings/PauseVolume.asset";
+            AssetDatabase.DeleteAsset(path);
+            var profile = ScriptableObject.CreateInstance<VolumeProfile>();
+            AssetDatabase.CreateAsset(profile, path);
+
+            var color = profile.Add<ColorAdjustments>(true);
+            color.saturation.Override(-85f);
+            color.postExposure.Override(-0.5f);
+            color.contrast.Override(15f);
+            var vignette = profile.Add<Vignette>(true);
+            vignette.intensity.Override(0.6f);
+            vignette.color.Override(new Color(0.08f, 0f, 0.15f));
+            var ca = profile.Add<ChromaticAberration>(true);
+            ca.intensity.Override(0.8f);
+            var lens = profile.Add<LensDistortion>(true);
+            lens.intensity.Override(-0.35f);
+            lens.scale.Override(1.05f);
+
+            foreach (var c in profile.components) AssetDatabase.AddObjectToAsset(c, profile);
+            EditorUtility.SetDirty(profile);
+            return profile;
+        }
+
+        private static void UIThemeAsset()
+        {
+            Folder("Assets", "Resources");
+            var mat = Mat("UIPanel", "Soulbreak/UIPanel");
+            const string path = "Assets/Resources/UITheme.asset";
+            var theme = AssetDatabase.LoadAssetAtPath<UITheme>(path);
+            if (theme == null) { theme = ScriptableObject.CreateInstance<UITheme>(); AssetDatabase.CreateAsset(theme, path); }
+            theme.panelMaterial = mat;
+            theme.cardMaterial = Mat("UICard", "Soulbreak/UICard");
+            EditorUtility.SetDirty(theme);
+        }
+
         // ---------------- Assets ----------------
         private static Material segmentMat, needleMat;
         private static ShotPattern basicShot;
         private static ProjectileShotPattern tripleShot, cannonShot, seekerShot;
+        private static ChainShotPattern chainShot;
+        private static BeamShotPattern lanceShot;
+        private static OrbitShotPattern bladesShot;
+        private static VortexShotPattern vortexShot;
 
         private static void Shots(Sprite quad, Material orbMat)
         {
@@ -93,6 +209,34 @@ namespace Soulbreak.EditorTools
             tripleShot = P("TripleShot", "Triple Shot", 1, new Color(0.6f, 3f, 1.4f), 3, 16f, 18f, 0.45f, 1f, 18f, false, 0f, false);
             cannonShot = P("SoulCannon", "Soul Cannon", 2, new Color(2.4f, 0.9f, 4f), 1, 0f, 8f, 1.3f, 3f, 30f, true, 1.8f, false);
             seekerShot = P("SeekerSwarm", "Seeker Swarm", 3, new Color(3.2f, 2.2f, 0.5f), 3, 70f, 10f, 0.45f, 1f, 25f, false, 0f, true);
+        }
+
+        private static void Techniques(Sprite quad, Material orbMat)
+        {
+            T Load<T>(string name) where T : ShotPattern
+            {
+                string path = $"Assets/Data/Weapons/{name}.asset";
+                var a = AssetDatabase.LoadAssetAtPath<T>(path);
+                if (a == null) { a = ScriptableObject.CreateInstance<T>(); AssetDatabase.CreateAsset(a, path); }
+                EditorUtility.SetDirty(a);
+                return a;
+            }
+
+            chainShot = Load<ChainShotPattern>("ChainLightning");
+            chainShot.displayName = "Chain Lightning"; chainShot.icon = 4; chainShot.color = new Color(1.2f, 2.4f, 4.5f);
+            chainShot.reloadTime = 3.5f;
+
+            lanceShot = Load<BeamShotPattern>("PiercingLance");
+            lanceShot.displayName = "Piercing Lance"; lanceShot.icon = 5; lanceShot.color = new Color(4f, 1.2f, 1.6f);
+            lanceShot.reloadTime = 4f;
+
+            bladesShot = Load<OrbitShotPattern>("OrbitalBlades");
+            bladesShot.displayName = "Orbital Blades"; bladesShot.icon = 6; bladesShot.color = new Color(0.8f, 4f, 3f);
+            bladesShot.reloadTime = 7f; bladesShot.sprite = quad; bladesShot.material = orbMat;
+
+            vortexShot = Load<VortexShotPattern>("BlackHole");
+            vortexShot.displayName = "Black Hole"; vortexShot.icon = 7; vortexShot.color = new Color(2.2f, 0.6f, 4.5f);
+            vortexShot.reloadTime = 8f; vortexShot.sprite = quad; vortexShot.material = Mat("Vortex", "Soulbreak/Vortex");
         }
 
         private static void SetReloadTimes()
@@ -263,6 +407,11 @@ namespace Soulbreak.EditorTools
                 P("Soul Cannon Module", "Adds a Soul Cannon slot: one giant orb that explodes where you aim.", Wp, Ra, 110, 70, 3, W(cannonShot)),
                 P("Seeker Swarm Module", "Adds a Seeker slot: 3 homing missiles hunt enemies near your cursor.", Wp, Ra, 100, 70, 3, W(seekerShot)),
 
+                P("Chain Lightning", "Technique: zap the target, then arc to 4 more enemies nearby.", Wp, Ra, 110, 70, 2, W(chainShot)),
+                P("Piercing Lance", "Technique: a giant beam that pierces everything in a line for 2x damage.", Wp, Ra, 120, 80, 2, W(lanceShot)),
+                P("Orbital Blades", "Technique: 3 blades orbit the reactor for 6s, slicing anything they touch.", Wp, Ep, 150, 100, 2, W(bladesShot)),
+                P("Black Hole", "Technique: a vortex pulls enemies in, grinds them, then implodes for 3x damage.", Wp, Ep, 170, 110, 2, W(vortexShot)),
+
                 // Legendary
                 P("Soul Reaper", "+2 damage, +50% soul gain and +1 max shield.", O, L, 300, 200, 1,
                   S(StatType.Damage, 2), S(StatType.SoulGain, 0.5f), R(ReactorAction.AddMaxShield, 1)),
@@ -300,7 +449,7 @@ namespace Soulbreak.EditorTools
                                        PerkDefinition[] perks, VolumeProfile profile)
         {
             var scene = EditorSceneManager.GetActiveScene();
-            foreach (var n in new[] { "Systems", "Background", "Global Volume", "EventSystem" })
+            foreach (var n in new[] { "Systems", "Background", "Global Volume", "Pause Volume", "EventSystem" })
             {
                 var old = GameObject.Find(n);
                 if (old != null) Object.DestroyImmediate(old);
@@ -368,6 +517,9 @@ namespace Soulbreak.EditorTools
             var shake = Get<CameraShake>(cam.gameObject);
             var weapons = Sys<Weapons.WeaponRing>("WeaponRing");
             Set(weapons, "basicShot", basicShot);
+            var wso = new SerializedObject(weapons);
+            wso.FindProperty("maxSlots").intValue = 12;
+            wso.ApplyModifiedPropertiesWithoutUndo();
 
             var ringView = new GameObject("WeaponRingView").AddComponent<Weapons.WeaponRingView>();
             ringView.transform.SetParent(sys);
@@ -378,6 +530,16 @@ namespace Soulbreak.EditorTools
             Set(shooter, "weapons", weapons);
             Set(shop, "weapons", weapons);
             Set(gm, "weapons", weapons);
+
+            // Pause: controller (time) + effect (post-processing) + menu (UI)
+            var pauseVol = new GameObject("Pause Volume").AddComponent<Volume>();
+            pauseVol.isGlobal = true; pauseVol.priority = 10f; pauseVol.weight = 0f; pauseVol.sharedProfile = pauseProfile;
+            var pause = Sys<PauseController>("PauseController");
+            Set(pause, "game", gm);
+            var pauseFx = Sys<PauseEffect>("PauseEffect");
+            Set(pauseFx, "pause", pause); Set(pauseFx, "volume", pauseVol);
+            var pauseMenu = Sys<PauseMenuView>("PauseMenu");
+            Set(pauseMenu, "pause", pause); Set(pauseMenu, "game", gm); Set(pauseMenu, "waves", waves); Set(pauseMenu, "wallet", wallet);
 
             var admin = Sys<AdminCheats>("AdminCheats");
             Set(admin, "shop", shop); Set(admin, "wallet", wallet);

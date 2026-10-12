@@ -21,6 +21,9 @@ namespace Soulbreak.Weapons
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() => OnAnyExploded = null;
 
+        // Lets other weapon objects (e.g. the black hole) reuse the explosion event/visual.
+        public static void RaiseExplosion(Vector2 pos, float radius, Color color) => OnAnyExploded?.Invoke(pos, radius, color);
+
         public static void Spawn(ProjectileShotPattern pattern, Vector2 origin, Vector2 dir, Vector2 target, int damage, bool crit)
         {
             var go = new GameObject(pattern.displayName);

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffb3c7d274e168a4386a8a8c82dd1366, type: 3}
+  m_Name: UITheme
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.UI.UITheme
+  osFontName: Bahnschrift
+  panelMaterial: {fileID: 2100000, guid: 114ea36cacba4c3479cde7847b4eceb1, type: 2}
+  cardMaterial: {fileID: 2100000, guid: 86dd08bb4eb348e4c968cba42fbdb5e3, type: 2}
+  panelColor: {r: 0.05, g: 0.03, b: 0.11, a: 0.78}
+  buttonColor: {r: 0.16, g: 0.1, b: 0.3, a: 0.95}
+  accent: {r: 0.45, g: 0.85, b: 1, a: 1}
+  soul: {r: 0.78, g: 0.5, b: 1, a: 1}

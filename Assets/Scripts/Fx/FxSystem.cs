@@ -40,6 +40,8 @@ namespace Soulbreak.Fx
             Orb.OnAnyCollected += HandleOrbCollected;
             EnemyProjectile.OnAnyShotDown += HandleProjectileShotDown;
             PlayerProjectile.OnAnyExploded += HandleExplosion;
+            ChainShotPattern.OnChain += HandleChain;
+            BeamShotPattern.OnBeam += HandleBeam;
         }
 
         private void OnDisable()
@@ -51,6 +53,8 @@ namespace Soulbreak.Fx
             Orb.OnAnyCollected -= HandleOrbCollected;
             EnemyProjectile.OnAnyShotDown -= HandleProjectileShotDown;
             PlayerProjectile.OnAnyExploded -= HandleExplosion;
+            ChainShotPattern.OnChain -= HandleChain;
+            BeamShotPattern.OnBeam -= HandleBeam;
         }
 
         private void HandleShot(Vector2 from, Vector2 to, bool crit, ShotPattern pattern)
@@ -68,6 +72,20 @@ namespace Soulbreak.Fx
         }
 
         private void HandleExplosion(Vector2 pos, float radius, Color color) => Ring(pos, color, 0.4f, radius * 2.2f, 0.4f, 0.12f);
+
+        private void HandleChain(System.Collections.Generic.List<Vector2> points, Color color)
+        {
+            var go = new GameObject("Lightning", typeof(LineRenderer), typeof(LightningFx));
+            go.GetComponent<LightningFx>().Init(points, tracerMaterial, color, 0.28f, 0.3f);
+            for (int i = 1; i < points.Count; i++) Ring(points[i], color, 0.2f, 1.4f, 0.3f);
+        }
+
+        private void HandleBeam(Vector2 from, Vector2 to, float width, Color color)
+        {
+            var go = new GameObject("Lance", typeof(LineRenderer), typeof(TracerFx));
+            go.GetComponent<TracerFx>().Init(from, to, tracerMaterial, color, width * 3.5f, 0.35f);
+            Ring(from, color, 0.5f, 2.2f, 0.3f);
+        }
 
         private void HandleNova(Vector2 center, float radius) => Ring(center, novaColor, 0.5f, radius * 2.2f, 0.6f, 0.08f);
 

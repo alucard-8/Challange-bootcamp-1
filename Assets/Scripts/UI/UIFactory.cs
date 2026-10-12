@@ -8,7 +8,48 @@ namespace Soulbreak.UI
     public static class UIFactory
     {
         private static Font font;
-        public static Font Font => font != null ? font : (font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
+        private static UITheme theme;
+
+        public static UITheme Theme
+        {
+            get
+            {
+                if (theme == null) theme = Resources.Load<UITheme>("UITheme");
+                if (theme == null) theme = ScriptableObject.CreateInstance<UITheme>();
+                return theme;
+            }
+        }
+
+        public static Font Font
+        {
+            get
+            {
+                if (font != null) return font;
+                string wanted = Theme.osFontName;
+                if (!string.IsNullOrEmpty(wanted) && Array.IndexOf(Font.GetOSInstalledFontNames(), wanted) >= 0)
+                    font = Font.CreateDynamicFontFromOSFont(wanted, 32);
+                if (font == null) font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                return font;
+            }
+        }
+
+        // A themed panel: rounded corners + glowing animated border (UIPanel shader).
+        public static Image StyledPanel(Transform parent, Color fill, Color? border = null, string name = "Panel",
+                                        float radius = 14f, bool uniqueMaterial = false)
+        {
+            var img = Panel(parent, fill, name);
+            var mat = Theme.panelMaterial;
+            if (mat == null) return img;
+
+            if (uniqueMaterial || border.HasValue || radius != 14f)
+            {
+                mat = new Material(mat);
+                if (border.HasValue) mat.SetColor("_BorderColor", border.Value);
+                mat.SetFloat("_Radius", radius);
+            }
+            img.material = mat;
+            return img;
+        }
 
         public static Canvas Canvas(string name, Transform parent, int sortOrder)
         {
@@ -81,11 +122,9 @@ namespace Soulbreak.UI
 
         public static Button Button(Transform parent, string label, Color color, Action onClick, out Text text, int fontSize = 28)
         {
-            var img = Panel(parent, color, label + " Button");
+            var img = StyledPanel(parent, color, Color.Lerp(color, Color.white, 0.55f), label + " Button", 12f);
             img.raycastTarget = true;
-            var outline = img.gameObject.AddComponent<Outline>();
-            outline.effectColor = new Color(1f, 1f, 1f, 0.25f);
-            outline.effectDistance = new Vector2(2f, -2f);
+            img.gameObject.AddComponent<UIButtonFx>();
 
             var btn = img.gameObject.AddComponent<Button>();
             var colors = btn.colors;

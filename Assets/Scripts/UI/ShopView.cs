@@ -37,8 +37,11 @@ namespace Soulbreak.UI
             public Image Background, RarityBar;
             public Text Category, Name, Description, Owned, Rarity, Hotkey, ButtonText;
             public Button Buy;
-            public CanvasGroup Group;
+            public CanvasGroup Group, Intro;
         }
+
+        private readonly List<Vector2> cardBase = new List<Vector2>();
+        private float showTime;
 
         private CanvasGroup group;
         private Text titleText, soulsText, rerollText;
@@ -67,13 +70,26 @@ namespace Soulbreak.UI
         private void Update()
         {
             if (!shop.IsOpen) return;
+            if (Time.timeScale > 0f)
+                for (int i = 0; i < cards.Count; i++)
+                    if (InputReader.PerkPressed(i)) shop.TryBuy(i);
+
+            // Open animation: overlay fades in, cards fly up one after another.
+            showTime += Time.unscaledDeltaTime;
+            group.alpha = Mathf.Clamp01(showTime * 4f);
             for (int i = 0; i < cards.Count; i++)
-                if (InputReader.PerkPressed(i)) shop.TryBuy(i);
+            {
+                float t = Mathf.Clamp01((showTime - 0.12f - i * 0.07f) / 0.45f);
+                float ease = 1f - Mathf.Pow(1f - t, 3f);
+                cards[i].Intro.alpha = ease;
+                cards[i].Root.anchoredPosition = cardBase[i] + Vector2.down * 120f * (1f - ease);
+            }
         }
 
         private void Show()
         {
-            group.alpha = 1f;
+            showTime = 0f;
+            group.alpha = 0f;
             group.blocksRaycasts = group.interactable = true;
             Refresh();
         }
@@ -113,9 +129,19 @@ namespace Soulbreak.UI
                 bool affordable = wallet.Souls >= offer.Cost;
 
                 card.RarityBar.color = rarity;
+                // Buff cards and technique cards get different animated faces (UICard shader).
+                var technique = perk.TechniqueEffect;
+                var mat = card.Background.material;
+                if (mat != null && mat.HasProperty("_Style"))
+                {
+                    mat.SetColor("_Accent", technique != null && technique.module != null ? (Color)technique.module.color * 0.45f + rarity * 0.55f : rarity);
+                    mat.SetFloat("_Style", technique != null ? 1f : 0f);
+                    mat.SetFloat("_Icon", technique != null && technique.module != null ? technique.module.icon : 0f);
+                    mat.SetFloat("_Dim", offer.Sold ? 1f : 0f);
+                }
                 card.Rarity.text = perk.rarity.ToString().ToUpper();
                 card.Rarity.color = rarity;
-                card.Category.text = perk.category.ToString().ToUpper();
+                card.Category.text = perk.IsTechnique ? "TECHNIQUE" : $"BUFF  -  {perk.category.ToString().ToUpper()}";
                 card.Category.color = cat;
                 card.Name.text = perk.displayName;
                 card.Description.text = perk.description;
@@ -135,9 +161,13 @@ namespace Soulbreak.UI
 
             const float w = 310f, gap = 28f;
             float total = cards.Count * w + (cards.Count - 1) * gap;
+            cardBase.Clear();
             for (int i = 0; i < cards.Count; i++)
-                cards[i].Root.Place(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
-                                    new Vector2(-total / 2f + w / 2f + i * (w + gap), 0f), new Vector2(w, 440f));
+            {
+                var pos = new Vector2(-total / 2f + w / 2f + i * (w + gap), 0f);
+                cards[i].Root.Place(new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), pos, new Vector2(w, 440f));
+                cardBase.Add(pos);
+            }
         }
 
         // ---------- Layout ----------
@@ -151,6 +181,7 @@ namespace Soulbreak.UI
 
             titleText = UIFactory.Label(bg.transform, "SOUL SHOP", 78, TextAnchor.MiddleCenter, Color.white, FontStyle.Bold);
             titleText.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -60), new Vector2(1200, 100));
+            titleText.gameObject.AddComponent<GlitchText>().burstChance = 0.5f;
             var sub = UIFactory.Label(bg.transform, "Spend souls on perks. Press 1-5 or click to buy.", 26, TextAnchor.MiddleCenter, new Color(1, 1, 1, 0.55f));
             sub.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -150), new Vector2(1200, 40));
             soulsText = UIFactory.Label(bg.transform, "0 SOULS", 44, TextAnchor.MiddleCenter, new Color(0.78f, 0.5f, 1f), FontStyle.Bold);
@@ -171,38 +202,44 @@ namespace Soulbreak.UI
         private Card MakeCard(int index)
         {
             var c = new Card();
-            c.Background = UIFactory.Panel(cardRow, new Color(0.07f, 0.05f, 0.13f, 0.97f), $"Card{index}");
-            c.Root = c.Background.rectTransform;
-            c.Group = c.Root.gameObject.AddComponent<CanvasGroup>();
-            var outline = c.Root.gameObject.AddComponent<Outline>();
-            outline.effectColor = new Color(1f, 1f, 1f, 0.12f);
-            outline.effectDistance = new Vector2(2f, -2f);
+            // Wrapper handles the fly-in alpha; the card itself handles sold-dimming and hover.
+            var holder = UIFactory.Rect($"Card{index}", cardRow);
+            c.Root = holder;
+            c.Intro = holder.gameObject.AddComponent<CanvasGroup>();
 
-            c.RarityBar = UIFactory.Panel(c.Root, Color.white, "RarityBar");
-            c.RarityBar.rectTransform.anchorMin = new Vector2(0, 1);
-            c.RarityBar.rectTransform.anchorMax = new Vector2(1, 1);
+            c.Background = UIFactory.Panel(holder, new Color(0.07f, 0.05f, 0.13f, 0.97f), "Body");
+            if (UIFactory.Theme.cardMaterial != null) c.Background.material = new Material(UIFactory.Theme.cardMaterial);
+            c.Background.rectTransform.Fill();
+            c.Background.raycastTarget = true;
+            c.Group = c.Background.gameObject.AddComponent<CanvasGroup>();
+            c.Background.gameObject.AddComponent<UIButtonFx>().hoverScale = 1.04f;
+
+            c.RarityBar = UIFactory.StyledPanel(c.Background.transform, Color.white, new Color(1, 1, 1, 0), "RarityBar", 4f, true);
+            c.RarityBar.rectTransform.anchorMin = new Vector2(0.08f, 1);
+            c.RarityBar.rectTransform.anchorMax = new Vector2(0.92f, 1);
             c.RarityBar.rectTransform.pivot = new Vector2(0.5f, 1);
-            c.RarityBar.rectTransform.sizeDelta = new Vector2(0, 10);
-            c.RarityBar.rectTransform.anchoredPosition = Vector2.zero;
+            c.RarityBar.rectTransform.sizeDelta = new Vector2(0, 8);
+            c.RarityBar.rectTransform.anchoredPosition = new Vector2(0, -10);
+            var parent = c.Background.rectTransform;
 
-            c.Category = UIFactory.Label(c.Root, "", 20, TextAnchor.UpperLeft, Color.white, FontStyle.Bold);
-            c.Category.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(22, -26), new Vector2(180, 26));
-            c.Rarity = UIFactory.Label(c.Root, "", 20, TextAnchor.UpperRight, Color.white, FontStyle.Bold);
+            c.Category = UIFactory.Label(parent, "", 17, TextAnchor.UpperLeft, Color.white, FontStyle.Bold);
+            c.Category.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(22, -26), new Vector2(200, 26));
+            c.Rarity = UIFactory.Label(parent, "", 17, TextAnchor.UpperRight, Color.white, FontStyle.Bold);
             c.Rarity.rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-22, -26), new Vector2(160, 26));
 
-            c.Name = UIFactory.Label(c.Root, "", 34, TextAnchor.UpperLeft, Color.white, FontStyle.Bold);
+            c.Name = UIFactory.Label(parent, "", 34, TextAnchor.UpperLeft, Color.white, FontStyle.Bold);
             c.Name.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(22, -64), new Vector2(266, 90));
 
-            c.Description = UIFactory.Label(c.Root, "", 23, TextAnchor.UpperLeft, new Color(1, 1, 1, 0.75f));
+            c.Description = UIFactory.Label(parent, "", 23, TextAnchor.UpperLeft, new Color(1, 1, 1, 0.75f));
             c.Description.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(22, -160), new Vector2(266, 150));
 
-            c.Owned = UIFactory.Label(c.Root, "", 20, TextAnchor.LowerLeft, new Color(1, 1, 1, 0.45f));
+            c.Owned = UIFactory.Label(parent, "", 20, TextAnchor.LowerLeft, new Color(1, 1, 1, 0.45f));
             c.Owned.rectTransform.Place(new Vector2(0, 0), new Vector2(0, 0), new Vector2(22, 100), new Vector2(200, 26));
-            c.Hotkey = UIFactory.Label(c.Root, "", 20, TextAnchor.LowerRight, new Color(1, 1, 1, 0.45f));
+            c.Hotkey = UIFactory.Label(parent, "", 20, TextAnchor.LowerRight, new Color(1, 1, 1, 0.45f));
             c.Hotkey.rectTransform.Place(new Vector2(1, 0), new Vector2(1, 0), new Vector2(-22, 100), new Vector2(80, 26));
 
             int captured = index;
-            c.Buy = UIFactory.Button(c.Root, "BUY", new Color(0.35f, 0.2f, 0.55f), () => shop.TryBuy(captured), out c.ButtonText);
+            c.Buy = UIFactory.Button(parent, "BUY", new Color(0.35f, 0.2f, 0.55f), () => shop.TryBuy(captured), out c.ButtonText);
             ((RectTransform)c.Buy.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0, 22), new Vector2(266, 64));
             return c;
         }

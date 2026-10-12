@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4c384538207d414aa847ca183dc4b14, type: 3}
+  m_Name: ChainLightning
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Weapons.ChainShotPattern
+  displayName: Chain Lightning
+  icon: 4
+  color: {r: 1.2, g: 2.4, b: 4.5, a: 1}
+  drawsTracer: 0
+  reloadTime: 3.5
+  jumps: 4
+  firstHitRadius: 1.1
+  jumpRadius: 3.8
+  falloff: 0.85
+  damageMultiplier: 1.5

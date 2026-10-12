@@ -28,10 +28,10 @@ namespace Soulbreak.UI
         private RectTransform root;
         private Text waveText, waveSubText, healthText, shieldText, soulsText, reloadText, novaText, comboText, bannerText, gameOverText;
         private RectTransform healthFill, reloadFill, novaFill, comboFill, ammoRow, shieldRow;
-        private CanvasGroup bannerGroup, gameOverGroup;
+        private CanvasGroup bannerGroup, gameOverGroup, hudGroup;
         private readonly List<Image> ammoPips = new List<Image>();
         private readonly List<Image> shieldPips = new List<Image>();
-        private float bannerTimer;
+        private float bannerTimer, bannerPunch;
         private int displayedSouls, targetSouls;
 
         private void Awake() => Build();
@@ -122,13 +122,14 @@ namespace Soulbreak.UI
         private void HandleState(GameState state)
         {
             if (state != GameState.GameOver) return;
-            gameOverGroup.alpha = 1f;
+            gameOverGroup.alpha = 0.01f;   // Update fades it in
+            gameOverGroup.blocksRaycasts = gameOverGroup.interactable = true;
             gameOverText.text =
                 "<size=90><b>REACTOR DESTROYED</b></size>\n\n" +
                 $"Waves cleared  <b>{gameManager.WavesCleared}</b>\n" +
                 $"Time survived  <b>{gameManager.SurvivalTime:0}s</b>\n" +
                 $"Souls banked  <b>{wallet.Souls}</b>\n\n" +
-                "<size=34>Press R to restart</size>";
+                "<size=30>R  restart</size>\n\n\n\n";
         }
 
         // ---------- Per-frame (timers only) ----------
@@ -143,8 +144,12 @@ namespace Soulbreak.UI
                 soulsText.text = $"{displayedSouls}";
             }
 
-            reloadText.text = ammo.IsReloading ? "RELOADING" : "R / RMB to reload";
-            reloadText.color = ammo.IsReloading ? Gold : new Color(1f, 1f, 1f, 0.35f);
+            // HUD steps aside while the shop is open.
+            float hudTarget = gameManager.State == GameState.Shop ? 0f : 1f;
+            hudGroup.alpha = Mathf.MoveTowards(hudGroup.alpha, hudTarget, Time.unscaledDeltaTime * 4f);
+
+            reloadText.text = ammo.IsReloading ? "RELOADING" : ammo.Current == 0 ? "R / RMB to reload" : "";
+            reloadText.color = ammo.IsReloading ? Gold : new Color(1f, 1f, 1f, 0.5f);
             UIFactory.SetBar(reloadFill, ammo.IsReloading ? ammo.ReloadProgress : 0f);
 
             float novaReady = nova.Cooldown > 0f ? 1f - nova.CooldownRemaining / nova.Cooldown : 1f;
@@ -159,6 +164,11 @@ namespace Soulbreak.UI
                 bannerTimer -= Time.unscaledDeltaTime;
                 bannerGroup.alpha = Mathf.Clamp01(bannerTimer * 2f);
             }
+            bannerPunch = Mathf.Max(0f, bannerPunch - Time.unscaledDeltaTime * 3f);
+            bannerText.rectTransform.localScale = Vector3.one * (1f + 0.35f * bannerPunch * bannerPunch);
+
+            if (gameOverGroup.alpha > 0f && gameOverGroup.alpha < 1f)
+                gameOverGroup.alpha = Mathf.Min(1f, gameOverGroup.alpha + Time.unscaledDeltaTime * 2f);
         }
 
         private void ShowBanner(string text, Color color, float duration)
@@ -167,6 +177,7 @@ namespace Soulbreak.UI
             bannerText.color = color;
             bannerTimer = duration;
             bannerGroup.alpha = 1f;
+            bannerPunch = 1f;
         }
 
         private static void Pips(RectTransform row, List<Image> pips, int count, float size, float gap, float height = 0f)
@@ -189,11 +200,13 @@ namespace Soulbreak.UI
         private void Build()
         {
             root = (RectTransform)UIFactory.Canvas("HUD Canvas", transform, 0).transform;
+            hudGroup = root.gameObject.AddComponent<CanvasGroup>();
+            hudGroup.blocksRaycasts = false;
             var white = Color.white;
             var panel = new Color(0.05f, 0.03f, 0.1f, 0.65f);
 
             // Top-left: wave + core
-            var tl = UIFactory.Panel(root, panel, "WavePanel").rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(24, -24), new Vector2(430, 210));
+            var tl = UIFactory.StyledPanel(root, panel, null, "WavePanel").rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(24, -24), new Vector2(430, 210));
             waveText = UIFactory.Label(tl, "WAVE 1", 54, TextAnchor.UpperLeft, white, FontStyle.Bold);
             waveText.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(20, -10), new Vector2(400, 64));
             waveSubText = UIFactory.Label(tl, "Get ready", 22, TextAnchor.UpperLeft, new Color(1, 1, 1, 0.6f));
@@ -208,7 +221,7 @@ namespace Soulbreak.UI
             shieldRow = UIFactory.Rect("ShieldPips", tl).Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(130, -174), new Vector2(278, 28));
 
             // Top-right: souls
-            var tr = UIFactory.Panel(root, panel, "SoulPanel").rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-24, -24), new Vector2(300, 110));
+            var tr = UIFactory.StyledPanel(root, panel, Soul, "SoulPanel").rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-24, -24), new Vector2(300, 110));
             UIFactory.Label(tr, "SOULS", 22, TextAnchor.UpperRight, new Color(1, 1, 1, 0.6f)).rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-20, -10), new Vector2(260, 28));
             soulsText = UIFactory.Label(tr, "0", 56, TextAnchor.UpperRight, Soul, FontStyle.Bold);
             soulsText.rectTransform.Place(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-20, -36), new Vector2(260, 64));
@@ -235,7 +248,7 @@ namespace Soulbreak.UI
             reloadText.rectTransform.Place(new Vector2(0.5f, 1), new Vector2(0.5f, 1), new Vector2(0, -76), new Vector2(400, 28));
 
             // Bottom-right: nova
-            var br = UIFactory.Panel(root, panel, "NovaPanel").rectTransform.Place(new Vector2(1, 0), new Vector2(1, 0), new Vector2(-24, 24), new Vector2(300, 80));
+            var br = UIFactory.StyledPanel(root, panel, Cyan, "NovaPanel").rectTransform.Place(new Vector2(1, 0), new Vector2(1, 0), new Vector2(-24, 24), new Vector2(300, 80));
             novaText = UIFactory.Label(br, "NOVA", 26, TextAnchor.MiddleLeft, Cyan, FontStyle.Bold);
             novaText.rectTransform.Place(new Vector2(0, 1), new Vector2(0, 1), new Vector2(18, -8), new Vector2(270, 34));
             var nb = UIFactory.Bar(br, new Color(0, 0, 0, 0.6f), Cyan, "NovaBar");
@@ -252,8 +265,17 @@ namespace Soulbreak.UI
             gameOverGroup = go.gameObject.AddComponent<CanvasGroup>();
             gameOverGroup.alpha = 0f;
             gameOverGroup.blocksRaycasts = false;
+            gameOverGroup.ignoreParentGroups = true;   // independent of the HUD fade
+            go.raycastTarget = true;
+            gameOverGroup.interactable = false;
             gameOverText = UIFactory.Label(go.transform, "", 40, TextAnchor.MiddleCenter, white);
             gameOverText.rectTransform.Fill();
+            gameOverText.gameObject.AddComponent<GlitchText>().burstChance = 0.6f;
+
+            var restart = UIFactory.Button(go.transform, "RESTART", new Color(0.1f, 0.42f, 0.55f, 0.95f), () => gameManager.Restart(), out _, 32);
+            ((RectTransform)restart.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(-190, 150), new Vector2(340, 80));
+            var menu = UIFactory.Button(go.transform, "MAIN MENU", UIFactory.Theme.buttonColor, () => gameManager.ToMainMenu(), out _, 32);
+            ((RectTransform)menu.transform).Place(new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(190, 150), new Vector2(340, 80));
         }
     }
 }

@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &29850022
+--- !u!1 &7302576
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,48 +127,44 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 29850024}
-  - component: {fileID: 29850023}
+  - component: {fileID: 7302578}
+  - component: {fileID: 7302577}
   m_Layer: 0
-  m_Name: PlayerShooter
+  m_Name: AmmoSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &29850023
+--- !u!114 &7302577
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 29850022}
+  m_GameObject: {fileID: 7302576}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cadf4215c351024186e38bf3df96b9e, type: 3}
+  m_Script: {fileID: 11500000, guid: 69a46c986d0bff643bc339c8bdcc983b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Player.PlayerShooter
-  stats: {fileID: 1722536782}
-  ammo: {fileID: 923975245}
-  weapons: {fileID: 569565755}
-  muzzle: {fileID: 1752002930}
-  cam: {fileID: 519420031}
---- !u!4 &29850024
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Player.AmmoSystem
+  stats: {fileID: 1715958552}
+--- !u!4 &7302578
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 29850022}
+  m_GameObject: {fileID: 7302576}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &346428967
+--- !u!1 &58180117
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,69 +172,87 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 346428970}
-  - component: {fileID: 346428969}
-  - component: {fileID: 346428968}
+  - component: {fileID: 58180118}
+  - component: {fileID: 58180119}
   m_Layer: 0
-  m_Name: EventSystem
+  m_Name: PauseMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &346428968
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 346428967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
-  m_SendPointerHoverToParent: 1
-  m_MoveRepeatDelay: 0.5
-  m_MoveRepeatRate: 0.1
-  m_XRTrackingOrigin: {fileID: 0}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_DeselectOnBackgroundClick: 1
-  m_PointerBehavior: 0
-  m_CursorLockBehavior: 0
-  m_ScrollDeltaPerTick: 6
---- !u!114 &346428969
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 346428967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
-  m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
-  m_DragThreshold: 10
---- !u!4 &346428970
+--- !u!4 &58180118
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 346428967}
+  m_GameObject: {fileID: 58180117}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &58180119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58180117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e6a2ea523efbc0449f3a5347ebc3902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.UI.PauseMenuView
+  pause: {fileID: 696873728}
+  game: {fileID: 1508151602}
+  waves: {fileID: 165417768}
+  wallet: {fileID: 782536877}
+--- !u!1 &130117953
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 130117955}
+  - component: {fileID: 130117954}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &130117954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130117953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: e9daa1e708cfd6044b83ee4883c72722, type: 2}
+--- !u!4 &130117955
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 130117953}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -247,7 +261,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &358249467
+--- !u!1 &165417767
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -255,45 +269,70 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 358249468}
-  - component: {fileID: 358249469}
+  - component: {fileID: 165417769}
+  - component: {fileID: 165417768}
   m_Layer: 0
-  m_Name: ShopView
+  m_Name: WaveManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &358249468
+--- !u!114 &165417768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165417767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b57ef64871572794187e01010b9ab000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Enemies.WaveManager
+  target: {fileID: 1752002930}
+  roster:
+  - config: {fileID: 11400000, guid: 81bb031ba0a1f874b8c0df9886d7a4b0, type: 2}
+    firstWave: 1
+    weight: 10
+  - config: {fileID: 11400000, guid: 1b6eefb653f136c4da1235df4209eea1, type: 2}
+    firstWave: 2
+    weight: 6
+  - config: {fileID: 11400000, guid: e4318f3e55657a64eadabd3633038f0f, type: 2}
+    firstWave: 3
+    weight: 3
+  - config: {fileID: 11400000, guid: 2e83aeecd29f48c44a172d2110e2acde, type: 2}
+    firstWave: 4
+    weight: 3
+  - config: {fileID: 11400000, guid: 1681b68e67b22f244ab8a2c1bba7379e, type: 2}
+    firstWave: 5
+    weight: 3
+  bossConfig: {fileID: 11400000, guid: 83d61a3cc10f4df43b25260bbf6145ef, type: 2}
+  bossEvery: 5
+  spawnRadius: 12
+  baseCount: 8
+  countPerWave: 3
+  baseInterval: 0.9
+  intervalPerWave: 0.05
+  minInterval: 0.25
+  healthGrowth: 0.1
+  speedGrowth: 0.03
+--- !u!4 &165417769
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 358249467}
+  m_GameObject: {fileID: 165417767}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &358249469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 358249467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 352064137526be745a99783227a16d39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.UI.ShopView
-  shop: {fileID: 630596599}
-  wallet: {fileID: 1771595771}
---- !u!1 &407439711
+--- !u!1 &321429172
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -301,44 +340,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 407439712}
-  - component: {fileID: 407439713}
+  - component: {fileID: 321429174}
+  - component: {fileID: 321429173}
   m_Layer: 0
-  m_Name: ReactorHealer
+  m_Name: NovaAbility
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &407439712
+--- !u!114 &321429173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321429172}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4200f48c0b09b9f40963ac380385dad8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Player.NovaAbility
+  center: {fileID: 1752002930}
+  stats: {fileID: 1715958552}
+  damage: 99
+--- !u!4 &321429174
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 407439711}
+  m_GameObject: {fileID: 321429172}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &407439713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 407439711}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f703eca716b39464da03d1c84630578b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Reactor.ReactorHealer
-  reactor: {fileID: 1752002927}
---- !u!1 &497008050
+--- !u!1 &341015217
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -346,51 +387,193 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 497008051}
-  - component: {fileID: 497008052}
+  - component: {fileID: 341015218}
+  - component: {fileID: 341015219}
   m_Layer: 0
-  m_Name: WeaponRingView
+  m_Name: PauseEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &497008051
+--- !u!4 &341015218
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497008050}
+  m_GameObject: {fileID: 341015217}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &497008052
+--- !u!114 &341015219
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 497008050}
+  m_GameObject: {fileID: 341015217}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cdd475da99063242a2054c18866df20, type: 3}
+  m_Script: {fileID: 11500000, guid: a3f0c21f686c0dd4ea4aaecba7abb912, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Weapons.WeaponRingView
-  ring: {fileID: 569565755}
-  shooter: {fileID: 29850023}
-  quad: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
-  segmentMaterial: {fileID: 2100000, guid: f2bc4c57ebe7f0d46836b120a1c30ad2, type: 2}
-  needleMaterial: {fileID: 2100000, guid: 8188052072cdbd748ab7283319c8a09c, type: 2}
-  diameter: 4.2
-  basicColor: {r: 0.5, g: 0.75, b: 1.2, a: 1}
-  loadingColor: {r: 0.9, g: 0.9, b: 1.4, a: 1}
-  needleColor: {r: 1.5, g: 2.5, b: 4, a: 1}
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Fx.PauseEffect
+  pause: {fileID: 696873728}
+  volume: {fileID: 492672861}
+--- !u!1 &391242198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 391242200}
+  - component: {fileID: 391242199}
+  m_Layer: 0
+  m_Name: ComboSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &391242199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391242198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7325c43810e80be4ba10119fbc95eb58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Economy.ComboSystem
+  stats: {fileID: 1715958552}
+  bonusPerKill: 0.05
+  maxMultiplier: 2
+--- !u!4 &391242200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 391242198}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &466250791
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 466250792}
+  m_Layer: 0
+  m_Name: Systems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &466250792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466250791}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1715958553}
+  - {fileID: 7302578}
+  - {fileID: 1645472202}
+  - {fileID: 321429174}
+  - {fileID: 165417769}
+  - {fileID: 1318730914}
+  - {fileID: 1677366663}
+  - {fileID: 391242200}
+  - {fileID: 782536878}
+  - {fileID: 879784067}
+  - {fileID: 1470445682}
+  - {fileID: 1584778505}
+  - {fileID: 1508151603}
+  - {fileID: 1846044849}
+  - {fileID: 1758555380}
+  - {fileID: 1838842314}
+  - {fileID: 1186122584}
+  - {fileID: 2105476664}
+  - {fileID: 696873729}
+  - {fileID: 341015218}
+  - {fileID: 58180118}
+  - {fileID: 989479071}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &492672860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 492672862}
+  - component: {fileID: 492672861}
+  m_Layer: 0
+  m_Name: Pause Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &492672861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492672860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 10
+  blendDistance: 0
+  weight: 0
+  sharedProfile: {fileID: 11400000, guid: b61784d94adf9a24f8bdf6363cec02f4, type: 2}
+--- !u!4 &492672862
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492672860}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -542,113 +725,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Fx.CameraShake
   reactor: {fileID: 1752002927}
-  nova: {fileID: 733553694}
+  nova: {fileID: 321429173}
   maxOffset: 0.35
   decay: 1.8
---- !u!1 &531880419
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 531880420}
-  - component: {fileID: 531880421}
-  m_Layer: 0
-  m_Name: FxSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &531880420
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 531880419}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1981756519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &531880421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 531880419}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88638f21f6759b046b72c525d2fdb8f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Fx.FxSystem
-  shooter: {fileID: 29850023}
-  nova: {fileID: 733553694}
-  reactor: {fileID: 1752002927}
-  quad: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
-  ringMaterial: {fileID: 2100000, guid: f318b9d751623814984e0027bd038f3e, type: 2}
-  tracerMaterial: {fileID: 2100000, guid: 8188052072cdbd748ab7283319c8a09c, type: 2}
-  enemyMaterial: {fileID: 2100000, guid: fb236d30924c61e43a992b87da4856f2, type: 2}
-  shotColor: {r: 1.2, g: 2.2, b: 4, a: 1}
-  critColor: {r: 4, g: 2.4, b: 0.6, a: 1}
-  novaColor: {r: 1.5, g: 2.5, b: 4, a: 1}
-  shieldHitColor: {r: 0.6, g: 2.5, b: 3, a: 1}
-  coreHitColor: {r: 4, g: 0.5, b: 0.5, a: 1}
---- !u!1 &569565754
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 569565756}
-  - component: {fileID: 569565755}
-  m_Layer: 0
-  m_Name: WeaponRing
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &569565755
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 569565754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45c87b4a81d0cef47869febd3cb52dad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Weapons.WeaponRing
-  basicShot: {fileID: 11400000, guid: 61a9b972a36ebb64d86f75c77b82c82d, type: 2}
-  minSlots: 5
-  maxSlots: 10
-  rotationSpeed: 12
---- !u!4 &569565756
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 569565754}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1981756519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -753,7 +832,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &630596598
+--- !u!1 &696873727
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -761,80 +840,45 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 630596600}
-  - component: {fileID: 630596599}
+  - component: {fileID: 696873729}
+  - component: {fileID: 696873728}
   m_Layer: 0
-  m_Name: PerkShop
+  m_Name: PauseController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &630596599
+--- !u!114 &696873728
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 630596598}
+  m_GameObject: {fileID: 696873727}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36c1f8504ff13af4ebcb97e709fef82c, type: 3}
+  m_Script: {fileID: 11500000, guid: ab81286f834692b4baca828a1206e681, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.PerkShop
-  catalog:
-  - {fileID: 11400000, guid: edd4105de07860243aca3b4d934f1d67, type: 2}
-  - {fileID: 11400000, guid: 0748e120698f5434d932c07ab848acc0, type: 2}
-  - {fileID: 11400000, guid: 011f75d3c53f9694c9382ffa3cae7cd4, type: 2}
-  - {fileID: 11400000, guid: cbc47eb1b0461ca458d82f053fc88513, type: 2}
-  - {fileID: 11400000, guid: d0ec5fd9229867242b586e30c40e54f0, type: 2}
-  - {fileID: 11400000, guid: 1f4ba31b6263ed64bac5d43e59dad1aa, type: 2}
-  - {fileID: 11400000, guid: 14eb6494c1fe5924da606b03a4acd14a, type: 2}
-  - {fileID: 11400000, guid: f535af7dbf1f2b64cbe74865c5d8ce36, type: 2}
-  - {fileID: 11400000, guid: cc64bc90752ef0b4baa5a3376e45450d, type: 2}
-  - {fileID: 11400000, guid: bbd3f6b95387c03469ef936f4f4b8bbb, type: 2}
-  - {fileID: 11400000, guid: 61f2e80c75a9df64e8b3afc9a047350c, type: 2}
-  - {fileID: 11400000, guid: 41334f7b439c3824ba40141b327dcfec, type: 2}
-  - {fileID: 11400000, guid: 981f1c833d229d240a38a114f45fb164, type: 2}
-  - {fileID: 11400000, guid: 5a4a19334cde3364194e0d378528a506, type: 2}
-  - {fileID: 11400000, guid: 02cba65419696cd45adf90e0b6cc6a9f, type: 2}
-  - {fileID: 11400000, guid: 6c8f03f6878fe964188340177bc1b5b7, type: 2}
-  - {fileID: 11400000, guid: dd55adcdc15c4114986a805722b8288d, type: 2}
-  - {fileID: 11400000, guid: 0c49627be4a6c5e4992ee9846a49d7f5, type: 2}
-  - {fileID: 11400000, guid: f3e2fda73715124449513089c1e46ae4, type: 2}
-  - {fileID: 11400000, guid: 6252c7e1013401f4284c9b17c8b8aa32, type: 2}
-  - {fileID: 11400000, guid: 9de9d9ea9bc366f40806b38e46ef0630, type: 2}
-  - {fileID: 11400000, guid: 6c174869dae58254ba25b3578aa018cb, type: 2}
-  - {fileID: 11400000, guid: 8c42d03ecf337b64ba74a38597dd4b48, type: 2}
-  - {fileID: 11400000, guid: c611b14ecd3738a4685cbfe528cabb6d, type: 2}
-  wallet: {fileID: 1771595771}
-  stats: {fileID: 1722536782}
-  reactor: {fileID: 1752002927}
-  weapons: {fileID: 569565755}
-  offerCount: 5
-  baseRerollCost: 15
-  rerollCostGrowth: 10
-  rarityWeights:
-  - 60
-  - 28
-  - 10
-  - 2
---- !u!4 &630596600
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.GameFlow.PauseController
+  game: {fileID: 1508151602}
+  transition: 0.35
+--- !u!4 &696873729
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 630596598}
+  m_GameObject: {fileID: 696873727}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &670242987
+--- !u!1 &782536876
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -842,47 +886,46 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 670242988}
-  - component: {fileID: 670242989}
+  - component: {fileID: 782536878}
+  - component: {fileID: 782536877}
   m_Layer: 0
-  m_Name: SoulInterest
+  m_Name: SoulWallet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &670242988
+--- !u!114 &782536877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 782536876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de2ea1a05f6555f49a1f93c8259493ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Economy.SoulWallet
+  stats: {fileID: 1715958552}
+  combo: {fileID: 391242199}
+  startingSouls: 0
+--- !u!4 &782536878
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 670242987}
+  m_GameObject: {fileID: 782536876}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &670242989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 670242987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04f1648f50218e247a22ef7f3ff967cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Economy.SoulInterest
-  waves: {fileID: 1832536043}
-  wallet: {fileID: 1771595771}
-  stats: {fileID: 1722536782}
-  payoutPoint: {fileID: 1752002930}
---- !u!1 &732914264
+--- !u!1 &807441050
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -890,104 +933,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 732914266}
-  - component: {fileID: 732914265}
-  m_Layer: 0
-  m_Name: Global Volume
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &732914265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732914264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
-  m_IsGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: e9daa1e708cfd6044b83ee4883c72722, type: 2}
---- !u!4 &732914266
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 732914264}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &733553693
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 733553695}
-  - component: {fileID: 733553694}
-  m_Layer: 0
-  m_Name: NovaAbility
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &733553694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 733553693}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4200f48c0b09b9f40963ac380385dad8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Player.NovaAbility
-  center: {fileID: 1752002930}
-  stats: {fileID: 1722536782}
-  damage: 99
---- !u!4 &733553695
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 733553693}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1981756519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &753687248
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 753687250}
-  - component: {fileID: 753687249}
+  - component: {fileID: 807441052}
+  - component: {fileID: 807441051}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -995,14 +942,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!212 &753687249
+--- !u!212 &807441051
 SpriteRenderer:
   serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 753687248}
+  m_GameObject: {fileID: 807441050}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -1055,13 +1002,13 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
   m_BlendShapeWeights: []
---- !u!4 &753687250
+--- !u!4 &807441052
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 753687248}
+  m_GameObject: {fileID: 807441050}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1070,7 +1017,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &923975244
+--- !u!1 &813884339
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1078,89 +1025,126 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 923975246}
-  - component: {fileID: 923975245}
+  - component: {fileID: 813884342}
+  - component: {fileID: 813884341}
+  - component: {fileID: 813884340}
   m_Layer: 0
-  m_Name: AmmoSystem
+  m_Name: EventSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &923975245
+--- !u!114 &813884340
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 923975244}
+  m_GameObject: {fileID: 813884339}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69a46c986d0bff643bc339c8bdcc983b, type: 3}
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Player.AmmoSystem
-  stats: {fileID: 1722536782}
---- !u!4 &923975246
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
+  m_SendPointerHoverToParent: 1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
+--- !u!114 &813884341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813884339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
+  m_FirstSelected: {fileID: 0}
+  m_sendNavigationEvents: 1
+  m_DragThreshold: 10
+--- !u!4 &813884342
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 923975244}
+  m_GameObject: {fileID: 813884339}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &879784066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 879784067}
+  - component: {fileID: 879784068}
+  m_Layer: 0
+  m_Name: SoulInterest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &879784067
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 879784066}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1156967447
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1156967448}
-  - component: {fileID: 1156967449}
-  m_Layer: 0
-  m_Name: EnemySplitter
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1156967448
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1156967447}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1981756519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1156967449
+--- !u!114 &879784068
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1156967447}
+  m_GameObject: {fileID: 879784066}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65af8ab89bbfab7489e38a8ce3b609d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 04f1648f50218e247a22ef7f3ff967cd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Enemies.EnemySplitter
-  spread: 0.6
---- !u!1 &1166563716
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Economy.SoulInterest
+  waves: {fileID: 165417768}
+  wallet: {fileID: 782536877}
+  stats: {fileID: 1715958552}
+  payoutPoint: {fileID: 1752002930}
+--- !u!1 &989479070
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1168,58 +1152,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1166563717}
-  - component: {fileID: 1166563718}
-  m_Layer: 0
-  m_Name: OrbDropper
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1166563717
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1166563716}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1981756519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1166563718
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1166563716}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba59ab1cbef14b946a62652b519c6148, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Orbs.OrbDropper
-  stats: {fileID: 1722536782}
-  orbSprite: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
-  orbMaterial: {fileID: 2100000, guid: e74f4fd2d9bf92c43ae801c8b418266a, type: 2}
-  soulColor: {r: 1.6, g: 0.7, b: 3, a: 1}
-  healColor: {r: 0.6, g: 3, b: 1.2, a: 1}
-  size: 0.7
---- !u!1 &1336996425
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1336996426}
-  - component: {fileID: 1336996427}
+  - component: {fileID: 989479071}
+  - component: {fileID: 989479072}
   m_Layer: 0
   m_Name: AdminCheats
   m_TagString: Untagged
@@ -1227,37 +1161,37 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1336996426
+--- !u!4 &989479071
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1336996425}
+  m_GameObject: {fileID: 989479070}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1336996427
+--- !u!114 &989479072
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1336996425}
+  m_GameObject: {fileID: 989479070}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75f992b490994e04794998bb0ff4dc7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.AdminCheats
-  shop: {fileID: 630596599}
-  wallet: {fileID: 1771595771}
+  shop: {fileID: 1584778504}
+  wallet: {fileID: 782536877}
   souls: 9999
---- !u!1 &1342868807
+--- !u!1 &1186122582
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1265,46 +1199,47 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1342868809}
-  - component: {fileID: 1342868808}
+  - component: {fileID: 1186122584}
+  - component: {fileID: 1186122583}
   m_Layer: 0
-  m_Name: ComboSystem
+  m_Name: WeaponRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1342868808
+--- !u!114 &1186122583
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342868807}
+  m_GameObject: {fileID: 1186122582}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7325c43810e80be4ba10119fbc95eb58, type: 3}
+  m_Script: {fileID: 11500000, guid: 45c87b4a81d0cef47869febd3cb52dad, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Economy.ComboSystem
-  stats: {fileID: 1722536782}
-  bonusPerKill: 0.05
-  maxMultiplier: 2
---- !u!4 &1342868809
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Weapons.WeaponRing
+  basicShot: {fileID: 11400000, guid: 61a9b972a36ebb64d86f75c77b82c82d, type: 2}
+  minSlots: 5
+  maxSlots: 12
+  rotationSpeed: 12
+--- !u!4 &1186122584
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342868807}
+  m_GameObject: {fileID: 1186122582}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1468669684
+--- !u!1 &1318730913
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1312,8 +1247,98 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1468669686}
-  - component: {fileID: 1468669685}
+  - component: {fileID: 1318730914}
+  - component: {fileID: 1318730915}
+  m_Layer: 0
+  m_Name: EnemySplitter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1318730914
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1318730913}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1318730915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1318730913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65af8ab89bbfab7489e38a8ce3b609d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Enemies.EnemySplitter
+  spread: 0.6
+--- !u!1 &1470445681
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1470445682}
+  - component: {fileID: 1470445683}
+  m_Layer: 0
+  m_Name: ReactorHealer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1470445682
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470445681}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1470445683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1470445681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f703eca716b39464da03d1c84630578b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Reactor.ReactorHealer
+  reactor: {fileID: 1752002927}
+--- !u!1 &1508151601
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1508151603}
+  - component: {fileID: 1508151602}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1321,39 +1346,39 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1468669685
+--- !u!114 &1508151602
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1468669684}
+  m_GameObject: {fileID: 1508151601}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a84393ad908061341b6aa26bb60e1930, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.GameFlow.GameManager
   reactor: {fileID: 1752002927}
-  waves: {fileID: 1832536043}
-  shop: {fileID: 630596599}
-  weapons: {fileID: 569565755}
+  waves: {fileID: 165417768}
+  shop: {fileID: 1584778504}
+  weapons: {fileID: 1186122583}
   firstWaveDelay: 1.5
---- !u!4 &1468669686
+--- !u!4 &1508151603
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1468669684}
+  m_GameObject: {fileID: 1508151601}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1722536781
+--- !u!1 &1584778503
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1361,8 +1386,192 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1722536783}
-  - component: {fileID: 1722536782}
+  - component: {fileID: 1584778505}
+  - component: {fileID: 1584778504}
+  m_Layer: 0
+  m_Name: PerkShop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1584778504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584778503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36c1f8504ff13af4ebcb97e709fef82c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Perks.PerkShop
+  catalog:
+  - {fileID: 11400000, guid: edd4105de07860243aca3b4d934f1d67, type: 2}
+  - {fileID: 11400000, guid: 0748e120698f5434d932c07ab848acc0, type: 2}
+  - {fileID: 11400000, guid: 011f75d3c53f9694c9382ffa3cae7cd4, type: 2}
+  - {fileID: 11400000, guid: cbc47eb1b0461ca458d82f053fc88513, type: 2}
+  - {fileID: 11400000, guid: d0ec5fd9229867242b586e30c40e54f0, type: 2}
+  - {fileID: 11400000, guid: 1f4ba31b6263ed64bac5d43e59dad1aa, type: 2}
+  - {fileID: 11400000, guid: 14eb6494c1fe5924da606b03a4acd14a, type: 2}
+  - {fileID: 11400000, guid: f535af7dbf1f2b64cbe74865c5d8ce36, type: 2}
+  - {fileID: 11400000, guid: cc64bc90752ef0b4baa5a3376e45450d, type: 2}
+  - {fileID: 11400000, guid: bbd3f6b95387c03469ef936f4f4b8bbb, type: 2}
+  - {fileID: 11400000, guid: 61f2e80c75a9df64e8b3afc9a047350c, type: 2}
+  - {fileID: 11400000, guid: 41334f7b439c3824ba40141b327dcfec, type: 2}
+  - {fileID: 11400000, guid: 981f1c833d229d240a38a114f45fb164, type: 2}
+  - {fileID: 11400000, guid: 5a4a19334cde3364194e0d378528a506, type: 2}
+  - {fileID: 11400000, guid: 02cba65419696cd45adf90e0b6cc6a9f, type: 2}
+  - {fileID: 11400000, guid: 6c8f03f6878fe964188340177bc1b5b7, type: 2}
+  - {fileID: 11400000, guid: dd55adcdc15c4114986a805722b8288d, type: 2}
+  - {fileID: 11400000, guid: 0c49627be4a6c5e4992ee9846a49d7f5, type: 2}
+  - {fileID: 11400000, guid: f3e2fda73715124449513089c1e46ae4, type: 2}
+  - {fileID: 11400000, guid: 6252c7e1013401f4284c9b17c8b8aa32, type: 2}
+  - {fileID: 11400000, guid: 9de9d9ea9bc366f40806b38e46ef0630, type: 2}
+  - {fileID: 11400000, guid: 6c174869dae58254ba25b3578aa018cb, type: 2}
+  - {fileID: 11400000, guid: 8c42d03ecf337b64ba74a38597dd4b48, type: 2}
+  - {fileID: 11400000, guid: ded4abdcfda01ae459f881c2bf2f3627, type: 2}
+  - {fileID: 11400000, guid: 89915ddcec4527e4294942fc267ee81b, type: 2}
+  - {fileID: 11400000, guid: a24c708ec03dfa140b670ffdca6510df, type: 2}
+  - {fileID: 11400000, guid: fca69a13dc0c0f84f8db2f43897ef7e0, type: 2}
+  - {fileID: 11400000, guid: c611b14ecd3738a4685cbfe528cabb6d, type: 2}
+  wallet: {fileID: 782536877}
+  stats: {fileID: 1715958552}
+  reactor: {fileID: 1752002927}
+  weapons: {fileID: 1186122583}
+  offerCount: 5
+  baseRerollCost: 15
+  rerollCostGrowth: 10
+  rarityWeights:
+  - 60
+  - 28
+  - 10
+  - 2
+--- !u!4 &1584778505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1584778503}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1645472200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1645472202}
+  - component: {fileID: 1645472201}
+  m_Layer: 0
+  m_Name: PlayerShooter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1645472201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645472200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cadf4215c351024186e38bf3df96b9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Player.PlayerShooter
+  stats: {fileID: 1715958552}
+  ammo: {fileID: 7302577}
+  weapons: {fileID: 1186122583}
+  muzzle: {fileID: 1752002930}
+  cam: {fileID: 519420031}
+--- !u!4 &1645472202
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645472200}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1677366662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1677366663}
+  - component: {fileID: 1677366664}
+  m_Layer: 0
+  m_Name: OrbDropper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1677366663
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677366662}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1677366664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1677366662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba59ab1cbef14b946a62652b519c6148, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Orbs.OrbDropper
+  stats: {fileID: 1715958552}
+  orbSprite: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
+  orbMaterial: {fileID: 2100000, guid: e74f4fd2d9bf92c43ae801c8b418266a, type: 2}
+  soulColor: {r: 1.6, g: 0.7, b: 3, a: 1}
+  healColor: {r: 0.6, g: 3, b: 1.2, a: 1}
+  size: 0.7
+--- !u!1 &1715958551
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1715958553}
+  - component: {fileID: 1715958552}
   m_Layer: 0
   m_Name: PlayerStats
   m_TagString: Untagged
@@ -1370,13 +1579,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1722536782
+--- !u!114 &1715958552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1722536781}
+  m_GameObject: {fileID: 1715958551}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e032c8561da669459c8ab8c6cbf085d, type: 3}
@@ -1413,20 +1622,20 @@ MonoBehaviour:
     value: 15
   - stat: 14
     value: 3.5
---- !u!4 &1722536783
+--- !u!4 &1715958553
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1722536781}
+  m_GameObject: {fileID: 1715958551}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1752002926
 GameObject:
@@ -1585,7 +1794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Reactor.ReactorView
   reactor: {fileID: 1752002927}
---- !u!1 &1771595770
+--- !u!1 &1758555379
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1593,126 +1802,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1771595772}
-  - component: {fileID: 1771595771}
-  m_Layer: 0
-  m_Name: SoulWallet
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1771595771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1771595770}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de2ea1a05f6555f49a1f93c8259493ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Economy.SoulWallet
-  stats: {fileID: 1722536782}
-  combo: {fileID: 1342868808}
-  startingSouls: 0
---- !u!4 &1771595772
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1771595770}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1981756519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1832536042
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1832536044}
-  - component: {fileID: 1832536043}
-  m_Layer: 0
-  m_Name: WaveManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1832536043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1832536042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b57ef64871572794187e01010b9ab000, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Enemies.WaveManager
-  target: {fileID: 1752002930}
-  roster:
-  - config: {fileID: 11400000, guid: 81bb031ba0a1f874b8c0df9886d7a4b0, type: 2}
-    firstWave: 1
-    weight: 10
-  - config: {fileID: 11400000, guid: 1b6eefb653f136c4da1235df4209eea1, type: 2}
-    firstWave: 2
-    weight: 6
-  - config: {fileID: 11400000, guid: e4318f3e55657a64eadabd3633038f0f, type: 2}
-    firstWave: 3
-    weight: 3
-  - config: {fileID: 11400000, guid: 2e83aeecd29f48c44a172d2110e2acde, type: 2}
-    firstWave: 4
-    weight: 3
-  - config: {fileID: 11400000, guid: 1681b68e67b22f244ab8a2c1bba7379e, type: 2}
-    firstWave: 5
-    weight: 3
-  bossConfig: {fileID: 11400000, guid: 83d61a3cc10f4df43b25260bbf6145ef, type: 2}
-  bossEvery: 5
-  spawnRadius: 12
-  baseCount: 8
-  countPerWave: 3
-  baseInterval: 0.9
-  intervalPerWave: 0.05
-  minInterval: 0.25
-  healthGrowth: 0.1
-  speedGrowth: 0.03
---- !u!4 &1832536044
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1832536042}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1981756519}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1967668943
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1967668944}
-  - component: {fileID: 1967668945}
+  - component: {fileID: 1758555380}
+  - component: {fileID: 1758555381}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -1720,41 +1811,41 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1967668944
+--- !u!4 &1758555380
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1967668943}
+  m_GameObject: {fileID: 1758555379}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1981756519}
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1967668945
+--- !u!114 &1758555381
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1967668943}
+  m_GameObject: {fileID: 1758555379}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05dd640f904bf2e4cb6b30e15c72fef9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.UI.HUD
   reactor: {fileID: 1752002927}
-  wallet: {fileID: 1771595771}
-  ammo: {fileID: 923975245}
-  nova: {fileID: 733553694}
-  combo: {fileID: 1342868808}
-  waves: {fileID: 1832536043}
-  gameManager: {fileID: 1468669685}
---- !u!1 &1981756518
+  wallet: {fileID: 782536877}
+  ammo: {fileID: 7302577}
+  nova: {fileID: 321429173}
+  combo: {fileID: 391242199}
+  waves: {fileID: 165417768}
+  gameManager: {fileID: 1508151602}
+--- !u!1 &1838842313
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1762,48 +1853,153 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1981756519}
+  - component: {fileID: 1838842314}
+  - component: {fileID: 1838842315}
   m_Layer: 0
-  m_Name: Systems
+  m_Name: ShopView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1981756519
+--- !u!4 &1838842314
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1981756518}
+  m_GameObject: {fileID: 1838842313}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1722536783}
-  - {fileID: 923975246}
-  - {fileID: 29850024}
-  - {fileID: 733553695}
-  - {fileID: 1832536044}
-  - {fileID: 1156967448}
-  - {fileID: 1166563717}
-  - {fileID: 1342868809}
-  - {fileID: 1771595772}
-  - {fileID: 670242988}
-  - {fileID: 407439712}
-  - {fileID: 630596600}
-  - {fileID: 1468669686}
-  - {fileID: 531880420}
-  - {fileID: 1967668944}
-  - {fileID: 358249468}
-  - {fileID: 569565756}
-  - {fileID: 497008051}
-  - {fileID: 1336996426}
-  m_Father: {fileID: 0}
+  m_Children: []
+  m_Father: {fileID: 466250792}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1838842315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838842313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 352064137526be745a99783227a16d39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.UI.ShopView
+  shop: {fileID: 1584778504}
+  wallet: {fileID: 782536877}
+--- !u!1 &1846044848
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1846044849}
+  - component: {fileID: 1846044850}
+  m_Layer: 0
+  m_Name: FxSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1846044849
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846044848}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1846044850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846044848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88638f21f6759b046b72c525d2fdb8f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Fx.FxSystem
+  shooter: {fileID: 1645472201}
+  nova: {fileID: 321429173}
+  reactor: {fileID: 1752002927}
+  quad: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
+  ringMaterial: {fileID: 2100000, guid: f318b9d751623814984e0027bd038f3e, type: 2}
+  tracerMaterial: {fileID: 2100000, guid: 8188052072cdbd748ab7283319c8a09c, type: 2}
+  enemyMaterial: {fileID: 2100000, guid: fb236d30924c61e43a992b87da4856f2, type: 2}
+  shotColor: {r: 1.2, g: 2.2, b: 4, a: 1}
+  critColor: {r: 4, g: 2.4, b: 0.6, a: 1}
+  novaColor: {r: 1.5, g: 2.5, b: 4, a: 1}
+  shieldHitColor: {r: 0.6, g: 2.5, b: 3, a: 1}
+  coreHitColor: {r: 4, g: 0.5, b: 0.5, a: 1}
+--- !u!1 &2105476663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2105476664}
+  - component: {fileID: 2105476665}
+  m_Layer: 0
+  m_Name: WeaponRingView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2105476664
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105476663}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 466250792}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2105476665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2105476663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cdd475da99063242a2054c18866df20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Weapons.WeaponRingView
+  ring: {fileID: 1186122583}
+  shooter: {fileID: 1645472201}
+  quad: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
+  segmentMaterial: {fileID: 2100000, guid: f2bc4c57ebe7f0d46836b120a1c30ad2, type: 2}
+  needleMaterial: {fileID: 2100000, guid: 8188052072cdbd748ab7283319c8a09c, type: 2}
+  diameter: 4.2
+  basicColor: {r: 0.5, g: 0.75, b: 1.2, a: 1}
+  loadingColor: {r: 0.9, g: 0.9, b: 1.4, a: 1}
+  needleColor: {r: 1.5, g: 2.5, b: 4, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1811,7 +2007,8 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 1752002930}
-  - {fileID: 753687250}
-  - {fileID: 732914266}
-  - {fileID: 346428970}
-  - {fileID: 1981756519}
+  - {fileID: 807441052}
+  - {fileID: 130117955}
+  - {fileID: 813884342}
+  - {fileID: 466250792}
+  - {fileID: 492672862}

@@ -23,7 +23,8 @@ I followed the Unity *Level up your code with design patterns and SOLID* e-book:
    perk types. Adding a perk = making an asset.
 5. **Weapon ring (Strategy again).** A ring of slots surrounds the reactor; the slot your aim passes
    through decides what your click fires. Each module is a `ShotPattern` strategy (Soul Laser,
-   Triple Shot, Soul Cannon, Seeker Swarm). Weapon perks install modules; every wave the ring rolls a
+   Triple Shot, Soul Cannon, Seeker Swarm, Chain Lightning, Piercing Lance, Orbital Blades, Black Hole).
+   In the shop, *buff* cards and *technique* cards use different animated faces (`UICard` shader). Weapon perks install modules; every wave the ring rolls a
    random number of slots (5-10) and reshuffles where the modules sit, and it slowly rotates.
 6. **Mediator for the game loop.** `WaveManager` and `PerkShop` never reference each other.
    `GameManager` connects them: wave cleared → open shop → shop closed → next wave.
@@ -48,6 +49,8 @@ I followed the Unity *Level up your code with design patterns and SOLID* e-book:
 | **Economy** | `SoulWallet`, `ComboSystem`, `SoulInterest` | `OnSoulsChanged`, `OnSoulsGained`, `OnComboChanged` | kills, orbs, `OnWaveCleared` |
 | **Perks** | `PerkShop`, `PerkDefinition`, `PerkEffect` (+ `StatPerkEffect`, `ReactorPerkEffect`) | `OnOpened`, `OnClosed`, `OnOffersChanged`, `OnPerkBought` | — |
 | **Game Flow** | `GameManager` (mediator) | `OnStateChanged` | `OnWaveCleared`, `shop.OnClosed`, `Reactor.OnDestroyed` |
+| **Pause** | `PauseController` (time), `PauseEffect` (post-processing), `PauseMenuView` (UI) | `OnPauseChanged`, `Blend` | input |
+| **Menu / Scenes** | `MainMenuView`, `MenuAmbience`, `SceneFader` | — | — |
 | **Fx** | `FxSystem`, `FxAnimator`, `TracerFx`, `CameraShake` | — | shots, kills, orbs, nova, reactor hits |
 | **UI** | `HUD`, `ShopView`, `FloatingText`, `UIFactory` | — | everything above |
 
@@ -77,13 +80,27 @@ Last enemy dead --> WaveManager.OnWaveCleared
 - **Background** — drifting nebula, rippling grid and a glow around the reactor.
 - Post-processing volume: bloom, vignette, slight chromatic aberration.
 
+## Menus & UI
+- **Main menu** scene: living backdrop (spinning weapon ring that fires and reloads, monsters vaporized
+  by the reactor, rising soul wisps, mouse parallax), glitching title, staggered intro, and a camera
+  dive into the reactor with a flash fade when you press Play.
+- **Pause (ESC)**: time eases into slow-motion then freezes; a pause volume blends in (desaturation,
+  heavy vignette, chromatic split, lens warp) while a side panel slides in. Split into three classes:
+  the controller owns time, the effect owns post-processing, the view owns UI — all driven by one
+  `Blend` value and an `OnPauseChanged` event.
+- **UIPanel shader** for every panel/button: rounded corners, glowing border with a light sweep,
+  inner glow and scanlines. Buttons scale on hover, shop cards fly in and use rarity-colored borders.
+
 ## Editor tool
-`Soulbreak → Setup Scene` (in `Assets/Editor/SoulbreakSetup.cs`) creates every asset (sprite,
-materials, 7 enemy types, 21 perks, post-processing) and wires the scene. Re-running it is safe.
+`Soulbreak → Setup Everything` (in `Assets/Editor/SoulbreakSetup.cs`) creates every asset (sprite,
+materials, enemy types, perks, weapon modules, UI theme, post-processing), wires the game scene,
+builds the main menu scene and registers both in Build Settings. Re-running it is safe.
 
 ## Controls
 - **Left click** — shoot enemies / orbs / enemy bullets
 - **R / Right click** — reload
 - **Space** — Nova blast
 - **1-5** or click — buy perks in the shop
+- **ESC / P** — pause
 - **R** — restart after game over
+- **F1** — admin: grant every perk + 9999 souls (testing)

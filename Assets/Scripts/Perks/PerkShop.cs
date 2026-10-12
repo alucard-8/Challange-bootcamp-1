@@ -110,7 +110,12 @@ namespace Soulbreak.Perks
 
         public int CostOf(PerkDefinition perk) => perk.baseCost + perk.costGrowth * GetStacks(perk);
 
-        private bool IsMaxed(PerkDefinition perk) => perk.maxStacks > 0 && GetStacks(perk) >= perk.maxStacks;
+        private bool IsMaxed(PerkDefinition perk)
+        {
+            if (perk.maxStacks > 0 && GetStacks(perk) >= perk.maxStacks) return true;
+            // No point offering techniques once every ring slot is taken.
+            return perk.IsTechnique && weapons != null && weapons.ModuleCount >= weapons.MaxSlots;
+        }
 
         private void Roll()
         {

@@ -45,6 +45,24 @@ namespace Soulbreak.Core
 #endif
         }
 
+        public static bool PausePressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && (Keyboard.current.escapeKey.wasPressedThisFrame || Keyboard.current.pKey.wasPressedThisFrame);
+#else
+            return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P);
+#endif
+        }
+
+        public static bool ConfirmPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.numpadEnterKey.wasPressedThisFrame);
+#else
+            return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter);
+#endif
+        }
+
         public static bool AdminPressed()
         {
 #if ENABLE_INPUT_SYSTEM

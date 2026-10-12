@@ -81,10 +81,17 @@ namespace Soulbreak.GameFlow
             OnStateChanged?.Invoke(state);
         }
 
-        private void Restart()
+        public void Restart() => SceneFader.LoadScene(SceneManager.GetActiveScene().name, 0.4f);
+
+        public void ToMainMenu() => SceneFader.LoadScene(SceneNames.MainMenu, 0.5f);
+
+        public static void Quit()
         {
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }

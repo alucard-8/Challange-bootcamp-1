@@ -46,7 +46,7 @@ Shader "Soulbreak/Background"
                 float2 g = abs(frac(w / _GridSize) - 0.5);
                 float grid = smoothstep(0.015, 0.0, 0.5 - max(g.x, g.y));
                 float ripple = pow(0.5 + 0.5 * sin(dist * 1.5 - t * 1.2), 4.0);
-                col += _GridColor.rgb * grid * (0.015 + 0.06 * ripple) * saturate(1.1 - dist / 12.0);
+                col += _GridColor.rgb * grid * (0.008 + 0.035 * ripple) * saturate(1.1 - dist / 12.0);
 
                 col += _ColorB.rgb * 0.6 * pow(saturate(1.0 - dist / 5.0), 2.0);
                 return half4(col, 1.0);
