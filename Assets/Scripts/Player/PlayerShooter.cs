@@ -1,17 +1,25 @@
 using System;
 using Soulbreak.Core;
+using Soulbreak.Weapons;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Soulbreak.Player
 {
-    // Turns clicks into shots. Only depends on IShootable, never on Enemy or Orb directly.
+    // Tracks the aim and turns clicks into shots. Which shot fires is decided by the weapon ring
+    // slot the aim passes through; the shot itself is a ShotPattern strategy.
     public class PlayerShooter : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private AmmoSystem ammo;
+        [SerializeField] private WeaponRing weapons;
+        [SerializeField] private Transform muzzle;
         [SerializeField] private Camera cam;
 
-        public event Action<Vector2> OnShotFired;
-        public event Action<IShootable> OnTargetHit;
+        public Vector2 AimPoint { get; private set; }
+        public Vector2 AimDirection { get; private set; } = Vector2.up;
+
+        public event Action<Vector2, Vector2, bool, ShotPattern> OnShotFired;   // (from, to, crit, pattern)
 
         private void Awake()
         {
@@ -20,18 +28,33 @@ namespace Soulbreak.Player
 
         private void Update()
         {
-            if (Time.timeScale == 0f || !InputReader.FirePressed()) return;
+            if (Time.timeScale == 0f) return;
 
-            Vector2 world = cam.ScreenToWorldPoint(InputReader.PointerPosition());
-            OnShotFired?.Invoke(world);
+            Vector2 origin = muzzle.position;
+            AimPoint = cam.ScreenToWorldPoint(InputReader.PointerPosition());
+            Vector2 toAim = AimPoint - origin;
+            if (toAim.sqrMagnitude > 0.0001f) AimDirection = toAim.normalized;
 
-            foreach (var hit in Physics2D.OverlapPointAll(world))
+            if (!InputReader.FirePressed()) return;
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+            if (!ammo.TryConsume()) return;
+
+            bool crit = UnityEngine.Random.value < stats.Get(StatType.CritChance);
+            int damage = Mathf.Max(1, Mathf.RoundToInt(stats.Get(StatType.Damage) * (crit ? stats.Get(StatType.CritMultiplier) : 1f)));
+            int slot = weapons.GetSlotIndex(AimDirection);
+            var pattern = weapons.GetPatternAt(slot);
+
+            pattern.Fire(new ShotContext
             {
-                if (!hit.TryGetComponent(out IShootable shootable)) continue;
-                shootable.Shoot(stats.Damage);
-                OnTargetHit?.Invoke(shootable);
-                return; // one target per click
-            }
+                Origin = origin,
+                Target = AimPoint,
+                Direction = AimDirection,
+                Damage = damage,
+                Crit = crit,
+                Stats = stats,
+            });
+            weapons.Consume(slot);   // module slots empty out and reload a new module
+            OnShotFired?.Invoke(origin, AimPoint, crit, pattern);
         }
     }
 }

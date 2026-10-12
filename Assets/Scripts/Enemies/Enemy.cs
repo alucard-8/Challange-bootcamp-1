@@ -4,53 +4,58 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Moves toward its target and dies. It does NOT give souls or drop orbs itself —
-    // it just raises static events and other systems (wallet, orb dropper) react.
-    [RequireComponent(typeof(SpriteRenderer), typeof(Rigidbody2D), typeof(Collider2D))]
+    // Moves toward its target and dies. It does NOT give souls, drop orbs, split or draw effects —
+    // it raises events and other systems (wallet, orb dropper, splitter, fx) react.
+    [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class Enemy : MonoBehaviour, IShootable, IDamageable
     {
         public static event Action<Enemy> OnAnyKilled;
         public static event Action<Enemy> OnAnyReachedTarget;
+        public static int AliveCount { get; private set; }
+
+        public event Action<Enemy> OnDamaged;
 
         public EnemyConfig Config { get; private set; }
+        public Transform Target { get; private set; }
         public int Health { get; private set; }
+        public int MaxHealth { get; private set; }
+        public float SpeedMultiplier { get; private set; }
+        public float HealthMultiplier { get; private set; }
+        public bool InRange { get; private set; }
 
-        private Transform target;
         private float speed;
-        private SpriteRenderer sr;
-        private float flashTimer;
 
-        // Clear static subscribers when entering Play Mode with domain reload disabled.
+        // Clear static state when entering Play Mode with domain reload disabled.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics()
         {
             OnAnyKilled = null;
             OnAnyReachedTarget = null;
+            AliveCount = 0;
         }
 
-        public void Init(EnemyConfig config, Transform target, float speedMultiplier)
+        private void OnEnable() => AliveCount++;
+        private void OnDisable() => AliveCount--;
+
+        public void Init(EnemyConfig config, Transform target, float healthMultiplier, float speedMultiplier)
         {
             Config = config;
-            this.target = target;
-            Health = config.maxHealth;
+            Target = target;
+            HealthMultiplier = healthMultiplier;
+            SpeedMultiplier = speedMultiplier;
+            MaxHealth = Health = Mathf.Max(1, Mathf.RoundToInt(config.maxHealth * healthMultiplier));
             speed = config.speed * speedMultiplier;
-
-            sr = GetComponent<SpriteRenderer>();
-            sr.sprite = config.sprite;
-            sr.color = config.color;
             transform.localScale = Vector3.one * config.size;
         }
 
         private void Update()
         {
-            if (target == null) return;
-            transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+            if (Target == null) return;
 
-            if (flashTimer > 0)
-            {
-                flashTimer -= Time.deltaTime;
-                if (flashTimer <= 0) sr.color = Config.color;
-            }
+            Vector3 toTarget = Target.position - transform.position;
+            InRange = Config.stopDistance > 0f && toTarget.magnitude <= Config.stopDistance;
+            if (!InRange)
+                transform.position = Vector3.MoveTowards(transform.position, Target.position, speed * Time.deltaTime);
         }
 
         public void Shoot(int damage) => TakeDamage(damage);
@@ -59,21 +64,16 @@ namespace Soulbreak.Enemies
         {
             if (Health <= 0) return;
             Health -= amount;
+            OnDamaged?.Invoke(this);
 
-            if (Health <= 0)
-            {
-                OnAnyKilled?.Invoke(this);
-                Destroy(gameObject);
-                return;
-            }
-
-            sr.color = Color.white;
-            flashTimer = 0.08f;
+            if (Health > 0) return;
+            OnAnyKilled?.Invoke(this);
+            Destroy(gameObject);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (Health <= 0 || other.transform != target) return;
+            if (Health <= 0 || other.transform != Target) return;
             if (other.TryGetComponent(out IDamageable damageable)) damageable.TakeDamage(Config.damage);
 
             Health = 0;

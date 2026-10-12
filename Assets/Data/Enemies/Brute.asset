@@ -12,13 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 105e4fd3ab9da334c88ccfa692cfe1c0, type: 3}
   m_Name: Brute
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Enemies.EnemyConfig
-  sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  color: {r: 0.8, g: 0.2, b: 0.8, a: 1}
-  size: 7
-  maxHealth: 4
-  speed: 0.9
+  sprite: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
+  material: {fileID: 2100000, guid: fb236d30924c61e43a992b87da4856f2, type: 2}
+  color: {r: 2, g: 0.5, b: 2.6, a: 1}
+  size: 2
+  spikes: 9
+  maxHealth: 5
+  speed: 0.8
   damage: 2
+  isBoss: 0
+  stopDistance: 0
+  fireInterval: 2
+  projectileDamage: 1
+  projectileSpeed: 3
+  projectileMaterial: {fileID: 2100000, guid: e74f4fd2d9bf92c43ae801c8b418266a, type: 2}
+  splitInto: {fileID: 0}
+  splitCount: 0
   soulReward: 20
   soulOrbChance: 0.6
-  soulOrbValue: 40
-  healOrbChance: 0.2
+  soulOrbValue: 30
+  healOrbChance: 0.15

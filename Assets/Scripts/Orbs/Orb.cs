@@ -7,29 +7,28 @@ namespace Soulbreak.Orbs
     public enum OrbType { Soul, Heal }
 
     // A shootable pickup. Shooting it raises OnAnyCollected; it doesn't know who rewards the player.
+    // The glow/pulse is done by the Orb shader; this script only handles lifetime and blinking.
     public class Orb : MonoBehaviour, IShootable
     {
         public static event Action<Orb> OnAnyCollected;
 
         public OrbType Type { get; private set; }
         public int Value { get; private set; }
+        public Color Color { get; private set; }
 
         private float lifetime;
         private float age;
-        private float baseSize;
         private SpriteRenderer sr;
-        private Color baseColor;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() => OnAnyCollected = null;
 
-        public void Init(OrbType type, int value, float lifetime, float size, Color color)
+        public void Init(OrbType type, int value, float lifetime, Color color)
         {
             Type = type;
             Value = value;
+            Color = color;
             this.lifetime = lifetime;
-            baseSize = size;
-            baseColor = color;
             sr = GetComponent<SpriteRenderer>();
             sr.color = color;
         }
@@ -43,10 +42,9 @@ namespace Soulbreak.Orbs
                 return;
             }
 
-            // Pulse, and blink during the last second so the player knows it's about to vanish.
-            transform.localScale = Vector3.one * baseSize * (1f + 0.15f * Mathf.Sin(age * 8f));
+            // Blink during the last second so the player knows it's about to vanish.
             bool blink = lifetime - age < 1f && Mathf.Repeat(age * 10f, 1f) > 0.5f;
-            sr.color = blink ? new Color(baseColor.r, baseColor.g, baseColor.b, 0.3f) : baseColor;
+            sr.color = new Color(Color.r, Color.g, Color.b, blink ? 0.25f : 1f);
         }
 
         public void Shoot(int damage)

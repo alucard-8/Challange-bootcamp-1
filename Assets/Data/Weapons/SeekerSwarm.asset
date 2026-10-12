@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e01618cd71c35a94ebb97f9299dbb732, type: 3}
+  m_Name: SeekerSwarm
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Weapons.ProjectileShotPattern
+  displayName: Seeker Swarm
+  icon: 3
+  color: {r: 3.2, g: 2.2, b: 0.5, a: 1}
+  drawsTracer: 0
+  reloadTime: 4
+  count: 3
+  spreadAngle: 70
+  sprite: {fileID: 7482667652216324306, guid: b81dcce8d55a1bd41977d71b1688b313, type: 3}
+  material: {fileID: 2100000, guid: e74f4fd2d9bf92c43ae801c8b418266a, type: 2}
+  speed: 10
+  size: 0.45
+  damageMultiplier: 1
+  range: 25
+  travelToTarget: 0
+  explosionRadius: 0
+  homing: 1
+  turnSpeed: 420

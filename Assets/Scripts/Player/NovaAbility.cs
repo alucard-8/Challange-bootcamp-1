@@ -9,35 +9,41 @@ namespace Soulbreak.Player
     public class NovaAbility : MonoBehaviour
     {
         [SerializeField] private Transform center;
-        [SerializeField] private float radius = 4f;
+        [SerializeField] private PlayerStats stats;
         [SerializeField] private int damage = 99;
-        [SerializeField] private float cooldown = 12f;
 
         public float CooldownRemaining { get; private set; }
-        public float Cooldown => cooldown;
+        public float Cooldown => stats.Get(StatType.NovaCooldown);
+        public float Radius => stats.Get(StatType.NovaRadius);
         public bool IsReady => CooldownRemaining <= 0f;
 
-        public event Action OnUsed;
+        public event Action<Vector2, float> OnUsed;   // (center, radius)
         public event Action OnReady;
 
         private void Update()
         {
+            if (Time.timeScale == 0f) return;
+
             if (CooldownRemaining > 0f)
             {
                 CooldownRemaining -= Time.deltaTime;
                 if (CooldownRemaining <= 0f) OnReady?.Invoke();
             }
 
-            if (Time.timeScale > 0f && IsReady && InputReader.AbilityPressed()) Use();
+            // Only fire when there is something to hit, so it isn't wasted between waves.
+            if (IsReady && Enemy.AliveCount > 0 && InputReader.AbilityPressed()) Use();
         }
 
         private void Use()
         {
-            foreach (var hit in Physics2D.OverlapCircleAll(center.position, radius))
+            foreach (var hit in Physics2D.OverlapCircleAll(center.position, Radius))
+            {
                 if (hit.TryGetComponent(out Enemy enemy)) enemy.TakeDamage(damage);
+                else if (hit.TryGetComponent(out EnemyProjectile projectile)) projectile.Shoot(damage);
+            }
 
-            CooldownRemaining = cooldown;
-            OnUsed?.Invoke();
+            CooldownRemaining = Cooldown;
+            OnUsed?.Invoke(center.position, Radius);
         }
     }
 }

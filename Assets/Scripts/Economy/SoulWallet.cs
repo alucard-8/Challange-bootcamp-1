@@ -10,9 +10,15 @@ namespace Soulbreak.Economy
     public class SoulWallet : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
+        [SerializeField] private ComboSystem combo;
+        [SerializeField] private int startingSouls = 0;
 
         public int Souls { get; private set; }
+
         public event Action<int> OnSoulsChanged;
+        public event Action<int, Vector3> OnSoulsGained;   // (amount, world position) — for floating text
+
+        private void Awake() => Souls = startingSouls;
 
         private void OnEnable()
         {
@@ -28,18 +34,24 @@ namespace Soulbreak.Economy
 
         private void Start() => OnSoulsChanged?.Invoke(Souls);
 
-        private void HandleEnemyKilled(Enemy enemy) => Add(enemy.Config.soulReward);
+        private void HandleEnemyKilled(Enemy enemy)
+        {
+            float amount = enemy.Config.soulReward * stats.Get(StatType.SoulGain) * combo.Multiplier;
+            Add(Mathf.RoundToInt(amount), enemy.transform.position);
+        }
 
         private void HandleOrbCollected(Orb orb)
         {
-            if (orb.Type == OrbType.Soul) Add(orb.Value);
+            if (orb.Type != OrbType.Soul) return;
+            Add(Mathf.RoundToInt(orb.Value * stats.Get(StatType.SoulGain)), orb.transform.position);
         }
 
-        public void Add(int amount)
+        public void Add(int amount, Vector3 worldPosition)
         {
             if (amount <= 0) return;
-            Souls += Mathf.RoundToInt(amount * stats.SoulMultiplier);
+            Souls += amount;
             OnSoulsChanged?.Invoke(Souls);
+            OnSoulsGained?.Invoke(amount, worldPosition);
         }
 
         public bool TrySpend(int amount)

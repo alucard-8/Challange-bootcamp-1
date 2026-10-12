@@ -1,35 +1,83 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Soulbreak.Player
 {
-    // Upgradeable numbers. Perks write here; shooter and wallet read from here.
+    public enum StatType
+    {
+        Damage, CritChance, CritMultiplier, SplashRadius,
+        ClipSize, ReloadTime,
+        SoulGain, OrbValue, OrbLifetime, OrbDropChance, HealOrbChance, ComboWindow, Interest,
+        NovaCooldown, NovaRadius
+    }
+
+    [Serializable]
+    public struct StatValue
+    {
+        public StatType stat;
+        public float value;
+        public StatValue(StatType stat, float value) { this.stat = stat; this.value = value; }
+    }
+
+    // A bag of upgradeable numbers. Perks write here, every other system reads from here.
+    // New stat = one enum entry, no new methods (Open/Closed).
+    [DefaultExecutionOrder(-100)]
     public class PlayerStats : MonoBehaviour
     {
-        [SerializeField] private int baseDamage = 1;
-        [SerializeField] private float baseSoulMultiplier = 1f;
+        [SerializeField] private StatValue[] baseValues =
+        {
+            new StatValue(StatType.Damage, 1),
+            new StatValue(StatType.CritChance, 0.05f),
+            new StatValue(StatType.CritMultiplier, 2f),
+            new StatValue(StatType.SplashRadius, 0f),
+            new StatValue(StatType.ClipSize, 6),
+            new StatValue(StatType.ReloadTime, 1.2f),
+            new StatValue(StatType.SoulGain, 1f),
+            new StatValue(StatType.OrbValue, 1f),
+            new StatValue(StatType.OrbLifetime, 4f),
+            new StatValue(StatType.OrbDropChance, 0f),
+            new StatValue(StatType.HealOrbChance, 0f),
+            new StatValue(StatType.ComboWindow, 2f),
+            new StatValue(StatType.Interest, 0f),
+            new StatValue(StatType.NovaCooldown, 15f),
+            new StatValue(StatType.NovaRadius, 3.5f),
+        };
 
-        public int Damage { get; private set; }
-        public float SoulMultiplier { get; private set; }
+        private readonly Dictionary<StatType, float> values = new Dictionary<StatType, float>();
 
-        public event Action OnStatsChanged;
+        public event Action<StatType, float> OnStatChanged;
 
         private void Awake()
         {
-            Damage = baseDamage;
-            SoulMultiplier = baseSoulMultiplier;
+            foreach (StatType s in Enum.GetValues(typeof(StatType))) values[s] = 0f;
+            foreach (var v in baseValues) values[v.stat] = v.value;
         }
 
-        public void AddDamage(int amount)
+        public float Get(StatType stat)
         {
-            Damage += amount;
-            OnStatsChanged?.Invoke();
+            float v = values[stat];
+            switch (stat)
+            {
+                case StatType.CritChance: return Mathf.Clamp01(v);
+                case StatType.ReloadTime: return Mathf.Max(0.2f, v);
+                case StatType.NovaCooldown: return Mathf.Max(3f, v);
+                default: return v;
+            }
         }
 
-        public void AddSoulMultiplier(float amount)
+        public int GetInt(StatType stat) => Mathf.RoundToInt(Get(stat));
+
+        public void Add(StatType stat, float amount)
         {
-            SoulMultiplier += amount;
-            OnStatsChanged?.Invoke();
+            values[stat] += amount;
+            OnStatChanged?.Invoke(stat, Get(stat));
+        }
+
+        public void Multiply(StatType stat, float factor)
+        {
+            values[stat] *= factor;
+            OnStatChanged?.Invoke(stat, Get(stat));
         }
     }
 }

@@ -1,39 +1,84 @@
 using System;
 using Soulbreak.Core;
+using Soulbreak.Enemies;
+using Soulbreak.Perks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Soulbreak.GameFlow
 {
-    public enum GameState { Playing, GameOver }
+    public enum GameState { Combat, Shop, GameOver }
 
-    // Owns the game state. Listens for the reactor dying; never polls other systems.
+    // Mediator for the game loop: wave cleared -> open shop -> shop closed -> next wave.
+    // WaveManager and PerkShop never reference each other; only this class connects them.
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private Reactor.Reactor reactor;
+        [SerializeField] private WaveManager waves;
+        [SerializeField] private PerkShop shop;
+        [SerializeField] private Weapons.WeaponRing weapons;
+        [SerializeField] private float firstWaveDelay = 1.5f;
 
-        public GameState State { get; private set; } = GameState.Playing;
+        public GameState State { get; private set; } = GameState.Combat;
         public float SurvivalTime { get; private set; }
+        public int WavesCleared { get; private set; }
+
         public event Action<GameState> OnStateChanged;
 
-        private void OnEnable() => reactor.OnDestroyed += HandleReactorDestroyed;
-        private void OnDisable() => reactor.OnDestroyed -= HandleReactorDestroyed;
+        private void OnEnable()
+        {
+            reactor.OnDestroyed += HandleReactorDestroyed;
+            waves.OnWaveCleared += HandleWaveCleared;
+            shop.OnClosed += HandleShopClosed;
+        }
 
-        private void Start() => Time.timeScale = 1f;
+        private void OnDisable()
+        {
+            reactor.OnDestroyed -= HandleReactorDestroyed;
+            waves.OnWaveCleared -= HandleWaveCleared;
+            shop.OnClosed -= HandleShopClosed;
+        }
+
+        private void Start()
+        {
+            Time.timeScale = 1f;
+            Invoke(nameof(BeginFirstWave), firstWaveDelay);
+        }
+
+        private void BeginFirstWave() => waves.StartNextWave();
 
         private void Update()
         {
-            if (State == GameState.Playing)
-                SurvivalTime += Time.deltaTime;
-            else if (InputReader.RestartPressed())
-                Restart();
+            if (State == GameState.Combat) SurvivalTime += Time.deltaTime;
+            else if (State == GameState.GameOver && InputReader.RestartPressed()) Restart();
+        }
+
+        private void HandleWaveCleared(int wave)
+        {
+            if (State == GameState.GameOver) return;
+            WavesCleared = wave;
+            SetState(GameState.Shop);
+            shop.Open();
+        }
+
+        private void HandleShopClosed()
+        {
+            if (State == GameState.GameOver) return;
+            SetState(GameState.Combat);
+            weapons.Shuffle();   // new random module layout every wave
+            waves.StartNextWave();
         }
 
         private void HandleReactorDestroyed()
         {
-            State = GameState.GameOver;
+            SetState(GameState.GameOver);
             Time.timeScale = 0f;
-            OnStateChanged?.Invoke(State);
+        }
+
+        private void SetState(GameState state)
+        {
+            State = state;
+            OnStateChanged?.Invoke(state);
         }
 
         private void Restart()

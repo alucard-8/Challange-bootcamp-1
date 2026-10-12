@@ -8,13 +8,28 @@ namespace Soulbreak.Enemies
     {
         [Header("Visuals")]
         public Sprite sprite;
-        public Color color = Color.red;
-        [Min(0.1f)] public float size = 0.8f;
+        public Material material;
+        [ColorUsage(true, true)] public Color color = Color.red;
+        [Min(0.1f)] public float size = 0.7f;
+        [Tooltip("Number of spikes drawn by the enemy shader.")]
+        [Min(0)] public float spikes = 6f;
 
         [Header("Stats")]
         [Min(1)] public int maxHealth = 1;
         [Min(0.1f)] public float speed = 1.5f;
         [Min(1)] public int damage = 1;
+        public bool isBoss;
+
+        [Header("Ranged (stopDistance > 0 makes it a shooter)")]
+        [Min(0)] public float stopDistance = 0f;
+        [Min(0.1f)] public float fireInterval = 2f;
+        [Min(1)] public int projectileDamage = 1;
+        [Min(0.1f)] public float projectileSpeed = 3f;
+        public Material projectileMaterial;
+
+        [Header("Splitting")]
+        public EnemyConfig splitInto;
+        [Min(0)] public int splitCount = 0;
 
         [Header("Rewards")]
         [Min(0)] public int soulReward = 5;
