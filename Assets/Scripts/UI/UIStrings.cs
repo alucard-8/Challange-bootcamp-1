@@ -185,27 +185,21 @@ namespace Soulbreak.UI
         public string tutorialAmmo = "AMMO";
         public string tutorialRing = "RING";
 
+        // Deliberately terse (1-3 words): the visuals in TutorialView (rings, arrows, ghost hand) carry the rest.
         [Header("Tutorial - steps (title / key / body)")]
         public string[] tutorialTitles =
         {
-            "AIM & SHOOT", "PROTECT THE CORE", "THE WEAPON RING", "RELOAD", "AMMO CHARGES",
-            "PICKUPS", "NOVA", "OVERDRIVE", "THE SHOP",
+            "SHOOT", "DEFEND", "WEAPON RING", "RELOAD", "AMMO DROP",
+            "PICKUPS", "NOVA", "OVERDRIVE", "SHOP",
         };
         public string[] tutorialKeys =
         {
-            "LEFT CLICK", "LEFT CLICK", "", "R  /  RIGHT CLICK", "", "SHOOT THE ORB", "SPACE", "Q", "",
+            "CLICK", "CLICK", "", "R", "", "SHOOT ORB", "SPACE", "Q", "",
         };
         public string[] tutorialBodies =
         {
-            "Aim with the mouse and fire at the incoming enemies.",
-            "Everything marches on the core in the middle. Destroy <b>3 enemies</b> before they reach it.",
-            "Your shot goes through the <b>ring slot</b> you aim across. <b>Glowing slots</b> hold techniques: they fire once, then reload a random technique you own. The slot count re-rolls every wave (5 to 12).",
-            "Empty clips reload on their own, but reloading early saves you in a pinch. <b>Reload now.</b>",
-            "Enemies drop <color=#FFC94D>gold ammo charges</color>. They fly to the core and <b>instantly refill</b> your clip. Watch this one.",
-            "<color=#C77DFF>Purple orbs</color> are souls, <color=#6CFF9A>green orbs</color> restore shield. <b>Shoot one</b> to collect it.",
-            "Nova blasts every enemy <b>near the core</b>. Let them come close, then press SPACE.",
-            "Kills fill the overdrive bar. It's full now: press <b>Q</b> to slow time and go berserk.",
-            "Clear the wave to open the shop. Spend souls on perks and techniques and combine them for synergies. Good luck!",
+            "AIM + CLICK", "KILL 3", "AIM ACROSS IT", "REFILL EARLY", "CATCH IT",
+            "PURPLE = SOULS", "CLEAR THE CROWD", "GO BERSERK", "SPEND SOULS",
         };
     }
 }
