@@ -54,7 +54,7 @@ namespace Soulbreak.UI
             "<color=#73D9FF><b>DEFEND THE CORE</b></color>\n\n" +
             "    Enemies march on the core in waves. Click them before they reach it. Survive as many waves as you can.\n\n\n" +
             "    <color=#FFC94C><b>AMMO</b></color>\n\n" +
-            "    Your clip holds <b>6 shots</b> (+3 per <i>Extended Clip</i> perk). Empty clips reload by themselves; <b>R</b> / <b>RMB</b> reloads early. Enemies sometimes drop <b>gold ammo charges</b> that fly to the core and refill the clip instantly, more often when you're low.\n\n\n" +
+            "    Your clip holds <b>6 shots</b> (+3 per <i>Extended Clip</i> perk) and <b>refills one shot at a time</b> on its own. Enemies sometimes drop <b>gold ammo charges</b> that fly to the core and refill the clip instantly, more often when you're low.\n\n\n" +
             "    <color=#C780FF><b>SOULS & ORBS</b></color>\n\n" +
             "    Kills give souls. Shoot the orbs they drop: purple = souls, green = a shield charge.";
         public string howToBodyRight =
@@ -66,7 +66,7 @@ namespace Soulbreak.UI
             "    - The ring slowly turns, so aim where the special slot is.\n\n\n" +
             "    <color=#C780FF><b>SHOP</b></color>\n\n" +
             "    Between waves spend souls on buffs and techniques. Some techniques combine into <b>synergies</b>.";
-        public string howToControls = "<b>LMB</b> shoot     <b>R / RMB</b> reload     <b>SPACE</b> nova     <b>Q</b> overdrive     <b>1-5</b> buy in shop     <b>ESC</b> pause";
+        public string howToControls = "<b>LMB</b> shoot     <b>SPACE</b> nova     <b>Q</b> overdrive     <b>1-5</b> buy in shop     <b>ESC</b> pause";
         public string howToBack = "BACK";
 
         [Header("Pause Menu")]
@@ -143,7 +143,6 @@ namespace Soulbreak.UI
         [Header("HUD - generic")]
         public string hudReloading = "RELOADING";
         public string hudReloadingPercent = "RELOADING  {0:0}%";
-        public string hudReloadHint = "R / RMB to reload";
         public string hudLowAmmo = "LOW AMMO";
         public string hudAmmoCharge = "AMMO CHARGE!";
         public string hudBlock = "BLOCK";
@@ -194,11 +193,11 @@ namespace Soulbreak.UI
         };
         public string[] tutorialKeys =
         {
-            "CLICK", "CLICK", "", "R", "", "SHOOT ORB", "SPACE", "Q", "",
+            "CLICK", "CLICK", "", "", "", "SHOOT ORB", "SPACE", "Q", "",
         };
         public string[] tutorialBodies =
         {
-            "AIM + CLICK", "KILL 3", "AIM ACROSS IT", "REFILL EARLY", "CATCH IT",
+            "AIM + CLICK", "KILL 3", "AIM ACROSS IT", "REFILLS ITSELF", "CATCH IT",
             "PURPLE = SOULS", "CLEAR THE CROWD", "GO BERSERK", "SPEND SOULS",
         };
     }

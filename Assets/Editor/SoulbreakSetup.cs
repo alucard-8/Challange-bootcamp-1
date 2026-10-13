@@ -957,7 +957,7 @@ namespace Soulbreak.EditorTools
 
             // Input controllers (systems and views never read input themselves)
             var player = Sys<PlayerController>("PlayerController");
-            Set(player, "shooter", shooter); Set(player, "ammo", ammo); Set(player, "nova", nova);
+            Set(player, "shooter", shooter); Set(player, "nova", nova);
             var hotkeys = Sys<GameHotkeys>("GameHotkeys");
             Set(hotkeys, "game", gm); Set(hotkeys, "pause", pause);
             var shopKeys = Sys<ShopHotkeys>("ShopHotkeys");

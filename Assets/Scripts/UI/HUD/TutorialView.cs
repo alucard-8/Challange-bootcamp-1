@@ -43,7 +43,7 @@ namespace Soulbreak.UI
         private Step[] steps;
         private int index = -1;
         private float stepTime, doneTimer = -1f, slide, retimer;
-        private int shots, kills, reloads, orbs, ammoOrbs, novas, overdrives;
+        private int shots, kills, orbs, ammoOrbs, novas, overdrives;
         private bool active;
 
         [SerializeField] private RectTransform root;
@@ -76,7 +76,7 @@ namespace Soulbreak.UI
                 new Step { Look = Look.Enemy, MinTime = 1f, Done = () => shots >= 3 },
                 new Step { Look = Look.Enemy, MinTime = 1.5f, Done = () => kills >= 3 },
                 new Step { Look = Look.Core, MinTime = 9f },
-                new Step { MinTime = 1f, Done = () => reloads >= 1 },
+                new Step { MinTime = 2.5f },   // ammo auto-recharges now, so this step is just a read
                 new Step { Look = Look.AmmoOrb, MinTime = 2f,
                     Enter = () => DropAmmo(), Tick = () => { if (ammoOrbs == 0 && Retry(5f)) DropAmmo(); }, Done = () => ammoOrbs >= 1 },
                 new Step { Look = Look.Orb, MinTime = 1.5f,
@@ -127,7 +127,6 @@ namespace Soulbreak.UI
         {
             if (!active) return;
             shooter.OnShotFired += CountShot;
-            ammo.OnReloadStarted += CountReload;
             ammo.OnAmmoPickup += CountAmmo;
             nova.OnUsed += CountNova;
             overdrive.OnStarted += CountOverdrive;
@@ -139,7 +138,6 @@ namespace Soulbreak.UI
         {
             if (!active) return;
             shooter.OnShotFired -= CountShot;
-            ammo.OnReloadStarted -= CountReload;
             ammo.OnAmmoPickup -= CountAmmo;
             nova.OnUsed -= CountNova;
             overdrive.OnStarted -= CountOverdrive;
@@ -148,7 +146,6 @@ namespace Soulbreak.UI
         }
 
         private void CountShot(Vector2 a, Vector2 b, bool c, Weapons.ShotPattern p) => shots++;
-        private void CountReload(float d) => reloads++;
         private void CountAmmo() => ammoOrbs++;
         private void CountNova(Vector2 c, float r) => novas++;
         private void CountOverdrive() => overdrives++;

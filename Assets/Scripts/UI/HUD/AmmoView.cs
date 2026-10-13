@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Bottom-center: one pip per bullet + reload progress bar. Pips blink red when low,
+    // Bottom-center: one pip per bullet + a bar tracking the next shot's recharge. Pips blink red when low,
     // and the row pops gold when an ammo charge lands.
     public class AmmoView : MonoBehaviour
     {
@@ -48,15 +48,15 @@ namespace Soulbreak.UI
         private void Update()
         {
             pickupFlash = Mathf.MoveTowards(pickupFlash, 0f, Time.unscaledDeltaTime * 1.6f);
-            bool low = !ammo.IsReloading && current > 0 && current <= Mathf.Max(1, max / 4);
+            bool low = current > 0 && current <= Mathf.Max(1, max / 4);
             float blink = low ? 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 14f) : 0f;
             var lowColor = Color.Lerp(HudColors.Gold, T.lowAmmo, blink);
             for (int i = 0; i < pips.Count; i++)
                 pips[i].color = i < current ? Color.Lerp(low ? lowColor : HudColors.Gold, Color.white, pickupFlash) : HudColors.Dim;
             row.localScale = Vector3.one * (1f + 0.25f * pickupFlash * pickupFlash);
 
-            reloadText.text = pickupFlash > 0f ? S.hudAmmoCharge : ammo.IsReloading ? S.hudReloading : ammo.Current == 0 ? S.hudReloadHint : low ? S.hudLowAmmo : "";
-            reloadText.color = pickupFlash > 0f ? Color.Lerp(HudColors.Gold, Color.white, pickupFlash) : ammo.IsReloading ? HudColors.Gold : low ? lowColor : T.dimText;
+            reloadText.text = pickupFlash > 0f ? S.hudAmmoCharge : current <= 0 ? S.hudReloading : low ? S.hudLowAmmo : "";
+            reloadText.color = pickupFlash > 0f ? Color.Lerp(HudColors.Gold, Color.white, pickupFlash) : current <= 0 ? HudColors.Gold : low ? lowColor : T.dimText;
             UIFactory.SetBar(reloadFill, ammo.IsReloading ? ammo.ReloadProgress : 0f);
         }
     }

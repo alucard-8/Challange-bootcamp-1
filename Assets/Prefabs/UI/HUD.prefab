@@ -6299,7 +6299,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: LMB shoot   R reload   SPACE nova   ESC pause
+  m_Text: LMB shoot   SPACE nova   ESC pause
 --- !u!114 &4508547662385288679
 MonoBehaviour:
   m_ObjectHideFlags: 0

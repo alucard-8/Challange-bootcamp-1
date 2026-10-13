@@ -1,10 +1,11 @@
 using System;
-
 using UnityEngine;
 
 namespace Soulbreak.Player
 {
     // Owns the clip. The shooter asks it for permission to fire; it never knows what is shot or reads input.
+    // Ammo recharges itself: whenever the clip is below max it regains one shot every ReloadTime seconds, so
+    // the player never reloads by hand. Ammo charges still top the clip off instantly.
     public class AmmoSystem : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -12,16 +13,17 @@ namespace Soulbreak.Player
 
         public int Current { get; private set; }
         public int Max => Mathf.Max(1, stats.GetInt(StatType.ClipSize));
-        public bool IsReloading { get; private set; }
-        public float ReloadProgress => IsReloading ? 1f - reloadTimer / reloadDuration : 1f;
+        public bool IsReloading => Current < Max;                                  // recharging toward a full clip
+        public float PerShot => Mathf.Max(0.02f, stats.Get(StatType.ReloadTime));  // seconds to regain one shot
+        public float ReloadProgress => IsReloading ? Mathf.Clamp01(1f - rechargeTimer / PerShot) : 1f;
 
         public event Action<int, int> OnAmmoChanged;   // (current, max)
-        public event Action<float> OnReloadStarted;    // duration
-        public event Action OnReloadFinished;
+        public event Action<float> OnReloadStarted;    // fired the moment the clip runs dry (seconds per shot)
+        public event Action OnReloadFinished;          // fired when the clip is full again
         public event Action OnDryFire;
         public event Action OnAmmoPickup;
 
-        private float reloadTimer, reloadDuration;
+        private float rechargeTimer;
 
         private void OnEnable()
         {
@@ -35,14 +37,13 @@ namespace Soulbreak.Player
             if (orbCollected != null) orbCollected.OnRaised -= HandleOrb;
         }
 
-        // Ammo charge picked up: skip the reload and fill the clip instantly.
+        // Ammo charge picked up: fill the clip instantly.
         private void HandleOrb(Orbs.Orb orb)
         {
             if (orb.Type != Orbs.OrbType.Ammo) return;
-            bool wasReloading = IsReloading;
-            IsReloading = false;
+            bool wasFull = Current >= Max;
             Refill();
-            if (wasReloading) OnReloadFinished?.Invoke();
+            if (!wasFull) OnReloadFinished?.Invoke();
             OnAmmoPickup?.Invoke();
         }
 
@@ -57,36 +58,32 @@ namespace Soulbreak.Player
         {
             if (Time.timeScale == 0f) return;
 
-            if (IsReloading)
+            if (Current >= Max)
             {
-                reloadTimer -= Time.deltaTime;
-                if (reloadTimer <= 0f)
-                {
-                    IsReloading = false;
-                    Refill();
-                    OnReloadFinished?.Invoke();
-                }
+                rechargeTimer = PerShot;   // a full clip waits a whole interval before the next shot returns
+                return;
             }
-        }
 
-        // Manual reload command (sent by PlayerController).
-        public void Reload()
-        {
-            if (!IsReloading && Current < Max) StartReload();
+            rechargeTimer -= Time.deltaTime;
+            if (rechargeTimer > 0f) return;
+
+            Current++;
+            OnAmmoChanged?.Invoke(Current, Max);
+            rechargeTimer = PerShot;
+            if (Current >= Max) OnReloadFinished?.Invoke();
         }
 
         public bool TryConsume()
         {
-            if (IsReloading || Current <= 0)
+            if (Current <= 0)
             {
                 OnDryFire?.Invoke();
-                if (!IsReloading) StartReload();
                 return false;
             }
 
             Current--;
             OnAmmoChanged?.Invoke(Current, Max);
-            if (Current == 0) StartReload();
+            if (Current == 0) OnReloadStarted?.Invoke(PerShot);
             return true;
         }
 
@@ -94,13 +91,6 @@ namespace Soulbreak.Player
         {
             Current = Max;
             OnAmmoChanged?.Invoke(Current, Max);
-        }
-
-        private void StartReload()
-        {
-            IsReloading = true;
-            reloadDuration = reloadTimer = stats.Get(StatType.ReloadTime);
-            OnReloadStarted?.Invoke(reloadDuration);
         }
     }
 }

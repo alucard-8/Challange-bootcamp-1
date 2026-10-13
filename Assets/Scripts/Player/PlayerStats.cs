@@ -33,7 +33,7 @@ namespace Soulbreak.Player
             new StatValue(StatType.SplashRadius, 0f),
             new StatValue(StatType.HeadshotMultiplier, 2f),
             new StatValue(StatType.ClipSize, 6),
-            new StatValue(StatType.ReloadTime, 1.2f),
+            new StatValue(StatType.ReloadTime, 0.35f),   // seconds to regain one shot (ammo auto-recharges)
             new StatValue(StatType.SoulGain, 1f),
             new StatValue(StatType.OrbValue, 1f),
             new StatValue(StatType.OrbLifetime, 4f),
@@ -61,7 +61,7 @@ namespace Soulbreak.Player
             switch (stat)
             {
                 case StatType.CritChance: return Mathf.Clamp01(v);
-                case StatType.ReloadTime: return Mathf.Max(0.2f, v);
+                case StatType.ReloadTime: return Mathf.Max(0.1f, v);
                 case StatType.NovaCooldown: return Mathf.Max(3f, v);
                 default: return v;
             }

@@ -4,12 +4,11 @@ using UnityEngine.EventSystems;
 
 namespace Soulbreak.Player
 {
-    // Input layer for the player: reads InputReader and sends commands (aim, fire, reload, nova).
+    // Input layer for the player: reads InputReader and sends commands (aim, fire, nova).
     // The gameplay components it drives never touch input themselves.
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private PlayerShooter shooter;
-        [SerializeField] private AmmoSystem ammo;
         [SerializeField] private NovaAbility nova;
         [SerializeField] private OverdriveSystem overdrive;
 
@@ -21,7 +20,6 @@ namespace Soulbreak.Player
 
             bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
             if (InputReader.FirePressed() && !overUI) shooter.Fire();
-            if (InputReader.ReloadPressed()) ammo.Reload();
             if (InputReader.AbilityPressed()) nova.TryUse();
             if (InputReader.OverdrivePressed()) overdrive.TryActivate();
         }

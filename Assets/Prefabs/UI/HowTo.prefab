@@ -297,7 +297,7 @@ MonoBehaviour:
 
     <color=#FFC94C><b>AMMO</b></color>
 
-    Your clip holds <b>6 shots</b> (+3 per <i>Extended Clip</i> perk). Empty clips reload by themselves; <b>R</b> / <b>RMB</b> reloads early. Enemies sometimes drop <b>gold ammo charges</b> that fly to the core and refill the clip instantly, more often when you''re low.
+    Your clip holds <b>6 shots</b> (+3 per <i>Extended Clip</i> perk) and <b>refills one shot at a time</b> on its own. Enemies sometimes drop <b>gold ammo charges</b> that fly to the core and refill the clip instantly, more often when you''re low.
 
 
     <color=#C780FF><b>SOULS & ORBS</b></color>
@@ -726,7 +726,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: <b>LMB</b> shoot     <b>R / RMB</b> reload     <b>SPACE</b> nova     <b>Q</b> overdrive     <b>1-5</b> buy in shop     <b>ESC</b> pause
+  m_Text: <b>LMB</b> shoot     <b>SPACE</b> nova     <b>Q</b> overdrive     <b>1-5</b> buy in shop     <b>ESC</b> pause
 --- !u!114 &6237886153974822998
 MonoBehaviour:
   m_ObjectHideFlags: 0

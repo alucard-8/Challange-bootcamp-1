@@ -782,7 +782,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Player.PlayerController
   shooter: {fileID: 515300337}
-  ammo: {fileID: 123396502}
   nova: {fileID: 766733956}
   overdrive: {fileID: 1397703511}
 --- !u!1 &515300336
@@ -1540,7 +1539,7 @@ MonoBehaviour:
   - stat: 5
     value: 6
   - stat: 6
-    value: 1.2
+    value: 0.35
   - stat: 7
     value: 1
   - stat: 8

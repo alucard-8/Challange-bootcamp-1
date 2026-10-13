@@ -35,16 +35,6 @@ namespace Soulbreak.Core
 #endif
         }
 
-        public static bool ReloadPressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
-                || (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame);
-#else
-            return Input.GetKeyDown(KeyCode.R) || Input.GetMouseButtonDown(1);
-#endif
-        }
-
         public static bool OverdrivePressed()
         {
 #if ENABLE_INPUT_SYSTEM

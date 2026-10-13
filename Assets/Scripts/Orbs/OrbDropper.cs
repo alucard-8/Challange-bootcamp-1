@@ -21,7 +21,7 @@ namespace Soulbreak.Orbs
         [SerializeField] private Transform magnetTarget;
         [SerializeField, ColorUsage(false, true)] private Color ammoColor = new Color(3f, 1.9f, 0.4f);
         [SerializeField, Range(0, 1)] private float ammoChance = 0.1f;
-        [SerializeField, Range(0, 1)] private float lowAmmoChance = 0.35f;   // when the clip is under a third or reloading
+        [SerializeField, Range(0, 1)] private float lowAmmoChance = 0.35f;   // when the clip is under a third
 
         public void SetColors(Color soul, Color heal) { soulColor = soul; healColor = heal; }
 
@@ -64,7 +64,7 @@ namespace Soulbreak.Orbs
         private void RollAmmo(Vector2 pos, bool guaranteed)
         {
             if (ammo == null || magnetTarget == null) return;
-            bool low = ammo.IsReloading || ammo.Current <= ammo.Max / 3;
+            bool low = ammo.Current <= Mathf.Max(1, ammo.Max / 3);
             if (!guaranteed && Random.value >= (low ? lowAmmoChance : ammoChance)) return;
             var orb = Spawn(OrbType.Ammo, 1, pos, ammoColor);
             orb.transform.localScale = Vector3.one * size * 0.8f;

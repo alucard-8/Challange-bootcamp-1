@@ -1556,7 +1556,7 @@ MonoBehaviour:
 
     LMB  shoot through the ring
 
-    R  reload     SPACE  nova'
+    SPACE  nova'
 --- !u!114 &7704801531057402419
 MonoBehaviour:
   m_ObjectHideFlags: 0
