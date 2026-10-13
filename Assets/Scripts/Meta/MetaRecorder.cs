@@ -15,8 +15,6 @@ namespace Soulbreak.Meta
         public Difficulty Difficulty;
     }
 
-    // Observer: when the run ends, scores it (multiplied by difficulty), awards Soul Essence,
-    // saves best/last score and publishes the full result for the game-over screen.
     public class MetaRecorder : MonoBehaviour
     {
         [SerializeField] private GameManager game;

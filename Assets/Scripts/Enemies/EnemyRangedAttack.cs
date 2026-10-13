@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Optional behaviour added by the factory to ranged enemies: once in range, lob projectiles.
     [RequireComponent(typeof(Enemy))]
     public class EnemyRangedAttack : MonoBehaviour
     {

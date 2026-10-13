@@ -8,11 +8,6 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Player accounts on Unity Gaming Services.
-    //  - Everyone starts as a guest (anonymous sign-in, remembered by the browser).
-    //  - Create account: upgrades the current guest to username + password, keeping its scores and progress.
-    //  - Log in: switches to an existing account and loads its progress from Cloud Save.
-    // Progress (MetaProgress) is pushed to Cloud Save whenever it changes, so it follows the account anywhere.
     public static class AccountService
     {
         public enum State { Idle, Connecting, Online, Offline }
@@ -31,7 +26,6 @@ namespace Soulbreak.Meta
         private static Task<bool> connecting;
         private static bool syncing, pushQueued;
 
-        // Safe to call any number of times; signs in once (resuming the last session if there is one).
         public static Task<bool> EnsureSignedIn()
         {
             if (Status == State.Online) return Task.FromResult(true);
@@ -59,7 +53,6 @@ namespace Soulbreak.Meta
             }
         }
 
-        // Turn the current guest into an account (keeps scores + progress).
         public static async Task<string> CreateAccount(string username, string password)
         {
             string invalid = Validate(username, password);
@@ -80,7 +73,6 @@ namespace Soulbreak.Meta
             catch (Exception e) { return Friendly(e); }
         }
 
-        // Switch to an existing account and load its progress.
         public static async Task<string> LogIn(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(password)) return "Enter your username and password.";
@@ -95,7 +87,6 @@ namespace Soulbreak.Meta
             }
             catch (Exception e)
             {
-                // fall back to a fresh guest so the game stays online
                 PlayerPrefs.DeleteKey(UserKey);
                 try { if (!AuthenticationService.Instance.IsSignedIn) await AuthenticationService.Instance.SignInAnonymouslyAsync(); } catch { }
                 OnAccountChanged?.Invoke();
@@ -103,7 +94,6 @@ namespace Soulbreak.Meta
             }
         }
 
-        // Back to a new guest. Local progress stays on this device.
         public static async Task LogOut()
         {
             if (Status != State.Online) return;
@@ -122,13 +112,11 @@ namespace Soulbreak.Meta
         {
             PlayerPrefs.SetString(UserKey, username);
             PlayerPrefs.Save();
-            try { await AuthenticationService.Instance.UpdatePlayerNameAsync(username); }   // shown on the leaderboard
+            try { await AuthenticationService.Instance.UpdatePlayerNameAsync(username); }
             catch (Exception e) { Debug.LogWarning($"Couldn't set player name: {e.Message}"); }
             OnAccountChanged?.Invoke();
         }
 
-        // ---------- Cloud Save ----------
-        // preferCloud: after logging in the account's cloud copy wins; otherwise the newer copy wins.
         private static async Task SyncProgress(bool preferCloud)
         {
             if (syncing) return;
@@ -164,7 +152,7 @@ namespace Soulbreak.Meta
 
         private static async Task PushSoon()
         {
-            await Task.Yield();   // batch several changes made in the same frame
+            await Task.Yield();
             pushQueued = false;
             await PushProgress();
         }
@@ -176,7 +164,6 @@ namespace Soulbreak.Meta
             catch (Exception e) { Debug.LogWarning($"Cloud save failed: {e.Message}"); }
         }
 
-        // ---------- helpers ----------
         private static string Validate(string user, string pass)
         {
             if (string.IsNullOrWhiteSpace(user) || user.Length < 3 || user.Length > 20) return "Username: 3 to 20 characters.";

@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.GameFlow
 {
-    // Observer that tallies the run for the game-over summary and the score.
     public class RunStats : MonoBehaviour
     {
         [SerializeField] private EnemyEventChannel enemyKilled;

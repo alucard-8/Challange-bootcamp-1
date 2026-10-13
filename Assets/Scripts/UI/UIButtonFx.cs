@@ -3,8 +3,6 @@ using UnityEngine.EventSystems;
 
 namespace Soulbreak.UI
 {
-    // Hover / press juice for buttons and cards: eases scale up on hover, squashes on press.
-    // Uses unscaled time so it still animates while the game is paused.
     public class UIButtonFx : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public float hoverScale = 1.06f;
@@ -26,7 +24,6 @@ namespace Soulbreak.UI
             initialized = true;
         }
 
-        // Call after moving the rect from code so the lift starts from the new spot.
         public void Rebase()
         {
             if (rt == null) rt = (RectTransform)transform;

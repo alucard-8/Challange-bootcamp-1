@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Model of the slotted ring around the reactor. Owns how many slots there are, which module
-    // sits in each, slot reloading and the ring's rotation. Knows nothing about input, drawing or the shop.
     [DefaultExecutionOrder(-50)]
     public class WeaponRing : MonoBehaviour
     {
@@ -18,13 +16,11 @@ namespace Soulbreak.Weapons
 
         public int SlotCount => slots.Count;
         public int MaxSlots => maxSlots;
-        public float Rotation { get; private set; }               // degrees
+        public float Rotation { get; private set; }
         public float SlotAngle => 360f / slots.Count;
         public ShotPattern BasicShot => basicShot;
 
-        // The module sitting in a slot (null while that slot is reloading).
         public ShotPattern GetSlot(int i) => slots[i];
-        // What actually fires from a slot: its module, or the basic shot if empty/reloading.
         public ShotPattern GetPatternAt(int i) => slots[i] != null ? slots[i] : basicShot;
         public bool IsLoading(int i) => slots[i] == null;
         public float LoadProgress(int i) => IsLoading(i) ? 1f - loadTimers[i] / loadDurations[i] : 1f;
@@ -71,7 +67,6 @@ namespace Soulbreak.Weapons
             return true;
         }
 
-        // Called after a slot fires: a module slot empties and starts loading a new random module.
         public void Consume(int i)
         {
             var used = slots[i];
@@ -81,7 +76,6 @@ namespace Soulbreak.Weapons
             OnSlotEmptied?.Invoke(i);
         }
 
-        // Rolls a new slot count and randomly re-places all owned modules; free slots get the basic shot.
         public void Shuffle()
         {
             int count = UnityEngine.Random.Range(Mathf.Max(minSlots, ModuleCount), Mathf.Max(minSlots, maxSlots) + 1);
@@ -109,7 +103,6 @@ namespace Soulbreak.Weapons
             return Mathf.Clamp(Mathf.FloorToInt(angle / SlotAngle), 0, slots.Count - 1);
         }
 
-        // Weighted by how many of each module you own; falls back to the basic shot.
         private ShotPattern RandomModule()
         {
             int total = ModuleCount;

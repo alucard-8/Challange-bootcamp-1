@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Perks
 {
-    // Input layer for the shop: number keys buy the matching offer. The view only displays.
     public class ShopHotkeys : MonoBehaviour
     {
         [SerializeField] private PerkShop shop;

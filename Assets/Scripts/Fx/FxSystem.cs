@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace Soulbreak.Fx
 {
-    // Pure observer: turns gameplay events into visuals (tracers, shockwaves, dissolving corpses).
-    // Remove this object and the game still plays exactly the same — just without the juice.
     public class FxSystem : MonoBehaviour
     {
         private static readonly int ColorId = Shader.PropertyToID("_Color");
@@ -82,7 +80,6 @@ namespace Soulbreak.Fx
             var c = crit ? critColor : (pattern.drawsTracer ? shotColor : pattern.color);
             if (!pattern.drawsTracer)
             {
-                // Projectile weapons: muzzle flash on the ring instead of a tracer.
                 Ring(from + (to - from).normalized * 1.9f, c, 0.3f, 1.4f, 0.25f);
                 return;
             }
@@ -107,7 +104,6 @@ namespace Soulbreak.Fx
             Ring(beam.From, beam.Color, 0.5f, 2.2f, 0.3f);
         }
 
-        // Every hit: a spark burst in the enemy's color; shield blocks deflect with a cyan ring instead.
         private void HandleEnemyDamaged(EnemyDamage hit)
         {
             if (hit.Blocked)
@@ -121,7 +117,6 @@ namespace Soulbreak.Fx
             SparkFx.Burst(hit.Position, new Color(c.r / m, c.g / m, c.b / m), hit.Killed ? 10 : 6, hit.Killed ? 6f : 4f, quad, sparkMaterial);
         }
 
-        // The reactor "absorbs" each purchase with a soul shockwave.
         private void HandlePerkBought(Perks.PerkDefinition perk) =>
             Ring(reactor.transform.position, new Color(1.6f, 0.7f, 3f), 1f, 7f, 0.6f, 0.1f);
 
@@ -147,7 +142,6 @@ namespace Soulbreak.Fx
 
         private void HandleProjectileShotDown(EnemyProjectile p) => Ring(p.transform.position, critColor, 0.2f, 1f, 0.25f);
 
-        // A copy of the dead enemy that burns away with the shader's dissolve effect.
         private void DissolveGhost(Enemy enemy)
         {
             var go = new GameObject("DissolveFx");

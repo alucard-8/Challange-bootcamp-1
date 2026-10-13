@@ -8,9 +8,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.Menu
 {
-    // The Index (main menu + pause menu): a paged grid of every enemy and perk, plus a side panel
-    // showing the selected entry. Enemies are rendered live by a small preview camera; perks show
-    // their shop card. Undiscovered entries stay "???". Reads MetaProgress, never writes it.
     public class IndexView : MonoBehaviour
     {
         [SerializeField] private CodexCatalog codex;
@@ -33,7 +30,6 @@ namespace Soulbreak.Menu
         private UIStrings S => strings != null ? strings : UIFactory.Strings;
         private UITheme T => theme != null ? theme : UIFactory.Theme;
 
-        // detail panel + the offscreen camera rig that renders the selected enemy
         [SerializeField] private Text dName, dTag, dDesc, dStats;
         [SerializeField] private RawImage dEnemyView;
         [SerializeField] private Image dCard, dLocked;
@@ -130,7 +126,6 @@ namespace Soulbreak.Menu
             group.blocksRaycasts = group.interactable = IsOpen;
             panel.localScale = Vector3.one * UIFactory.PopScale(group.alpha);
 
-            // only render the preview while it's visible
             bool showEnemy = group.alpha > 0.01f && enemyTab && Discovered(selected);
             previewCam.enabled = showEnemy;
             previewSr.enabled = showEnemy;

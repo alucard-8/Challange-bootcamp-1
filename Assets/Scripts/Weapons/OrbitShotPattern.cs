@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Orbital Blades: summons blades that circle the reactor for a while, slicing whatever they touch.
     [CreateAssetMenu(menuName = "Soulbreak/Shots/Orbital Blades", fileName = "OrbitShot")]
     public class OrbitShotPattern : ShotPattern
     {

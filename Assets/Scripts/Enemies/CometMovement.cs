@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Comets: swing in on a fast, shallow orbit for a full loop (slingshot), then dive straight at the target.
     [CreateAssetMenu(menuName = "Soulbreak/Movement/Comet", fileName = "CometMovement")]
     public class CometMovement : MovementPattern
     {

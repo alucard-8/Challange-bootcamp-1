@@ -8,8 +8,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.Menu
 {
-    // Main menu UI: glitching title, staggered intro animation, Play / How to play / Quit,
-    // and a dive-into-the-reactor transition when the run starts.
     public class MainMenuView : MonoBehaviour
     {
         [SerializeField] private MenuAmbience ambience;
@@ -20,7 +18,6 @@ namespace Soulbreak.Menu
         [SerializeField] private Meta.CodexCatalog codex;
         [SerializeField] private DifficultyView difficulty;
 
-        // Staggered intro: each element slides in from an offset after a delay.
         [System.Serializable]
         private class Intro
         {
@@ -37,7 +34,7 @@ namespace Soulbreak.Menu
         [SerializeField] private Text titleLabel, tagLabel, toastText, recordsText;
         [SerializeField] private CanvasGroup toastGroup;
         [SerializeField] private Image flashImage;
-        [SerializeField] private Button[] menuButtons;   // play, ascension, index, settings, quit
+        [SerializeField] private Button[] menuButtons;
         [SerializeField] private Button helpButton;
         [SerializeField] private UIStrings strings;
         [SerializeField] private UITheme theme;
@@ -60,7 +57,7 @@ namespace Soulbreak.Menu
             }
             helpButton.onClick.AddListener(OpenHowTo);
 #if UNITY_WEBGL
-            menuButtons[menuButtons.Length - 1].gameObject.SetActive(false);   // no quitting a browser tab
+            menuButtons[menuButtons.Length - 1].gameObject.SetActive(false);
 #endif
         }
 
@@ -94,7 +91,6 @@ namespace Soulbreak.Menu
                 if (t < 1f) e.rt.anchoredPosition = e.basePos + e.offset * (1f - ease);
             }
 
-            // Title gently floats once its intro is done.
             if (time > 1f) title.anchoredPosition = titleBase + Vector2.up * Mathf.Sin(time * 1.3f) * 6f;
         }
 
@@ -119,7 +115,6 @@ namespace Soulbreak.Menu
             SceneFader.LoadScene(SceneNames.Game, T.transitionColor, 0.75f);
         }
 
-        // ---------- Records panel (top-left): best / last score, best wave, runs, difficulty ----------
         private void RefreshRecords()
         {
             if (recordsText == null) return;
@@ -135,7 +130,6 @@ namespace Soulbreak.Menu
                 diff.Name);
         }
 
-        // Mode-specific title ("SOULBREAK" / "STARBREAK").
         public void SetTitle(string titleText, string tagline)
         {
             titleLabel.text = titleText;

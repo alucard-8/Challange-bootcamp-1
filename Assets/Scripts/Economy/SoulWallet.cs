@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Soulbreak.Economy
 {
-    // Observer: earns souls from kills and soul orbs. Owns the soul count and nothing else.
     public class SoulWallet : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -19,7 +18,7 @@ namespace Soulbreak.Economy
         public int TotalEarned { get; private set; }
 
         public event Action<int> OnSoulsChanged;
-        public event Action<int, Vector3> OnSoulsGained;   // (amount, world position) — for floating text
+        public event Action<int, Vector3> OnSoulsGained;
 
         private void Awake() => Souls = startingSouls;
 

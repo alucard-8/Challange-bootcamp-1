@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Threat awareness: arrows on the screen edge pointing at off-screen enemies (colored per enemy),
-    // and a pulsing red vignette when enemies are close to the reactor or the core is low.
     public class DangerView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;
@@ -68,7 +66,6 @@ namespace Soulbreak.UI
             if (vignette.material != null) vignette.material.SetFloat("_PulseSpeed", 2f + strength * 3f);
         }
 
-        // Arrow = a small rotated square with two edges showing (a chevron-like tip).
         private Image GetArrow(int i)
         {
             while (arrows.Count <= i) arrows.Add(UIFactory.Spawn(arrowTemplate, hud.Root));

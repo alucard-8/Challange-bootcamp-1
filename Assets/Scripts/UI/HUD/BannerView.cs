@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Big center announcements that punch in and fade: wave start, boss, wave cleared, nova ready.
     public class BannerView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

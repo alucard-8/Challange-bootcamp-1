@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Fx
 {
-    // Short-lived laser line that thins and fades out.
     [RequireComponent(typeof(LineRenderer))]
     public class TracerFx : MonoBehaviour
     {
@@ -29,7 +28,7 @@ namespace Soulbreak.Fx
 
         private void Update()
         {
-            age += Time.unscaledDeltaTime;   // finish even when time is frozen (game over)
+            age += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(age / duration);
             Apply(t);
             if (t >= 1f) Destroy(gameObject);

@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Bottom-right: Nova ability name + cooldown bar.
     public class NovaView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

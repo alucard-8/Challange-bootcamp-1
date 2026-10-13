@@ -24,7 +24,6 @@ namespace Soulbreak.Meta
         [ColorUsage(true, true)] public Color shieldColor = new Color(0.5f, 2.5f, 3f);
     }
 
-    // Everything purchasable between runs with Soul Essence. Data only.
     [CreateAssetMenu(menuName = "Soulbreak/Meta Catalog", fileName = "MetaCatalog")]
     public class MetaCatalog : ScriptableObject
     {

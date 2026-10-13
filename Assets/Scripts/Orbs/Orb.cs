@@ -6,8 +6,6 @@ namespace Soulbreak.Orbs
 {
     public enum OrbType { Soul, Heal, Ammo }
 
-    // A shootable pickup. Shooting it raises its "collected" channel; it doesn't know who rewards the player.
-    // The glow/pulse is done by the Orb shader; this script only handles lifetime and blinking.
     public class Orb : MonoBehaviour, IShootable
     {
         private OrbEventChannel collectedChannel;
@@ -19,7 +17,7 @@ namespace Soulbreak.Orbs
         private float lifetime;
         private float age;
         private SpriteRenderer sr;
-        private Transform magnet;      // ammo orbs fly to the core on their own
+        private Transform magnet;
         private Vector2 velocity;
 
         public void Magnetize(Transform target, Vector2 kick) { magnet = target; velocity = kick; }
@@ -45,14 +43,12 @@ namespace Soulbreak.Orbs
                 return;
             }
 
-            // Blink during the last second so the player knows it's about to vanish.
             bool blink = lifetime - age < 1f && Mathf.Repeat(age * 10f, 1f) > 0.5f;
             sr.color = new Color(Color.r, Color.g, Color.b, blink ? 0.25f : 1f);
         }
 
         private void FlyToMagnet()
         {
-            // Pop out, hang for a moment, then home in faster and faster.
             Vector2 pos = transform.position, to = (Vector2)magnet.position - pos;
             if (age > 0.45f) velocity += to.normalized * (30f + age * 40f) * Time.deltaTime;
             velocity *= Mathf.Exp(-3f * Time.deltaTime);

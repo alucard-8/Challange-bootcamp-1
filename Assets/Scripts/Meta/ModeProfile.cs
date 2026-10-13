@@ -12,8 +12,6 @@ namespace Soulbreak.Meta
         public string text;
     }
 
-    // A game mode as data: enemies, perks, visuals, music and wording.
-    // Adding a mode = adding one of these assets (Open/Closed) — gameplay code stays the same.
     [CreateAssetMenu(menuName = "Soulbreak/Mode Profile", fileName = "ModeProfile")]
     public class ModeProfile : ScriptableObject
     {

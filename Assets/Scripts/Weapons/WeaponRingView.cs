@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Draws the weapon ring: one shader-driven segment per slot + the aiming needle.
-    // Reads the model (WeaponRing) and the shooter's aim; never changes gameplay.
     public class WeaponRingView : MonoBehaviour
     {
         private static readonly int StartId = Shader.PropertyToID("_Start");
@@ -86,7 +84,7 @@ namespace Soulbreak.Weapons
                 activeAmount[i] = next;
 
                 if (pop[i] > 0f) { pop[i] = Mathf.Max(0f, pop[i] - Time.deltaTime * 3f); changed = true; }
-                if (ring.IsLoading(i)) changed = true;   // animate the loading sweep
+                if (ring.IsLoading(i)) changed = true;
                 if (changed) DrawSlot(i);
             }
 
@@ -105,7 +103,6 @@ namespace Soulbreak.Weapons
             for (int i = 0; i < segments.Count; i++) DrawSlot(i);
         }
 
-        // The slot count changes every shuffle: create/remove segment renderers to match.
         private void EnsureSegments()
         {
             while (segments.Count < ring.SlotCount)
@@ -121,7 +118,7 @@ namespace Soulbreak.Weapons
             while (segments.Count > ring.SlotCount)
             {
                 var old = segments[segments.Count - 1].gameObject;
-                old.SetActive(false);   // hide now; Destroy only happens at end of frame
+                old.SetActive(false);
                 Destroy(old);
                 segments.RemoveAt(segments.Count - 1);
             }

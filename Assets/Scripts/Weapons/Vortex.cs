@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Runtime black hole: travel -> pull + tick damage -> implode. Works on any IHostile.
     public class Vortex : MonoBehaviour
     {
         private static readonly int ColorId = Shader.PropertyToID("_Color");

@@ -4,7 +4,6 @@ namespace Soulbreak.Perks
 {
     public enum ReactorAction { Heal, AddMaxHealth, RestoreShield, AddMaxShield }
 
-    // Repairs or upgrades the reactor.
     [CreateAssetMenu(menuName = "Soulbreak/Perk Effects/Reactor", fileName = "ReactorEffect")]
     public class ReactorPerkEffect : PerkEffect
     {

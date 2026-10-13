@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Economy
 {
-    // Observer: pays interest on banked souls whenever a wave is cleared (unlocked by perks).
     public class SoulInterest : MonoBehaviour
     {
         [SerializeField] private WaveManager waves;

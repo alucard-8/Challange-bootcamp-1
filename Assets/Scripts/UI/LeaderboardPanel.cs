@@ -6,9 +6,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Slide-out panel on the right edge (main menu + pause menu). Click the arrow tab to open it:
-    // your best and last run (local), your global rank, and the global top 10.
-    // In the game scene it only shows while paused.
     public class LeaderboardPanel : MonoBehaviour
     {
         [System.Serializable]
@@ -18,7 +15,7 @@ namespace Soulbreak.UI
             public Text rank, name, score;
         }
 
-        [SerializeField] private PauseController pause;   // optional: visible only while paused
+        [SerializeField] private PauseController pause;
         [SerializeField] private int sortingOrder = 12;
 
         [SerializeField] private Canvas canvas;
@@ -88,7 +85,7 @@ namespace Soulbreak.UI
             ShowLocal();
             var (top, me) = await LeaderboardService.Fetch();
             loading = false;
-            if (this == null) return;   // left the scene while waiting
+            if (this == null) return;
 
             ShowLocal();
             bool online = LeaderboardService.Online;

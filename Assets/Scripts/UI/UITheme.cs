@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.UI
 {
-    // Shared UI look (font, panel/card materials, colors). Lives in Resources so views can load it without wiring.
     [CreateAssetMenu(menuName = "Soulbreak/UI Theme", fileName = "UITheme")]
     public class UITheme : ScriptableObject
     {
@@ -77,7 +76,6 @@ namespace Soulbreak.UI
         public Color catAbility = new Color(1f, 0.85f, 0.35f);
         public Color catWeapon = new Color(0.45f, 1f, 0.6f);
 
-        // Rarity palette (Common, Rare, Epic, Legendary) for shader/card lookups.
         public Color Rarity(int i) => i switch
         {
             1 => rarityRare,
@@ -86,7 +84,6 @@ namespace Soulbreak.UI
             _ => rarityCommon,
         };
 
-        // Category palette (Offense, Economy, Defense, Ability, Weapon) for shader/card lookups.
         public Color Category(int i) => i switch
         {
             1 => catEconomy,

@@ -7,9 +7,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Cinematic game-over: the screen darkens, the title slams in, then a run summary tallies up
-    // line by line, the score counts up, a NEW BEST stamp lands, essence is shown and the buttons appear.
-    // Click anywhere to skip the tally. Driven entirely by the MetaRecorder's RunResult event.
     public class GameOverView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;
@@ -87,14 +84,11 @@ namespace Soulbreak.UI
             badgeTime = -1f;
             stampGroup.alpha = 0f;
 
-            // Show the record to beat; it disappears the moment the count passes it.
             bestText.text = string.Format(S.gameOverBest, (r.NewBest ? r.PreviousBest : MetaProgress.BestScore).ToString("N0"));
             bestGroup.alpha = 1f;
             essenceText.text = string.Format(S.gameOverEssence, r.Essence, Lex.T("essence", "SOUL ESSENCE"), MetaProgress.Essence);
         }
 
-        // Debug preview (F3): plays the full game-over sequence with a fake run that beats your best.
-        // Nothing is saved — your real records are untouched.
         public void PreviewNewBest()
         {
             int best = MetaProgress.BestScore;
@@ -115,7 +109,6 @@ namespace Soulbreak.UI
             rows[i].ticked = false;
         }
 
-        // Click anywhere: jump to the end of the sequence.
         private void Skip()
         {
             if (running && time < buttonsAt) time = buttonsAt;
@@ -128,19 +121,16 @@ namespace Soulbreak.UI
 
             backdrop.color = new Color(T.gameOverBackdrop.r, T.gameOverBackdrop.g, T.gameOverBackdrop.b, Mathf.Clamp01(time / 1.0f) * 0.9f);
 
-            // Title slam
             float tk = Mathf.Clamp01((time - 0.5f) / 0.25f);
             titleGroup.alpha = tk;
             titleRt.localScale = Vector3.one * Mathf.Lerp(2.4f, 1f, 1f - (1f - tk) * (1f - tk));
             if (tk > 0f && tk < 1f) titleRt.anchoredPosition = new Vector2(Random.Range(-6f, 6f), -150f + Random.Range(-4f, 4f));
             else titleRt.anchoredPosition = new Vector2(0f, -150f);
 
-            // Summary panel slides up
             float pk = Mathf.Clamp01((time - 1.0f) / 0.4f);
             panelGroup.alpha = pk;
             panelRt.anchoredPosition = new Vector2(0f, Mathf.Lerp(-120f, 0f, 1f - (1f - pk) * (1f - pk)) - 30f);
 
-            // Rows tally one by one
             foreach (var r in rows)
             {
                 float k = Mathf.Clamp01((time - r.start) / RowCount);
@@ -149,14 +139,12 @@ namespace Soulbreak.UI
                 if (!r.ticked && time >= r.start) { r.ticked = true; UIAudio.Play(Sfx.Tally, 0.5f); }
             }
 
-            // Score count-up (eased, slows near the end so you watch it pass the record)
             float sk = Mathf.Clamp01((time - scoreStart) / ScoreCount);
             float eased = 1f - Mathf.Pow(1f - sk, 3f);
             int shown = Mathf.RoundToInt(Mathf.Lerp(0, result.Score, eased));
             scoreText.text = $"{shown:N0}";
             if (!scoreTicked && time >= scoreStart) { scoreTicked = true; UIAudio.Play(Sfx.Streak, 0.6f); }
 
-            // Passing the old best: the BEST line vanishes, a gold BEST! badge slams in beside the score with confetti
             if (result.NewBest && !bestCrossed && time >= scoreStart && shown > result.PreviousBest) CrossBest();
 
             float flash = badgeTime >= 0f ? Mathf.Clamp01(1f - (time - badgeTime) / 0.5f) : 0f;
@@ -192,12 +180,11 @@ namespace Soulbreak.UI
             UIConfetti.Burst(confetti, stampRt.anchoredPosition, T.stampGlow, 24, 420f);
         }
 
-        // Keep the badge just to the right of the (changing-width) score number.
         private void PlaceBadge()
         {
             float half = Mathf.Min(scoreText.preferredWidth, scoreText.rectTransform.rect.width) * 0.5f;
             var s = scoreText.rectTransform.anchoredPosition;
-            stampRt.anchoredPosition = new Vector2(s.x + half + 10f, s.y + 72f);   // sticker on the top-right of the number
+            stampRt.anchoredPosition = new Vector2(s.x + half + 10f, s.y + 72f);
         }
     }
 }

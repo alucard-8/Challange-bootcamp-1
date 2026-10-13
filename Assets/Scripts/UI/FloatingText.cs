@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // "+15" popup that drifts up and fades.
     [RequireComponent(typeof(Text))]
     public class FloatingText : MonoBehaviour
     {

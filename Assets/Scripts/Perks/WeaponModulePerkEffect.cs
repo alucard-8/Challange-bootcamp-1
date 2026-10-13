@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Perks
 {
-    // Installs weapon modules into random slots of the weapon ring.
     [CreateAssetMenu(menuName = "Soulbreak/Perk Effects/Weapon Module", fileName = "WeaponModuleEffect")]
     public class WeaponModulePerkEffect : PerkEffect
     {

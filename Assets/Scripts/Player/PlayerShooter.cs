@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Player
 {
-    // Holds the aim and fires shots on command. Which shot fires is decided by the weapon ring slot the
-    // aim passes through; the shot itself is a ShotPattern strategy. Input lives in PlayerController.
     public class PlayerShooter : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -18,7 +16,7 @@ namespace Soulbreak.Player
         public Vector2 AimPoint { get; private set; }
         public Vector2 AimDirection { get; private set; } = Vector2.up;
 
-        public event Action<Vector2, Vector2, bool, ShotPattern> OnShotFired;   // (from, to, crit, pattern)
+        public event Action<Vector2, Vector2, bool, ShotPattern> OnShotFired;
 
         private void Awake()
         {
@@ -36,7 +34,7 @@ namespace Soulbreak.Player
         {
             if (Time.timeScale == 0f) return false;
             bool overdriven = overdrive != null && overdrive.IsActive;
-            if (!overdriven && !ammo.TryConsume()) return false;   // Overdrive = free ammo
+            if (!overdriven && !ammo.TryConsume()) return false;
 
             Vector2 origin = muzzle.position;
             bool crit = UnityEngine.Random.value < stats.Get(StatType.CritChance);
@@ -58,11 +56,10 @@ namespace Soulbreak.Player
 
             if (overdriven)
             {
-                // Overdrive: every other owned technique fires too, and nothing is used up.
                 foreach (var module in weapons.OwnedModules)
                     if (module != pattern) { module.Fire(ctx); OnShotFired?.Invoke(origin, AimPoint, crit, module); }
             }
-            else weapons.Consume(slot);   // module slots empty out and reload a new module
+            else weapons.Consume(slot);
 
             return true;
         }

@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Menu
 {
-    // Secret: click the menu core 7 times quickly. The core collapses and reignites as a STAR,
-    // unlocking Star Core mode. Once unlocked, doing it again flips between the two modes.
     public class ReactorEasterEgg : MonoBehaviour
     {
         public const string SecretId = "mode_star";
@@ -27,7 +25,6 @@ namespace Soulbreak.Menu
 
         private void Start() => baseScale = core.localScale;
 
-        // Called by MainMenuInput with the clicked world position.
         public void RegisterClick(Vector2 worldPoint)
         {
             if (busy || Vector2.Distance(worldPoint, core.position) > baseScale.x * 0.25f) return;
@@ -51,7 +48,6 @@ namespace Soulbreak.Menu
             busy = true;
             clicks = 0;
 
-            // Collapse: spin down to a point
             for (float t = 0f; t < 0.7f; t += Time.unscaledDeltaTime)
             {
                 float k = t / 0.7f;
@@ -66,7 +62,6 @@ namespace Soulbreak.Menu
             MetaProgress.SelectedMode = GameModeService.IsStar ? "" : GameModeService.StarMode;
             core.localRotation = Quaternion.identity;
 
-            // Reignite with an overshoot
             for (float t = 0f; t < 0.6f; t += Time.unscaledDeltaTime)
             {
                 float k = t / 0.6f;

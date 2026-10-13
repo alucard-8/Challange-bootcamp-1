@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Fx
 {
-    // Observer: adds "trauma" on impactful events; trauma decays and shakes the camera.
     public class CameraShake : MonoBehaviour
     {
         [SerializeField] private Reactor.Reactor reactor;

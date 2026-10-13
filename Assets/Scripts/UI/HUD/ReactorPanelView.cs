@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Top-left panel: wave number + reactor core health bar + shield pips.
     public class ReactorPanelView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

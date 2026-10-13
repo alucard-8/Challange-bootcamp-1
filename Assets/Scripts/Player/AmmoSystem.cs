@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Player
 {
-    // Owns the clip. The shooter asks it for permission to fire; it never knows what is shot or reads input.
-    // Ammo recharges itself: whenever the clip is below max it regains one shot every ReloadTime seconds, so
-    // the player never reloads by hand. Ammo charges still top the clip off instantly.
     public class AmmoSystem : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -13,13 +10,13 @@ namespace Soulbreak.Player
 
         public int Current { get; private set; }
         public int Max => Mathf.Max(1, stats.GetInt(StatType.ClipSize));
-        public bool IsReloading => Current < Max;                                  // recharging toward a full clip
-        public float PerShot => Mathf.Max(0.02f, stats.Get(StatType.ReloadTime));  // seconds to regain one shot
+        public bool IsReloading => Current < Max;
+        public float PerShot => Mathf.Max(0.02f, stats.Get(StatType.ReloadTime));
         public float ReloadProgress => IsReloading ? Mathf.Clamp01(1f - rechargeTimer / PerShot) : 1f;
 
-        public event Action<int, int> OnAmmoChanged;   // (current, max)
-        public event Action<float> OnReloadStarted;    // fired the moment the clip runs dry (seconds per shot)
-        public event Action OnReloadFinished;          // fired when the clip is full again
+        public event Action<int, int> OnAmmoChanged;
+        public event Action<float> OnReloadStarted;
+        public event Action OnReloadFinished;
         public event Action OnDryFire;
         public event Action OnAmmoPickup;
 
@@ -37,7 +34,6 @@ namespace Soulbreak.Player
             if (orbCollected != null) orbCollected.OnRaised -= HandleOrb;
         }
 
-        // Ammo charge picked up: fill the clip instantly.
         private void HandleOrb(Orbs.Orb orb)
         {
             if (orb.Type != Orbs.OrbType.Ammo) return;
@@ -60,7 +56,7 @@ namespace Soulbreak.Player
 
             if (Current >= Max)
             {
-                rechargeTimer = PerShot;   // a full clip waits a whole interval before the next shot returns
+                rechargeTimer = PerShot;
                 return;
             }
 

@@ -2,8 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Observer: when an enemy that splits dies (its config has splitInto, or it's a "Splitting" elite),
-    // spawn its children.
     public class EnemySplitter : MonoBehaviour
     {
         [SerializeField] private EnemyEventChannel enemyKilled;

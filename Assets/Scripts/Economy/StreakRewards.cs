@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Economy
 {
-    // Observer: pays bonus souls on kill-streak milestones and broadcasts the announcement.
     public class StreakRewards : MonoBehaviour
     {
         [SerializeField] private ComboSystem combo;

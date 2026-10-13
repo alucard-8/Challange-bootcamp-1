@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Fx
 {
-    // Crackling lightning through a list of points: re-jitters its zig-zag every few frames, then fades.
     [RequireComponent(typeof(LineRenderer))]
     public class LightningFx : MonoBehaviour
     {

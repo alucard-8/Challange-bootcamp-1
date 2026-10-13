@@ -9,13 +9,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // First-run interactive coach. Each step:
-    //   - sets up a little practice moment (drops orbs, charges Nova / Overdrive),
-    //   - shows a big key prompt and a marker that tracks the thing to look at in the world,
-    //   - plays a visual demo (highlight ring + animated key ring + arrow + ghost hand that taps),
-    //   - waits until the player actually does it (observed through events), then ticks off.
-    // T skips. Finishing or skipping turns GameSettings.Tutorial off (Settings can turn it back on).
-    // Step copy and chrome live in UIStrings.
     public class TutorialView : MonoBehaviour
     {
         [SerializeField] private GameManager game;
@@ -33,11 +26,11 @@ namespace Soulbreak.UI
         private class Step
         {
             public string Title, Body, Key;
-            public Func<bool> Done;   // null = info step, completes after MinTime
-            public float MinTime;     // keeps fast players from skipping the text unread
+            public Func<bool> Done;
+            public float MinTime;
             public Look Look;
-            public Action Enter;      // practice setup
-            public Action Tick;       // keeps the practice going (e.g. re-drops orbs)
+            public Action Enter;
+            public Action Tick;
         }
 
         private Step[] steps;
@@ -55,7 +48,6 @@ namespace Soulbreak.UI
         [SerializeField] private UIStrings strings;
         [SerializeField] private UITheme theme;
 
-        // ---- visual demos (sprites generated once, elements built under the tutorial content group) ----
         private RectTransform demoSpace;
         private Image focusRing, keyRing, arrow, hand, ripple;
         private static Sprite ringSprite, arrowSprite, handSprite;
@@ -70,13 +62,12 @@ namespace Soulbreak.UI
             active = GameSettings.Tutorial;
             if (!active) { enabled = false; return; }
 
-            // Gameplay behaviour lives here; the words come from UIStrings (same order).
             steps = new[]
             {
                 new Step { Look = Look.Enemy, MinTime = 1f, Done = () => shots >= 3 },
                 new Step { Look = Look.Enemy, MinTime = 1.5f, Done = () => kills >= 3 },
                 new Step { Look = Look.Core, MinTime = 9f },
-                new Step { MinTime = 2.5f },   // ammo auto-recharges now, so this step is just a read
+                new Step { MinTime = 2.5f },
                 new Step { Look = Look.AmmoOrb, MinTime = 2f,
                     Enter = () => DropAmmo(), Tick = () => { if (ammoOrbs == 0 && Retry(5f)) DropAmmo(); }, Done = () => ammoOrbs >= 1 },
                 new Step { Look = Look.Orb, MinTime = 1.5f,
@@ -107,7 +98,6 @@ namespace Soulbreak.UI
 
         private void DropAmmo()
         {
-            // from a random point at the edge of the screen, so it visibly travels in
             var cam = Camera.main;
             Vector2 dir = UnityEngine.Random.insideUnitCircle.normalized;
             float dist = cam != null ? cam.orthographicSize * 0.8f : 4f;
@@ -163,11 +153,10 @@ namespace Soulbreak.UI
             if (!running) return;
 
             if (InputReader.SkipTutorialPressed()) { Finish(); return; }
-            if (game.State == GameState.Shop) { Finish(); return; }   // reaching the shop = seen enough
+            if (game.State == GameState.Shop) { Finish(); return; }
 
             var step = steps[index];
 
-            // slide-in + key prompt pulse
             slide = Mathf.MoveTowards(slide, 1f, dt * 3.5f);
             float e = 1f - Mathf.Pow(1f - slide, 3f);
             card.anchoredPosition = new Vector2(Mathf.Lerp(-460f, 24f, e), 0f);
@@ -196,7 +185,6 @@ namespace Soulbreak.UI
             else if ((doneTimer -= dt) <= 0f) Next();
         }
 
-        // Marker: a pulsing ring + label that follows whatever this step is about.
         private void UpdateMarker(Look look)
         {
             Vector2? world = WorldFocus(look);
@@ -224,13 +212,10 @@ namespace Soulbreak.UI
             markerText.rectTransform.anchoredPosition = local + new Vector2(0f, 62f);
         }
 
-        // ---------- visual demos ----------
         private void BuildDemo()
         {
             if (marker == null) return;
 
-            // Put the demo layer beside the marker inside the tutorial content group, so it fades
-            // with the whole HUD (the `group` CanvasGroup) but not with the marker's own fade.
             var markerGroupRt = marker.parent;
             var content = markerGroupRt != null && markerGroupRt.parent != null ? markerGroupRt.parent : markerGroupRt;
 
@@ -278,7 +263,6 @@ namespace Soulbreak.UI
             Vector2 cardLocal = UILocal(card);
             float now = Time.unscaledTime;
 
-            // Animated key ring: a golden halo pulsing around the key cap.
             keyRing.enabled = hasKey;
             if (hasKey)
             {
@@ -289,7 +273,6 @@ namespace Soulbreak.UI
                 keyRing.color = Fade(T.hudGold, 0.25f + 0.5f * kp);
             }
 
-            // Highlight ring: pulses on whatever the step is about in the world.
             focusRing.enabled = focus.HasValue;
             if (focus.HasValue)
             {
@@ -299,7 +282,6 @@ namespace Soulbreak.UI
                 focusRing.color = Fade(T.accent, 0.45f + 0.4f * fp);
             }
 
-            // Ghost hand: travels from the key (or card) to the target, then taps it.
             Vector2 from = hasKey ? keyLocal : cardLocal;
             Vector2 to = focus ?? from;
             const float period = 1.9f;
@@ -313,7 +295,6 @@ namespace Soulbreak.UI
             hand.rectTransform.localScale = Vector3.one * (1f + 0.3f * tap);
             hand.color = Fade(T.flashColor, live ? 0.9f : 0f);
 
-            // Arrow: points from the key/card toward the target; bobs above the key when there is none.
             arrow.enabled = live && (focus.HasValue || hasKey);
             if (focus.HasValue)
             {
@@ -331,7 +312,6 @@ namespace Soulbreak.UI
                 arrow.color = Fade(T.hudGold, 0.8f);
             }
 
-            // Tap ripple at the target.
             if (tapping)
             {
                 float r = Mathf.Clamp01((ph - 0.7f) / 0.3f);
@@ -355,11 +335,9 @@ namespace Soulbreak.UI
             return null;
         }
 
-        // UI rect -> local point in the tutorial canvas (root space).
         private Vector2 UILocal(Transform t)
             => LocalInRoot(RectTransformUtility.WorldToScreenPoint(null, t.position)) ?? Vector2.zero;
 
-        // World point -> local point in the tutorial canvas (root space), through the game camera.
         private Vector2? FocusLocal(Look look)
         {
             Vector2? w = WorldFocus(look);
@@ -381,7 +359,6 @@ namespace Soulbreak.UI
         private static Sprite ArrowSprite => arrowSprite != null ? arrowSprite : (arrowSprite = MakeSprite(64, ArrowAlpha));
         private static Sprite HandSprite => handSprite != null ? handSprite : (handSprite = MakeSprite(64, HandAlpha));
 
-        // Generates a small white RGBA sprite (tinted through Image.color) from a coverage function.
         private static Sprite MakeSprite(int size, Func<float, float, float> alpha)
         {
             var tex = new Texture2D(size, size, TextureFormat.RGBA32, false)
@@ -415,12 +392,11 @@ namespace Soulbreak.UI
         {
             const float apexY = 0.94f, baseY = 0.10f;
             if (v < baseY || v > apexY) return 0f;
-            float t = (apexY - v) / (apexY - baseY);       // 0 at apex -> 1 at base
+            float t = (apexY - v) / (apexY - baseY);
             float half = Mathf.Lerp(0.03f, 0.44f, t);
             return 1f - Mathf.Clamp01((Mathf.Abs(u - 0.5f) - half) / 0.03f);
         }
 
-        // Classic mouse-cursor silhouette, y-up.
         private static readonly float[] CursorPoly =
         {
             0.30f, 0.95f, 0.30f, 0.12f, 0.46f, 0.30f,
@@ -456,7 +432,7 @@ namespace Soulbreak.UI
             foreach (var en in registry.Alive)
             {
                 if (en == null) continue;
-                float d = ((Vector2)en.transform.position).sqrMagnitude;   // closest to the core = most urgent
+                float d = ((Vector2)en.transform.position).sqrMagnitude;
                 if (d < bestD) { bestD = d; best = en.transform.position; }
             }
             return best;

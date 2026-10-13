@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Observer: marks enemies as discovered when they spawn and perks when the shop offers them,
-    // and announces first-time discoveries. Knows nothing about the Index UI.
     public class CodexRecorder : MonoBehaviour
     {
         [SerializeField] private EnemyEventChannel enemySpawned;

@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Menu
 {
-    // The living main-menu backdrop: the reactor and its weapon ring spin, slots fire and reload,
-    // monsters drift in and get vaporized, soul wisps rise, and the camera leans toward the mouse.
-    // Pure presentation — reuses the game's shaders/materials but none of its gameplay systems.
     public class MenuAmbience : MonoBehaviour
     {
         private static readonly int StartId = Shader.PropertyToID("_Start");
@@ -76,7 +73,6 @@ namespace Soulbreak.Menu
 
         public void SetEnemyMaterial(Material material) => enemyMaterial = material;
 
-        // Where the player is pointing (screen space) — fed by MainMenuInput, used for camera parallax.
         public void LookAt(Vector2 screenPoint) => lookScreenPoint = screenPoint;
         private Vector2 lookScreenPoint;
 
@@ -84,7 +80,6 @@ namespace Soulbreak.Menu
         {
             float dt = Time.unscaledDeltaTime;
 
-            // Ring spin + fake fire/reload cycle
             ringPivot.Rotate(0f, 0f, 14f * dt);
             for (int i = 0; i < slots.Count; i++) UpdateSlot(slots[i], i, dt);
 
@@ -96,7 +91,6 @@ namespace Soulbreak.Menu
             if (wispTimer <= 0f) { wispTimer = 0.12f; SpawnWisp(); }
             for (int i = wisps.Count - 1; i >= 0; i--) UpdateWisp(wisps[i], i, dt);
 
-            // Camera: parallax toward the mouse, and a dive into the reactor when Play is pressed.
             Vector2 mouse = lookScreenPoint;
             Vector2 n = new Vector2(mouse.x / Mathf.Max(1, Screen.width) - 0.5f, mouse.y / Mathf.Max(1, Screen.height) - 0.5f);
             if (zooming) zoom = Mathf.Min(1f, zoom + dt * 1.4f);
@@ -165,7 +159,6 @@ namespace Soulbreak.Menu
             d.t.Rotate(0f, 0f, d.spin * dt);
             if (Vector3.Distance(d.t.position, reactor.position) > Random.Range(3.4f, 6f)) return;
 
-            // The reactor "shoots" it: tracer + shockwave + dissolve.
             Vector2 from = reactor.position + (d.t.position - reactor.position).normalized * (ringDiameter * 0.45f);
             var tracer = new GameObject("MenuTracer", typeof(LineRenderer), typeof(TracerFx));
             tracer.GetComponent<TracerFx>().Init(from, d.t.position, tracerMaterial, new Color(1.2f, 2.2f, 4f), 0.25f, 0.15f);

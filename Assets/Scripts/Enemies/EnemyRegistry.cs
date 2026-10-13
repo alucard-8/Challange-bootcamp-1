@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Observer that keeps the set of living enemies, built purely from the enemy channels.
-    // Anyone who needs "all enemies" (wave clearing, off-screen arrows, danger vignette) reads this.
     [DefaultExecutionOrder(-40)]
     public class EnemyRegistry : MonoBehaviour
     {
@@ -34,6 +32,6 @@ namespace Soulbreak.Enemies
         private void Add(Enemy e) => alive.Add(e);
         private void Remove(Enemy e) => alive.Remove(e);
 
-        private void LateUpdate() => alive.RemoveWhere(e => e == null);   // safety for destroyed objects
+        private void LateUpdate() => alive.RemoveWhere(e => e == null);
     }
 }

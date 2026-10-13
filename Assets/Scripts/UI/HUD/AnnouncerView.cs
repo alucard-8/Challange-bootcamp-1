@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Arena-announcer style callouts (kill streaks, synergies, map events, boss phases).
-    // Listens to one announcement channel; queues messages so they don't overlap.
     public class AnnouncerView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

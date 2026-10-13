@@ -5,9 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Audio
 {
-    // Reads game state and steers the music (played by the AudioManager from authored clips):
-    // intensity grows with the wave number and with danger near the reactor, maxes out in
-    // Overdrive / boss fights; muffled while paused or shopping.
     public class MusicDirector : MonoBehaviour
     {
         [SerializeField] private GameManager game;

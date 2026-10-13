@@ -12,8 +12,6 @@ namespace Soulbreak.Enemies
         [Min(0)] public float weight = 1f;
     }
 
-    // Runs waves: spawns a budget of enemies (some rolled as elites), then reports the wave as cleared
-    // once the EnemyRegistry is empty. It doesn't know the shop exists — GameManager connects them.
     public class WaveManager : MonoBehaviour
     {
         [SerializeField] private Transform target;
@@ -45,7 +43,7 @@ namespace Soulbreak.Enemies
         public bool IsBossWave => bossConfig != null && bossEvery > 0 && Wave % bossEvery == 0;
         public int RemainingToSpawn { get; private set; }
 
-        public event Action<int, bool> OnWaveStarted;   // (wave, isBoss)
+        public event Action<int, bool> OnWaveStarted;
         public event Action<int> OnWaveCleared;
 
         private float timer;
@@ -66,13 +64,11 @@ namespace Soulbreak.Enemies
             OnWaveStarted?.Invoke(Wave, IsBossWave);
         }
 
-        // Configuration (used by the mode applier before the first wave).
         public void SetRoster(WaveEnemy[] newRoster, EnemyConfig newBoss) { roster = newRoster; bossConfig = newBoss; }
 
         private float diffHealth = 1f, diffSpeed = 1f, diffCount = 1f, diffElite = 1f;
         public void SetDifficulty(float health, float speed, float count, float elite) { diffHealth = health; diffSpeed = speed; diffCount = count; diffElite = elite; }
 
-        // Lets other systems (map events) add an enemy to the current wave.
         public Enemy SpawnExtra(EnemyConfig config) => Spawn(config, EnemyModifier.None);
 
         private void Update()

@@ -11,8 +11,6 @@ namespace Soulbreak.GameFlow
         public const string Game = "SampleScene";
     }
 
-    // Persistent full-screen fader: fade out -> load scene -> fade in.
-    // The overlay is the Resources/SceneFader prefab, spawned on first use and kept across scenes.
     public class SceneFader : MonoBehaviour
     {
         private static SceneFader instance;

@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Big boss health bar across the top while a boss is alive. Turns red when it enrages.
     public class BossHealthView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

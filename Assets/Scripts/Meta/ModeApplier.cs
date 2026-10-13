@@ -8,8 +8,6 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Mediator that configures the game scene for the selected mode before anything else runs.
-    // Each system just receives its data through a small setter — none of them know modes exist.
     [DefaultExecutionOrder(-200)]
     public class ModeApplier : MonoBehaviour
     {

@@ -4,7 +4,6 @@ using UnityEngine.Rendering;
 
 namespace Soulbreak.Fx
 {
-    // Blends in the purple Overdrive post-processing while Overdrive is active.
     public class OverdriveEffect : MonoBehaviour
     {
         [SerializeField] private OverdriveSystem overdrive;

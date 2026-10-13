@@ -5,7 +5,6 @@ namespace Soulbreak.Perks
 {
     public enum StatOperation { Add, Multiply }
 
-    // Modifies one player stat. Covers most perks with zero extra code.
     [CreateAssetMenu(menuName = "Soulbreak/Perk Effects/Stat", fileName = "StatEffect")]
     public class StatPerkEffect : PerkEffect
     {

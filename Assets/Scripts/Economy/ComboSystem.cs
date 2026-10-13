@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Economy
 {
-    // Observer: chains fast kills into a combo that boosts soul rewards.
     public class ComboSystem : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -17,8 +16,8 @@ namespace Soulbreak.Economy
         public float Multiplier => Mathf.Min(maxMultiplier, 1f + Count * bonusPerKill);
         public float TimeLeft01 => window > 0f ? timer / window : 0f;
 
-        public event Action<int, float> OnComboChanged;   // (count, multiplier)
-        public event Action<int, string> OnMilestone;     // (count, title) — kill streak announcements
+        public event Action<int, float> OnComboChanged;
+        public event Action<int, string> OnMilestone;
 
         private static readonly int[] MilestoneCounts = { 5, 10, 15, 25, 40, 60 };
         private static readonly string[] MilestoneTitles = { "KILLING SPREE", "RAMPAGE", "UNSTOPPABLE", "GODLIKE", "SOUL REAPER", "ASCENDED" };

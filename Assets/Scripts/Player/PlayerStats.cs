@@ -20,8 +20,6 @@ namespace Soulbreak.Player
         public StatValue(StatType stat, float value) { this.stat = stat; this.value = value; }
     }
 
-    // A bag of upgradeable numbers. Perks write here, every other system reads from here.
-    // New stat = one enum entry, no new methods (Open/Closed).
     [DefaultExecutionOrder(-100)]
     public class PlayerStats : MonoBehaviour
     {
@@ -33,7 +31,7 @@ namespace Soulbreak.Player
             new StatValue(StatType.SplashRadius, 0f),
             new StatValue(StatType.HeadshotMultiplier, 2f),
             new StatValue(StatType.ClipSize, 6),
-            new StatValue(StatType.ReloadTime, 2f),   // seconds to regain one shot (ammo auto-recharges)
+            new StatValue(StatType.ReloadTime, 2f),
             new StatValue(StatType.SoulGain, 1f),
             new StatValue(StatType.OrbValue, 1f),
             new StatValue(StatType.OrbLifetime, 4f),

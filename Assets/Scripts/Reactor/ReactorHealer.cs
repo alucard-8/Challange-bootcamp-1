@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Reactor
 {
-    // Observer: when a heal orb is collected, restore one shield charge.
     public class ReactorHealer : MonoBehaviour
     {
         [SerializeField] private Reactor reactor;

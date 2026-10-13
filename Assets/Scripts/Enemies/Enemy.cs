@@ -4,12 +4,10 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Moves toward its target and dies. It does NOT give souls, drop orbs, split or draw effects —
-    // it raises events on its channels and other systems (wallet, orb dropper, splitter, fx) react.
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class Enemy : MonoBehaviour, IHostile, IDamageable, IWeakPoint
     {
-        public event Action<Enemy> OnDamaged;   // per-instance, for this enemy's own view
+        public event Action<Enemy> OnDamaged;
 
         public EnemyConfig Config { get; private set; }
         public EnemyChannels Channels { get; private set; }
@@ -50,7 +48,6 @@ namespace Soulbreak.Enemies
 
         public bool Has(EnemyModifier m) => (Modifiers & m) != 0;
 
-        // Used by the boss when it enrages.
         public void BoostSpeed(float multiplier) => speedBoost = multiplier;
 
         private void Update()
@@ -67,7 +64,6 @@ namespace Soulbreak.Enemies
                 transform.position = Vector3.MoveTowards(transform.position, Target.position, step * Time.deltaTime);
         }
 
-        // The glowing eye in the middle of the shader is the weak point.
         public bool IsWeakPointHit(Vector2 worldPoint) =>
             Vector2.Distance(worldPoint, transform.position) <= transform.localScale.x * 0.17f;
 

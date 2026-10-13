@@ -4,8 +4,6 @@ using UnityEngine.EventSystems;
 
 namespace Soulbreak.Player
 {
-    // Input layer for the player: reads InputReader and sends commands (aim, fire, nova).
-    // The gameplay components it drives never touch input themselves.
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private PlayerShooter shooter;

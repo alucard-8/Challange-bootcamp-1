@@ -11,7 +11,6 @@ namespace Soulbreak.Meta
         public float EnemyHealth, EnemySpeed, EnemyCount, EliteChance, CoreHealth, ScoreMultiplier;
     }
 
-    // Tuning table for each difficulty. Score / essence multiplier rewards harder runs.
     public static class DifficultyTable
     {
         public static readonly Difficulty[] All = { Difficulty.Easy, Difficulty.Normal, Difficulty.Hard, Difficulty.Nightmare };

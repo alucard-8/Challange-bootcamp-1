@@ -4,7 +4,6 @@ using UnityEngine.Rendering;
 
 namespace Soulbreak.Fx
 {
-    // Blends in the desaturated "frozen" post-processing while paused, and slowly on game over.
     public class PauseEffect : MonoBehaviour
     {
         [SerializeField] private PauseController pause;

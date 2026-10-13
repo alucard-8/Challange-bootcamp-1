@@ -2,8 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Audio
 {
-    // Interface sounds (hover, click, panel open/close, tally ticks). Played through AudioManager,
-    // which reads the clips from the AudioLibrary. Works in every scene and while the game is paused.
     public static class UIAudio
     {
         private static float lastHover;

@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Player
 {
-    // Ultimate: kills charge a soul meter; when full, Overdrive makes every shot fire ALL owned
-    // techniques at once, with free ammo and slightly slowed time. Triggered by PlayerController.
     public class OverdriveSystem : MonoBehaviour
     {
         [SerializeField] private EnemyEventChannel enemyKilled;
@@ -42,7 +40,6 @@ namespace Soulbreak.Player
             if (Meter >= Max) OnReady?.Invoke();
         }
 
-        // Tutorial / cheats: fill the meter.
         public void Fill()
         {
             if (IsActive || Meter >= Max) return;

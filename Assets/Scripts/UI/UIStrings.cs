@@ -2,9 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.UI
 {
-    // Every player-facing UI string lives here so copy can be edited without touching code.
-    // Views read them through a [SerializeField] UIStrings ref; UIFactory.Strings is the
-    // Resources fallback when a ref is not wired. Placeholders use string.Format ({0}, {1}...).
     [CreateAssetMenu(menuName = "Soulbreak/UI Strings", fileName = "UIStrings")]
     public class UIStrings : ScriptableObject
     {
@@ -184,7 +181,6 @@ namespace Soulbreak.UI
         public string tutorialAmmo = "AMMO";
         public string tutorialRing = "RING";
 
-        // Deliberately terse (1-3 words): the visuals in TutorialView (rings, arrows, ghost hand) carry the rest.
         [Header("Tutorial - steps (title / key / body)")]
         public string[] tutorialTitles =
         {

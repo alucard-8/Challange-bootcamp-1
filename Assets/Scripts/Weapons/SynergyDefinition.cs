@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // A technique combo: owning BOTH modules makes firing the trigger module also fire a bonus pattern.
     [CreateAssetMenu(menuName = "Soulbreak/Synergy", fileName = "Synergy")]
     public class SynergyDefinition : ScriptableObject
     {

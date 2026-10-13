@@ -6,13 +6,10 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Settings panel (used in the main menu and the pause menu): volumes, screen shake, toggles.
-    // Values live in GameSettings; this view only displays them and steps them with -/+ buttons.
     public class SettingsView : MonoBehaviour
     {
         public enum Setting { Master, Music, Sfx, ScreenShake, DamageNumbers, Tutorial }
 
-        // One row of the panel. Sliders use minus/plus/bar/value, toggles use the toggle button.
         [Serializable]
         private class Row
         {

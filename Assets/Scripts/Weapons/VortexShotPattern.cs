@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Black Hole: flies to the cursor, pulls enemies in and grinds them, then implodes.
     [CreateAssetMenu(menuName = "Soulbreak/Shots/Black Hole", fileName = "VortexShot")]
     public class VortexShotPattern : ShotPattern
     {

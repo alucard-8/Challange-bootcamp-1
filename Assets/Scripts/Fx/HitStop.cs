@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace Soulbreak.Fx
 {
-    // Observer: freezes time for a few milliseconds on heavy impacts (headshots, big kills, reactor hits,
-    // boss enrage) so hits feel weighty. Raises OnImpact so a flash view can react.
     public class HitStop : MonoBehaviour
     {
         [SerializeField] private TimeScaleService time;
@@ -16,7 +14,7 @@ namespace Soulbreak.Fx
         [SerializeField] private EnemyEventChannel enemyKilled;
         [SerializeField] private EnemyEventChannel bossEnraged;
 
-        public event Action<float> OnImpact;   // strength 0..1
+        public event Action<float> OnImpact;
 
         private float remaining;
 

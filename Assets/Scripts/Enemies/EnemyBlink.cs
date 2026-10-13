@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Elite "Blink" behaviour: every few seconds the enemy teleports a short hop toward its target.
     [RequireComponent(typeof(Enemy))]
     public class EnemyBlink : MonoBehaviour
     {
@@ -26,7 +25,7 @@ namespace Soulbreak.Enemies
             timer = interval;
 
             Vector3 to = enemy.Target.position - transform.position;
-            float hop = Mathf.Min(distance, Mathf.Max(0f, to.magnitude - 1.6f));   // never blink into the reactor
+            float hop = Mathf.Min(distance, Mathf.Max(0f, to.magnitude - 1.6f));
             transform.position += to.normalized * hop;
         }
     }

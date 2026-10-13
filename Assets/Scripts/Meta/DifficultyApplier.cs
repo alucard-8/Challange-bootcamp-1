@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Applies the chosen difficulty to the run before anything starts (like ModeApplier, a mediator).
     [DefaultExecutionOrder(-210)]
     public class DifficultyApplier : MonoBehaviour
     {

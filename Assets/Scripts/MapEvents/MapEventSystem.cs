@@ -7,10 +7,6 @@ using UnityEngine;
 
 namespace Soulbreak.MapEvents
 {
-    // Random arena events rolled at the start of waves (from wave 3):
-    //   SOUL URN     — a treasure urn drifts across; crack it before it escapes for a soul jackpot.
-    //   SOLAR FLARE  — the reactor shield goes offline for a while.
-    //   REJUVENATOR  — a crystal golem joins the wave; kill it for a temporary damage + reload buff.
     public class MapEventSystem : MonoBehaviour
     {
         [SerializeField] private WaveManager waves;
@@ -66,7 +62,6 @@ namespace Soulbreak.MapEvents
             }
         }
 
-        // ---------- Soul Urn ----------
         private IEnumerator SoulUrnEvent()
         {
             yield return new WaitForSeconds(3f);
@@ -84,7 +79,6 @@ namespace Soulbreak.MapEvents
             };
         }
 
-        // ---------- Solar Flare ----------
         private IEnumerator SolarFlareEvent()
         {
             yield return new WaitForSeconds(2f);
@@ -96,7 +90,6 @@ namespace Soulbreak.MapEvents
             announcements.Raise(new Announcement("SHIELD ONLINE", "", new Color(0.45f, 0.85f, 1f)));
         }
 
-        // ---------- Rejuvenator ----------
         private IEnumerator RejuvenatorEvent()
         {
             if (rejuvenatorConfig == null) yield break;

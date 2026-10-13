@@ -4,14 +4,12 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Everything the Index can show. Data only; discovery state lives in MetaProgress.
     [CreateAssetMenu(menuName = "Soulbreak/Codex Catalog", fileName = "CodexCatalog")]
     public class CodexCatalog : ScriptableObject
     {
         public EnemyConfig[] enemies;
         public PerkDefinition[] perks;
 
-        // Readable summary built from the enemy's stats, so new enemy assets describe themselves.
         public static string Describe(EnemyConfig c)
         {
             var sb = new System.Text.StringBuilder();

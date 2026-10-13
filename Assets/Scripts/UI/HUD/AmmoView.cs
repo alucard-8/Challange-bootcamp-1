@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Bottom-center: one pip per bullet + a bar tracking the next shot's recharge. Pips blink red when low,
-    // and the row pops gold when an ammo charge lands.
     public class AmmoView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

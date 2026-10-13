@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.GameFlow
 {
-    // Owns "is the game paused". Pausing eases time down to a stop (slow-mo into freeze) and back.
-    // Views (pause menu, post-processing) read Blend / listen to OnPauseChanged — they never touch time.
     public class PauseController : MonoBehaviour
     {
         [SerializeField] private GameManager game;
@@ -13,7 +11,7 @@ namespace Soulbreak.GameFlow
         [SerializeField] private float transition = 0.35f;
 
         public bool IsPaused { get; private set; }
-        public float Blend { get; private set; }   // 0 = playing, 1 = fully paused (eased)
+        public float Blend { get; private set; }
 
         public event Action<bool> OnPauseChanged;
 

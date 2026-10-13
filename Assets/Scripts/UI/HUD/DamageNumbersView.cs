@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Damage numbers popping off enemies. Big hits (crits / headshots) are larger and gold,
-    // killing blows get a "!" and shield-absorbed hits show "BLOCK". Pooled; can be turned off in settings.
     public class DamageNumbersView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;
@@ -70,7 +68,7 @@ namespace Soulbreak.UI
             {
                 var n = active[i];
                 n.age += dt;
-                n.velocity.y -= 520f * dt;   // little arc
+                n.velocity.y -= 520f * dt;
                 n.rt.anchoredPosition += n.velocity * dt;
                 n.rt.localScale = Vector3.Lerp(n.rt.localScale, Vector3.one, 1f - Mathf.Exp(-14f * dt));
                 float k = n.age / n.life;

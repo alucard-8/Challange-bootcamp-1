@@ -7,11 +7,6 @@ using UnityEngine;
 
 namespace Soulbreak.Reactor
 {
-    // Makes the core look more "equipped" as the run goes on (both modes):
-    //   offense perks  -> spikes / solar prominences       defense perks -> armor plates / asteroid belt
-    //   economy perks  -> golden halo / bigger corona        techniques    -> satellites / moons orbiting the core
-    //   every 4 perks  -> a new core tier (brighter, pulse, announcement)
-    // Pure listener on the shop and the weapon ring; it forwards shader values to ReactorView.
     public class CoreUpgradeView : MonoBehaviour
     {
         [SerializeField] private PerkShop shop;
@@ -82,7 +77,6 @@ namespace Soulbreak.Reactor
 
         private void Push() => reactorView.SetUpgrades(offense, defense, economy, tier, pulse);
 
-        // One small satellite (moon in Star mode) per owned technique, in that technique's color.
         private void RebuildSatellites()
         {
             foreach (var s in satellites) if (s.t != null) Destroy(s.t.gameObject);
@@ -95,7 +89,6 @@ namespace Soulbreak.Reactor
                 var sr = go.AddComponent<SpriteRenderer>();
                 sr.sprite = quad;
                 sr.sharedMaterial = satelliteMaterial;
-                // Dimmed so a full ring of satellites doesn't bloom into a haze.
                 var c = module.color;
                 float m = Mathf.Max(1f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
                 sr.color = new Color(c.r / m, c.g / m, c.b / m, 0.55f);

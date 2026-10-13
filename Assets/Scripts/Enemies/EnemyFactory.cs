@@ -2,8 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Factory pattern: the only place that knows how an enemy GameObject is assembled,
-    // including which optional behaviours (ranged, blink, boss brain) it gets.
     public static class EnemyFactory
     {
         public static Enemy Create(EnemyConfig config, Vector2 position, Transform target, EnemyChannels channels,

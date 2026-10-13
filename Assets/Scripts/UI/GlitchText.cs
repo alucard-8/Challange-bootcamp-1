@@ -3,11 +3,10 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Chromatic "glitch" title: two colored ghost copies behind the text that jitter apart in bursts.
     [RequireComponent(typeof(Text))]
     public class GlitchText : MonoBehaviour
     {
-        public float burstChance = 1.2f;    // bursts per second
+        public float burstChance = 1.2f;
         public float maxOffset = 10f;
         public Color colorA = new Color(1f, 0.2f, 0.5f, 0.75f);
         public Color colorB = new Color(0.2f, 0.9f, 1f, 0.75f);
@@ -30,7 +29,7 @@ namespace Soulbreak.UI
             var cg = go.GetComponent<CanvasGroup>();
             if (cg != null) DestroyImmediate(cg);
             go.name = name + " Ghost";
-            go.transform.SetSiblingIndex(transform.GetSiblingIndex());   // render behind the main text
+            go.transform.SetSiblingIndex(transform.GetSiblingIndex());
             var t = go.GetComponent<Text>();
             t.color = c;
             return t;
@@ -41,7 +40,6 @@ namespace Soulbreak.UI
             if (ghostA == null) return;
             ghostA.text = ghostB.text = main.text;
 
-            // Follow the main text's fade (e.g. intro CanvasGroup animations).
             var group = GetComponent<CanvasGroup>();
             float fade = group != null ? group.alpha : 1f;
             ghostA.color = new Color(colorA.r, colorA.g, colorA.b, colorA.a * fade);

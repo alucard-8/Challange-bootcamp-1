@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // The default click: instantly hits whatever is under the cursor (plus Shrapnel splash).
-    // Clicking a target's weak point (enemy eyes) is a HEADSHOT: extra damage + headshot event.
     [CreateAssetMenu(menuName = "Soulbreak/Shots/Hitscan", fileName = "HitscanShot")]
     public class HitscanShotPattern : ShotPattern
     {
@@ -35,7 +33,7 @@ namespace Soulbreak.Weapons
                 first = false;
 
                 shootable.Shoot(damage);
-                if (splash <= 0f) break; // no splash = one target per click
+                if (splash <= 0f) break;
             }
         }
     }

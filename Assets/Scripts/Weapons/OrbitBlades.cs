@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Runtime object for Orbital Blades: rotates blade sprites around a center and damages on contact,
-    // with a per-target cooldown so one enemy isn't hit every frame.
     public class OrbitBlades : MonoBehaviour
     {
         private OrbitShotPattern pattern;
@@ -43,7 +41,6 @@ namespace Soulbreak.Weapons
             age += Time.deltaTime;
             angle += pattern.angularSpeed * Time.deltaTime;
 
-            // Spin up from the ring, then hold the orbit, fade out at the end.
             float grow = Mathf.Clamp01(age / 0.3f);
             float fade = Mathf.Clamp01((pattern.duration - age) / 0.5f);
             Place(grow);
@@ -61,7 +58,7 @@ namespace Soulbreak.Weapons
                 float a = (angle + i * 360f / blades.Count) * Mathf.Deg2Rad;
                 var t = blades[i].transform;
                 t.localPosition = new Vector3(Mathf.Cos(a), Mathf.Sin(a)) * r;
-                t.localRotation = Quaternion.Euler(0f, 0f, a * Mathf.Rad2Deg + 90f);   // blade lies along the orbit
+                t.localRotation = Quaternion.Euler(0f, 0f, a * Mathf.Rad2Deg + 90f);
             }
         }
 

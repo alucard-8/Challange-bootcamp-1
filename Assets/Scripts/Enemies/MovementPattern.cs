@@ -2,17 +2,14 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Per-enemy scratch state used by movement strategies.
     public struct MotionState
     {
         public bool Initialized;
-        public float Direction;     // +1 / -1 orbit direction
-        public float Travelled;     // radians travelled around the target
+        public float Direction;
+        public float Travelled;
         public int Phase;
     }
 
-    // Strategy pattern for enemy movement. EnemyConfig.movement picks one; null = straight line.
-    // New movement = new subclass/asset, Enemy never changes.
     public abstract class MovementPattern : ScriptableObject
     {
         public abstract Vector2 Step(Enemy enemy, Vector2 position, Vector2 center, float speed, float dt, ref MotionState state);
@@ -24,7 +21,6 @@ namespace Soulbreak.Enemies
             s.Direction = Random.value < 0.5f ? -1f : 1f;
         }
 
-        // Moves around "center" by an angular step and inward by a radial step.
         protected static Vector2 Orbit(Vector2 position, Vector2 center, float tangentialDistance, float radialDistance,
                                        ref MotionState s, float minRadius = 0.1f)
         {

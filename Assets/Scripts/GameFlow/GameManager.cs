@@ -9,8 +9,6 @@ namespace Soulbreak.GameFlow
 {
     public enum GameState { Combat, Shop, GameOver }
 
-    // Mediator for the game loop: wave cleared -> open shop -> shop closed -> next wave.
-    // WaveManager and PerkShop never reference each other; only this class connects them.
     public class GameManager : MonoBehaviour
     {
         [SerializeField] private Reactor.Reactor reactor;
@@ -73,14 +71,14 @@ namespace Soulbreak.GameFlow
         {
             if (State == GameState.GameOver) return;
             SetState(GameState.Combat);
-            weapons.Shuffle();   // new random module layout every wave
+            weapons.Shuffle();
             waves.StartNextWave();
         }
 
         private void HandleReactorDestroyed()
         {
             SetState(GameState.GameOver);
-            time.Set("gameover", 0.2f);   // slow-motion collapse, frozen after a moment (see Update)
+            time.Set("gameover", 0.2f);
             collapseTimer = 0f;
         }
 

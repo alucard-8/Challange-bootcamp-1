@@ -4,10 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Audio
 {
-    // Central audio player. SFX clips come from the AudioLibrary (one slot per Sfx value; a slot
-    // with no AudioClip assigned stays silent). Music is authored too: a menu loop, and game music
-    // split into intensity tiers that crossfade as combat heats up. Lazily created on first use and
-    // kept DontDestroyOnLoad, so one manager spans the menu and game scenes. Volumes follow settings.
     public class AudioManager : MonoBehaviour
     {
         private const int PoolSize = 16;
@@ -25,7 +21,7 @@ namespace Soulbreak.Audio
 
         private AudioSource menuSource;
         private readonly List<AudioSource> tiers = new List<AudioSource>();
-        private int musicState;          // 0 = none, 1 = menu, 2 = game tiers
+        private int musicState;
         private float intensity, muffle, shownMuffle;
 
         private void Awake()
@@ -38,7 +34,7 @@ namespace Soulbreak.Audio
                 var s = gameObject.AddComponent<AudioSource>();
                 s.playOnAwake = false;
                 s.spatialBlend = 0f;
-                s.ignoreListenerPause = true;   // UI sounds must play while paused
+                s.ignoreListenerPause = true;
                 sfxPool.Add(s);
             }
         }
@@ -58,14 +54,13 @@ namespace Soulbreak.Audio
             }
         }
 
-        // ---------- SFX ----------
         public void PlaySfx(Sfx id, float volume = 1f, float pitchVariance = 0.08f)
         {
             if (lastPlayed.TryGetValue(id, out float last) && Time.unscaledTime - last < SpamGuard) return;
             lastPlayed[id] = Time.unscaledTime;
 
             var entry = EntryFor(id);
-            if (entry == null || entry.clip == null) return;   // empty slot = silent
+            if (entry == null || entry.clip == null) return;
 
             var src = sfxPool[next];
             next = (next + 1) % sfxPool.Count;
@@ -81,7 +76,6 @@ namespace Soulbreak.Audio
             return i >= 0 && i < a.sfx.Length ? a.sfx[i] : null;
         }
 
-        // ---------- Music ----------
         public void SetIntensity(float value) => intensity = Mathf.Clamp01(value);
         public void SetMuffle(float value) => muffle = Mathf.Clamp01(value);
 
@@ -157,9 +151,8 @@ namespace Soulbreak.Audio
             }
         }
 
-        // Tiers sit evenly in [0,1] so intensity maps linearly onto them.
         private static float TierLevel(int i, int count) => count <= 1 ? 0f : (float)i / (count - 1);
 
-        private float Dip() => Mathf.Lerp(1f, 0.4f, shownMuffle);   // "muffle" = volume dip on authored clips
+        private float Dip() => Mathf.Lerp(1f, 0.4f, shownMuffle);
     }
 }

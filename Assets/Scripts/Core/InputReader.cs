@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 namespace Soulbreak.Core
 {
-    // Single place that talks to the input backend, so gameplay systems don't care which one is active.
     public static class InputReader
     {
         public static bool FirePressed()
@@ -125,7 +124,6 @@ namespace Soulbreak.Core
 #endif
         }
 
-        // index 0 -> key "1", index 1 -> key "2", ...
         public static bool PerkPressed(int index)
         {
             if (index < 0 || index > 8) return false;

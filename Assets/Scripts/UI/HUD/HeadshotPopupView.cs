@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.UI
 {
-    // "HEADSHOT" text that pops where the headshot landed.
     public class HeadshotPopupView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

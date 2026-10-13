@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.GameFlow
 {
-    // Single owner of Time.timeScale. Systems request a named layer (pause, hit-stop, overdrive, game over)
-    // and the final scale is the product of all layers — so they never fight over the global value.
     [DefaultExecutionOrder(-90)]
     public class TimeScaleService : MonoBehaviour
     {

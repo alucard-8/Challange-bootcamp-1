@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Planets: spiral inward on a decaying orbit. Ranged enemies hold their orbit once in range.
     [CreateAssetMenu(menuName = "Soulbreak/Movement/Spiral", fileName = "SpiralMovement")]
     public class SpiralMovement : MovementPattern
     {

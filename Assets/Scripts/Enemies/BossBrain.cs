@@ -2,9 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Two-phase boss behaviour, added by the factory to boss enemies.
-    // Phase 1: summons minion packs. Phase 2 (below 50% health): enrages — faster, and fires
-    // rings of bullets at the reactor that the player must shoot down.
     [RequireComponent(typeof(Enemy))]
     public class BossBrain : MonoBehaviour
     {

@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Top-center: combo counter + multiplier + time-left bar.
     public class ComboView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

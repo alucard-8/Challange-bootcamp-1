@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // All game modes. Lives in Resources so both scenes can find it without wiring.
     [CreateAssetMenu(menuName = "Soulbreak/Mode Library", fileName = "ModeLibrary")]
     public class ModeLibrary : ScriptableObject
     {

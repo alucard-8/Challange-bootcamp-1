@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Pause screen: a side panel slides in with a glitching title, run stats and buttons.
-    // Animation follows PauseController.Blend; buttons only call PauseController / GameManager.
     public class PauseMenuView : MonoBehaviour
     {
         [SerializeField] private PauseController pause;
@@ -19,7 +17,6 @@ namespace Soulbreak.UI
         [SerializeField] private HowToView howTo;
         [SerializeField] private Meta.CodexCatalog codex;
 
-        // Esc closes the top-most popup first; returns false when nothing was open.
         public bool CloseTopPanel()
         {
             if (howTo != null && howTo.IsOpen) { howTo.Close(); return true; }
@@ -28,7 +25,6 @@ namespace Soulbreak.UI
             return false;
         }
 
-        // Unpausing (or leaving the pause menu any other way) closes every popup.
         private void CloseAll()
         {
             if (howTo != null) howTo.Close();
@@ -40,7 +36,7 @@ namespace Soulbreak.UI
         [SerializeField] private RectTransform panel, hint;
         [SerializeField] private Text statsText;
         [SerializeField] private Image dim;
-        [SerializeField] private Button[] menuButtons;   // resume, settings, index, restart, main menu, quit
+        [SerializeField] private Button[] menuButtons;
         [SerializeField] private Button helpButton;
         [SerializeField] private UIStrings strings;
         [SerializeField] private UITheme theme;
@@ -67,7 +63,7 @@ namespace Soulbreak.UI
             }
             helpButton.onClick.AddListener(() => howTo.Open());
 #if UNITY_WEBGL
-            menuButtons[menuButtons.Length - 1].gameObject.SetActive(false);   // no quitting a browser tab
+            menuButtons[menuButtons.Length - 1].gameObject.SetActive(false);
 #endif
         }
 
@@ -88,7 +84,6 @@ namespace Soulbreak.UI
             group.blocksRaycasts = group.interactable = pause.IsPaused;
             dim.color = new Color(T.pauseDim.r, T.pauseDim.g, T.pauseDim.b, T.pauseDim.a * b);
 
-            // Panel slides in from the left with a slight overshoot.
             float slide = 1f - Mathf.Pow(1f - b, 3f);
             panel.anchoredPosition = new Vector2(Mathf.Lerp(-PanelWidth - 40f, 70f, slide), 0f);
             hint.anchoredPosition = new Vector2(Mathf.Lerp(400f, -70f, slide), 70f);

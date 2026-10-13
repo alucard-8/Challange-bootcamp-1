@@ -1,7 +1,5 @@
 namespace Soulbreak.Meta
 {
-    // Answers "which mode are we playing?" (the selected, unlocked mode or the default) and
-    // "what is this thing called in this mode?" (lexicon lookups for UI text).
     public static class GameModeService
     {
         public const string DefaultMode = "reactor";

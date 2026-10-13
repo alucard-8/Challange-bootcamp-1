@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Short white impact flash over the whole screen, driven by HitStop impacts.
     public class ScreenFlashView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

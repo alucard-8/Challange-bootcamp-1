@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Reactor
 {
-    // Subject in the Observer pattern: owns reactor state and only announces changes.
-    // It never references UI, audio, effects or game-over logic — those subscribe to its events.
     public class Reactor : MonoBehaviour, IDamageable
     {
         [SerializeField] private ReactorConfig config;
@@ -17,7 +15,6 @@ namespace Soulbreak.Reactor
         public bool IsDestroyed => Health <= 0;
         public bool ShieldSuppressed { get; private set; }
 
-        // Solar flares knock the shield offline for a while (charges are kept, just unusable).
         public void SetShieldSuppressed(bool suppressed)
         {
             if (ShieldSuppressed == suppressed) return;
@@ -25,14 +22,13 @@ namespace Soulbreak.Reactor
             RaiseShield();
         }
 
-        public event Action<int, int> OnHealthChanged;   // (current, max)
-        public event Action<int, int> OnShieldChanged;   // (current, max)
-        public event Action<bool> OnHit;                 // true = shield absorbed it
+        public event Action<int, int> OnHealthChanged;
+        public event Action<int, int> OnShieldChanged;
+        public event Action<bool> OnHit;
         public event Action OnDestroyed;
 
         private float healthMultiplier = 1f;
 
-        // Difficulty hook — must be called before Awake (DifficultyApplier runs first).
         public void SetHealthMultiplier(float multiplier) => healthMultiplier = multiplier;
 
         private void Awake()
@@ -43,12 +39,10 @@ namespace Soulbreak.Reactor
 
         private void Start()
         {
-            // Push initial state so listeners (HUD, view) can draw themselves.
             RaiseHealth();
             RaiseShield();
         }
 
-        // Shield charges absorb hits first, then health takes damage.
         public void TakeDamage(int amount)
         {
             if (IsDestroyed || amount <= 0) return;

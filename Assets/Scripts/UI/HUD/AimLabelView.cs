@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Names the shot you're about to fire, just past the needle tip ("CHAIN LIGHTNING").
-    // Shows "RELOADING" over an emptied slot; hides over plain laser slots to keep the screen clean.
     public class AimLabelView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

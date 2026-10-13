@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Menu
 {
-    // Re-themes the main menu for the selected mode (core + background + enemies + music + title)
-    // and re-applies whenever the selection changes.
     [DefaultExecutionOrder(-100)]
     public class MenuModeApplier : MonoBehaviour
     {

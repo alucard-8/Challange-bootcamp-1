@@ -2,8 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Visual side of an enemy: feeds the enemy shader (color, spikes, hit flash, health ring,
-    // elite aura, shield bubble). Split from Enemy so gameplay and visuals change independently (SRP).
     [RequireComponent(typeof(Enemy), typeof(SpriteRenderer))]
     public class EnemyView : MonoBehaviour
     {
@@ -26,7 +24,7 @@ namespace Soulbreak.Enemies
             enemy = GetComponent<Enemy>();
             sr = GetComponent<SpriteRenderer>();
             block = new MaterialPropertyBlock();
-            baseScale = transform.localScale;   // set by Enemy.Init (elites are a bit bigger)
+            baseScale = transform.localScale;
             transform.localScale = Vector3.zero;
         }
 
@@ -54,7 +52,6 @@ namespace Soulbreak.Enemies
 
         private void Update()
         {
-            // Hit squash: quick squeeze then spring back
             if (squash > 0f && appear >= 1f)
             {
                 squash = Mathf.Max(0f, squash - Time.deltaTime * 8f);
@@ -62,7 +59,6 @@ namespace Soulbreak.Enemies
                 transform.localScale = new Vector3(baseScale.x * (2f - s), baseScale.y * s, 1f);
             }
 
-            // Spawn-in: grow from nothing with a small overshoot.
             if (appear < 1f)
             {
                 appear = Mathf.Min(1f, appear + Time.deltaTime * 3f);

@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Observer: watches the ring layout for newly completed synergies (announces them) and, whenever a
-    // trigger module fires, fires the synergy's bonus pattern at the same target.
     public class SynergySystem : MonoBehaviour
     {
         [SerializeField] private WeaponRing ring;
@@ -42,7 +40,7 @@ namespace Soulbreak.Weapons
 
         private void HandleShot(Vector2 from, Vector2 to, bool crit, ShotPattern pattern)
         {
-            if (firingBonus) return;   // bonus shots never chain into more bonus shots
+            if (firingBonus) return;
             foreach (var s in active)
             {
                 if (s.trigger != pattern || s.bonus == null) continue;
@@ -61,7 +59,6 @@ namespace Soulbreak.Weapons
             }
         }
 
-        // Shop hint: "Synergy with X: Name" lines for a module.
         public string HintFor(ShotPattern module)
         {
             if (module == null || synergies == null) return "";

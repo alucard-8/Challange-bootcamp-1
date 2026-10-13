@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Fx
 {
-    // A small burst of glowing sparks flying out from an impact point, slowing and fading.
     public class SparkFx : MonoBehaviour
     {
         private Transform[] sparks;

@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.MapEvents
 {
-    // A treasure urn that drifts across the arena and escapes after a while.
-    // Shoot it enough times to crack it open. It only reports hits/break — the event system pays out.
     public class SoulUrn : MonoBehaviour, IShootable
     {
         public event Action<SoulUrn> OnHit;

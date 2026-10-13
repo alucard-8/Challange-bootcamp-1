@@ -13,8 +13,6 @@ namespace Soulbreak.Perks
         public bool Sold;
     }
 
-    // Shop logic only (the ShopView draws it). Rolls random offers weighted by rarity,
-    // sells them for souls, rerolls, and announces everything through events.
     public class PerkShop : MonoBehaviour
     {
         [SerializeField] private PerkDefinition[] catalog;
@@ -93,7 +91,6 @@ namespace Soulbreak.Perks
             return true;
         }
 
-        // Debug/admin: apply every perk up to its max stacks (unlimited perks once), for free.
         public void GrantAll()
         {
             foreach (var perk in catalog)
@@ -115,7 +112,6 @@ namespace Soulbreak.Perks
         private bool IsMaxed(PerkDefinition perk)
         {
             if (perk.maxStacks > 0 && GetStacks(perk) >= perk.maxStacks) return true;
-            // No point offering techniques once every ring slot is taken.
             return perk.IsTechnique && weapons != null && weapons.ModuleCount >= weapons.MaxSlots;
         }
 

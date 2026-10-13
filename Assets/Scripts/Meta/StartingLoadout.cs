@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Applies the equipped meta loadout at the start of a run: starting technique + reactor skin.
     public class StartingLoadout : MonoBehaviour
     {
         [SerializeField] private MetaCatalog catalog;

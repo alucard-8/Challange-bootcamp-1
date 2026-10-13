@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Runtime UI helpers shared by the views: theme/font lookup, bars, pips, template cloning, easing.
-    // All layout lives in the UI prefabs (Assets/Prefabs/UI).
     public static class UIFactory
     {
         private static Font font;
@@ -22,7 +20,6 @@ namespace Soulbreak.UI
             }
         }
 
-        // Fallback copy source for views whose [SerializeField] ref is not wired.
         public static UIStrings Strings
         {
             get
@@ -52,7 +49,6 @@ namespace Soulbreak.UI
             fill.offsetMax = new Vector2(-2f, -2f);
         }
 
-        // Lays out a centered row of pips (ammo, shield charges) by cloning the row's inactive template.
         public static void Pips(Image template, System.Collections.Generic.List<Image> pips, int count, float gap)
         {
             if (pips.Count == count) return;
@@ -68,7 +64,6 @@ namespace Soulbreak.UI
                 pips[i].rectTransform.anchoredPosition = new Vector2(-total / 2f + size / 2f + i * (size + gap), 0f);
         }
 
-        // Clones an inactive template (popups, pips, arrows) and switches the copy on.
         public static T Spawn<T>(T template, Transform parent) where T : Component
         {
             var copy = UnityEngine.Object.Instantiate(template, parent, false);
@@ -76,7 +71,6 @@ namespace Soulbreak.UI
             return copy;
         }
 
-        // Panel "pop" scale for an open amount 0..1 (eases out with a small overshoot).
         public static float PopScale(float open01)
         {
             float t = Mathf.Clamp01(open01) - 1f;

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Chain Lightning: zaps the hostile under the cursor, then arcs to nearby hostiles, losing power each jump.
     [CreateAssetMenu(menuName = "Soulbreak/Shots/Chain Lightning", fileName = "ChainShot")]
     public class ChainShotPattern : ShotPattern
     {

@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Fx
 {
-    // Tiny one-shot animator: drives one shader float 0 -> 1 (and optionally scale) then self-destructs.
     [RequireComponent(typeof(SpriteRenderer))]
     public class FxAnimator : MonoBehaviour
     {
@@ -26,7 +25,7 @@ namespace Soulbreak.Fx
 
         private void Update()
         {
-            age += Time.unscaledDeltaTime;   // finish even when time is frozen (game over)
+            age += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(age / duration);
             Step(t);
             if (t >= 1f) Destroy(gameObject);

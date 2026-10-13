@@ -11,9 +11,6 @@ namespace Soulbreak.Audio
         UIHover, UIClick, UIOpen, UIClose, Tally, NewBest, Collapse,
     }
 
-    // Authoritative audio data: one AudioClip slot per Sfx value (empty = that sound stays silent),
-    // each with its own volume, plus authored music (the menu loop and per-intensity game tiers).
-    // Generated on RebuildSfx so every enum value always has a slot.
     [CreateAssetMenu(menuName = "Soulbreak/Audio Library", fileName = "AudioLibrary")]
     public class AudioLibrary : ScriptableObject
     {
@@ -45,7 +42,6 @@ namespace Soulbreak.Audio
         private void Reset() => RebuildSfx();
         private void OnValidate() => RebuildSfx();
 
-        // Make sure there is exactly one (possibly empty) entry per Sfx value, in enum order.
         public void RebuildSfx()
         {
             int count = Enum.GetValues(typeof(Sfx)).Length;

@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Reactor
 {
-    // Visual side of the reactor: feeds health / shield / hit flash into the Reactor shader.
     [RequireComponent(typeof(SpriteRenderer))]
     public class ReactorView : MonoBehaviour
     {
@@ -21,7 +20,6 @@ namespace Soulbreak.Reactor
         private static readonly int TierId = Shader.PropertyToID("_Tier");
         private static readonly int TierPulseId = Shader.PropertyToID("_TierPulse");
 
-        // Visual upgrade levels (fed by CoreUpgradeView). Works for both the reactor and star shaders.
         public void SetUpgrades(float offense, float defense, float economy, int tier, float tierPulse)
         {
             block.SetFloat(UpOffenseId, offense);
@@ -32,7 +30,6 @@ namespace Soulbreak.Reactor
             Apply();
         }
 
-        // Reactor skins (meta progression) recolor the core and shield.
         public void SetColors(Color core, Color shield)
         {
             block.SetColor(CoreColorId, core);

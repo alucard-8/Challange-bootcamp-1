@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Bottom-right (above Nova): the Overdrive soul meter. Pulses when ready.
     public class OverdriveView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.Menu
 {
-    // "Choose your difficulty" popup shown when pressing PLAY. Picking a card saves the choice and starts the run.
     public class DifficultyView : MonoBehaviour
     {
         [SerializeField] private MainMenuView menu;
@@ -59,7 +58,6 @@ namespace Soulbreak.Menu
             UIAudio.Play(Sfx.UIClose);
         }
 
-        // Enter = start with the highlighted (last used) difficulty.
         public void Confirm() => Choose(MetaProgress.SelectedDifficulty);
 
         private void Choose(Difficulty d)
@@ -76,7 +74,6 @@ namespace Soulbreak.Menu
             group.blocksRaycasts = group.interactable = IsOpen;
             panel.localScale = Vector3.one * UIFactory.PopScale(group.alpha);
 
-            // Cards rise in one after another
             for (int i = 0; i < cards.Count; i++)
             {
                 float k = Mathf.Clamp01((openTime - 0.05f - i * 0.06f) / 0.3f);

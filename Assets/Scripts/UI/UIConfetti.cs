@@ -2,9 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.UI
 {
-    // A burst of glowing UI particles (gold sparks + tiny streamers) that fly out, fall and fade.
-    // Real-time, so it works on frozen screens like game over.
-    // Lives in the prefab as an inactive template with one inactive "Spark" child; Burst clones both.
     public class UIConfetti : MonoBehaviour
     {
         [SerializeField] private UnityEngine.UI.Image spark;

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Orbs
 {
-    // Observer: listens for enemy deaths and rolls for orb drops (chances boosted by perks).
     public class OrbDropper : MonoBehaviour
     {
         [SerializeField] private PlayerStats stats;
@@ -21,7 +20,7 @@ namespace Soulbreak.Orbs
         [SerializeField] private Transform magnetTarget;
         [SerializeField, ColorUsage(false, true)] private Color ammoColor = new Color(3f, 1.9f, 0.4f);
         [SerializeField, Range(0, 1)] private float ammoChance = 0.1f;
-        [SerializeField, Range(0, 1)] private float lowAmmoChance = 0.35f;   // when the clip is under a third
+        [SerializeField, Range(0, 1)] private float lowAmmoChance = 0.35f;
 
         public void SetColors(Color soul, Color heal) { soulColor = soul; healColor = heal; }
 
@@ -45,7 +44,6 @@ namespace Soulbreak.Orbs
             RollAmmo(pos, cfg.isBoss || enemy.IsElite);
         }
 
-        // Tutorial: drop a specific orb somewhere (ammo orbs still fly to the core on their own).
         public Orb SpawnFor(OrbType type, Vector2 pos)
         {
             switch (type)
@@ -60,7 +58,6 @@ namespace Soulbreak.Orbs
             }
         }
 
-        // Ammo charges: rarer when the clip is full, likely when you're running dry. Bosses/elites always drop one.
         private void RollAmmo(Vector2 pos, bool guaranteed)
         {
             if (ammo == null || magnetTarget == null) return;

@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // A glowing mote that arcs from where souls were earned to the soul counter, then calls back on arrival.
     public class FlyingMote : MonoBehaviour
     {
         private RectTransform rt;
@@ -19,7 +18,6 @@ namespace Soulbreak.UI
             image = GetComponent<Image>();
             from = start;
             to = end;
-            // Curve outward to the side for a nice swoop
             Vector2 mid = (start + end) * 0.5f;
             Vector2 perp = Vector2.Perpendicular(end - start).normalized;
             control = mid + perp * UnityEngine.Random.Range(-220f, 220f) + Vector2.down * 80f;

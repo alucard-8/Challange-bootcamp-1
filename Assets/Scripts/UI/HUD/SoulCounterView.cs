@@ -4,8 +4,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Top-right soul counter. Earned souls fly to it as glowing motes; the number only climbs as they
-    // land (with a bump), so you SEE souls arriving. Spending updates it immediately.
     public class SoulCounterView : MonoBehaviour
     {
         [SerializeField] private HUDCanvas hud;
@@ -39,7 +37,7 @@ namespace Soulbreak.UI
         private void HandleSouls(int souls)
         {
             if (!initialized) { initialized = true; actual = target = displayed = souls; soulsText.text = $"{souls}"; return; }
-            if (souls < actual) target -= actual - souls;   // spending shows instantly; gains arrive by mote
+            if (souls < actual) target -= actual - souls;
             actual = souls;
         }
 
@@ -51,13 +49,11 @@ namespace Soulbreak.UI
             Vector2 screen = cam.WorldToScreenPoint(worldPos);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(hud.Root, screen, null, out Vector2 from);
 
-            // "+N" popup where it was earned
             var t = UIFactory.Spawn(popupTemplate, hud.Root);
             t.text = string.Format(S.hudCollect, amount);
             t.fontSize = amount >= 30 ? 40 : 28;
             t.rectTransform.anchoredPosition = from;
 
-            // Motes flying to the counter, each carrying a share of the souls
             Vector2 to = hud.Root.InverseTransformPoint(soulsText.rectTransform.position);
             int motes = Mathf.Clamp(amount / 6, 1, 6);
             int share = amount / motes, rest = amount - share * motes;

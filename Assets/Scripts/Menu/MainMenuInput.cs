@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Menu
 {
-    // Input layer for the main menu: Enter plays (via the difficulty picker), Esc closes open panels,
-    // mouse drives the parallax and clicks feed the core easter egg.
     public class MainMenuInput : MonoBehaviour
     {
         [SerializeField] private MainMenuView view;
@@ -17,7 +15,6 @@ namespace Soulbreak.Menu
 
         private void Update()
         {
-            // Admin (editor / dev builds only): F1 unlocks every skin, technique and mode.
             if (InputReader.AdminPressed() && catalog != null && (Application.isEditor || Debug.isDebugBuild))
             {
                 Meta.MetaProgress.UnlockAll(catalog);
@@ -34,7 +31,7 @@ namespace Soulbreak.Menu
             bool esc = InputReader.PausePressed();
             bool enter = InputReader.ConfirmPressed();
 
-            if (account.IsOpen) { if (esc) account.Close(); }   // typing: Enter must not start a run
+            if (account.IsOpen) { if (esc) account.Close(); }
             else if (index.IsOpen)
             {
                 if (esc) index.Close();

@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Soulbreak.EditorTools
 {
-    // Soulbreak/Build WebGL: builds the game for the browser into Builds/WebGL, ready to zip for itch.io.
     public static class WebBuild
     {
         public const string Output = "Builds/WebGL";
@@ -13,7 +12,6 @@ namespace Soulbreak.EditorTools
         [MenuItem("Soulbreak/Build WebGL")]
         public static void Build()
         {
-            // itch.io serves files as-is, so gzip + the built-in decompression fallback is the safe combo.
             PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
             PlayerSettings.WebGL.decompressionFallback = true;
             PlayerSettings.WebGL.dataCaching = true;

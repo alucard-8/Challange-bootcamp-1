@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // One asset per enemy type. New enemy = new asset, no new code (Open/Closed).
     [CreateAssetMenu(menuName = "Soulbreak/Enemy Config", fileName = "EnemyConfig")]
     public class EnemyConfig : ScriptableObject
     {

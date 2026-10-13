@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Piercing Lance: an instant beam from the ring in the aim direction that hits everything in a line.
     [CreateAssetMenu(menuName = "Soulbreak/Shots/Beam", fileName = "BeamShot")]
     public class BeamShotPattern : ShotPattern
     {

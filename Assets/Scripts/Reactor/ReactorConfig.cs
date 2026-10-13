@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Reactor
 {
-    // Data only — tweak values in the Inspector without touching code (Open/Closed).
     [CreateAssetMenu(menuName = "Soulbreak/Reactor Config", fileName = "ReactorConfig")]
     public class ReactorConfig : ScriptableObject
     {

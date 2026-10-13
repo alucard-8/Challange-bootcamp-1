@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Player
 {
-    // Panic button: blasts every hostile near the reactor, then goes on cooldown.
-    // Triggered by PlayerController; targets IHostile only.
     public class NovaAbility : MonoBehaviour
     {
         [SerializeField] private Transform center;
@@ -17,7 +15,7 @@ namespace Soulbreak.Player
         public float Radius => stats.Get(StatType.NovaRadius);
         public bool IsReady => CooldownRemaining <= 0f;
 
-        public event Action<Vector2, float> OnUsed;   // (center, radius)
+        public event Action<Vector2, float> OnUsed;
         public event Action OnReady;
 
         private void Update()
@@ -27,7 +25,6 @@ namespace Soulbreak.Player
             if (CooldownRemaining <= 0f) OnReady?.Invoke();
         }
 
-        // Tutorial / cheats: make it ready right now.
         public void ResetCooldown()
         {
             if (CooldownRemaining <= 0f) return;
@@ -35,7 +32,6 @@ namespace Soulbreak.Player
             OnReady?.Invoke();
         }
 
-        // Only fires if something is in range, so it isn't wasted between waves.
         public bool TryUse()
         {
             if (!IsReady || Time.timeScale == 0f) return false;

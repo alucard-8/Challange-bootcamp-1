@@ -3,19 +3,16 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Everything a shot needs to know when it's fired.
     public struct ShotContext
     {
-        public Vector2 Origin;      // reactor
-        public Vector2 Target;      // cursor in world space
-        public Vector2 Direction;   // normalized Origin -> Target
+        public Vector2 Origin;
+        public Vector2 Target;
+        public Vector2 Direction;
         public int Damage;
         public bool Crit;
         public PlayerStats Stats;
     }
 
-    // Strategy pattern: each weapon module is one "how to fire" strategy.
-    // The shooter and the ring never switch on weapon types — they just call Fire().
     public abstract class ShotPattern : ScriptableObject
     {
         public string displayName = "Shot";

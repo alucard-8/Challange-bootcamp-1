@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Main menu account button + login popup. Guests can create an account (keeping their progress)
-    // or log in to an existing one; the popup opens once by itself for new players.
     public class AccountView : MonoBehaviour
     {
         private const string PromptedKey = "soulbreak.account.prompted";
@@ -71,7 +69,6 @@ namespace Soulbreak.UI
             group.blocksRaycasts = group.interactable = IsOpen;
             panel.localScale = Vector3.one * UIFactory.PopScale(group.alpha);
 
-            // First visit: offer an account once.
             if (promptTimer > 0f && (promptTimer -= Time.unscaledDeltaTime) <= 0f
                 && AccountService.IsGuest && PlayerPrefs.GetInt(PromptedKey, 0) == 0)
             {

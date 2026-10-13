@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.Menu
 {
-    // Main-menu "Ascension" screen: spend Soul Essence on starting techniques and reactor skins.
-    // Rules live in MetaProgress; this view only displays and forwards clicks. Previews skins on the menu reactor.
     public class AscensionView : MonoBehaviour
     {
         private static readonly int CoreColorId = Shader.PropertyToID("_Color");
@@ -18,7 +16,6 @@ namespace Soulbreak.Menu
 
         public bool IsOpen { get; private set; }
 
-        // One card per catalog item; the item is looked up by id so the prefab never holds stale data.
         [System.Serializable]
         private class Entry
         {
@@ -50,7 +47,6 @@ namespace Soulbreak.Menu
                 var entry = e;
                 entry.item = catalog.Find(entry.itemId);
                 entry.button.onClick.AddListener(() => Click(entry));
-                // each preview animates its own shader values
                 if (entry.preview.material != null) entry.preview.material = new Material(entry.preview.material);
                 if (entry.item != null) SetupPreview(entry);
             }
@@ -116,10 +112,9 @@ namespace Soulbreak.Menu
                 bool unlocked = MetaProgress.IsUnlocked(e.item);
                 bool equipped = MetaProgress.IsEquipped(e.item);
 
-                if (e.item.type == MetaItemType.GameMode) SetupPreview(e);   // locked orb -> star once unlocked
+                if (e.item.type == MetaItemType.GameMode) SetupPreview(e);
                 if (e.item.type == MetaItemType.GameMode)
                 {
-                    // Secret mode: locked cards only show a hint about how to find it.
                     e.title.text = unlocked ? e.item.displayName : S.ascensionUnknown;
                     e.body.text = unlocked ? e.item.description : e.item.unlockHint;
                     e.buttonText.text = !unlocked ? S.ascensionSecret : equipped ? S.ascensionActive : S.ascensionPlayMode;
@@ -135,7 +130,6 @@ namespace Soulbreak.Menu
             }
         }
 
-        // Preview kinds understood by the UIPreview shader.
         private const float KindSkin = 0f, KindTechnique = 1f, KindStar = 2f, KindLocked = 3f;
 
         private static void SetupPreview(Entry e)

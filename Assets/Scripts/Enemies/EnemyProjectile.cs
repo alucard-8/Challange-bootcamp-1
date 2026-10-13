@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Enemy bullet flying at the reactor. The player can shoot it down (it's IHostile/IShootable).
     public class EnemyProjectile : MonoBehaviour, IHostile
     {
         private Transform target;

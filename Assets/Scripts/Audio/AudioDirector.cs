@@ -17,9 +17,6 @@ namespace Soulbreak.Audio
         public Sfx sound;
     }
 
-    // Pure observer: turns gameplay events into sound effects. Nothing in gameplay knows audio exists.
-    // Delegates playing to the AudioManager (clips come from the AudioLibrary); keeps a per-sound
-    // cooldown here to avoid spam.
     public class AudioDirector : MonoBehaviour
     {
         [Header("Systems")]
@@ -96,7 +93,6 @@ namespace Soulbreak.Audio
             announcements.OnRaised -= HandleAnnouncement;
         }
 
-        // ---------- handlers ----------
         private void HandleShot(Vector2 from, Vector2 to, bool crit, ShotPattern pattern) => Play(SoundFor(pattern), crit ? 1f : 0.8f);
         private void HandleReload(float duration) => Play(Sfx.Reload, 0.6f);
         private void HandleAmmoPickup() { Play(Sfx.Reload, 0.9f); Play(Sfx.Buy, 0.5f); }

@@ -2,8 +2,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // Fires physical projectiles. One class covers Triple Shot, Soul Cannon and Seekers —
-    // they're just different settings on different assets (Open/Closed).
     [CreateAssetMenu(menuName = "Soulbreak/Shots/Projectile", fileName = "ProjectileShot")]
     public class ProjectileShotPattern : ShotPattern
     {

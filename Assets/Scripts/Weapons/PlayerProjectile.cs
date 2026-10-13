@@ -3,8 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Weapons
 {
-    // A player projectile: flies straight, homes, or travels to a point and explodes.
-    // Targets only IHostile (never the Enemy class) and uses overlap checks, so it needs no Rigidbody.
     public class PlayerProjectile : MonoBehaviour
     {
         private ProjectileShotPattern pattern;
@@ -17,7 +15,7 @@ namespace Soulbreak.Weapons
         public static void Spawn(ProjectileShotPattern pattern, Vector2 origin, Vector2 dir, Vector2 target, int damage, bool crit)
         {
             var go = new GameObject(pattern.displayName);
-            go.transform.position = origin + dir * 1.9f;   // start at the weapon ring
+            go.transform.position = origin + dir * 1.9f;
             go.transform.localScale = Vector3.one * pattern.size * (crit ? 1.25f : 1f);
 
             var sr = go.AddComponent<SpriteRenderer>();
@@ -86,7 +84,6 @@ namespace Soulbreak.Weapons
 
         private void Explode()
         {
-            // Explosions also collect orbs — everything shootable in the blast is hit.
             foreach (var hit in Physics2D.OverlapCircleAll(transform.position, pattern.explosionRadius))
                 if (hit.TryGetComponent(out IShootable shootable)) shootable.Shoot(damage);
 

@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // Draws the PerkShop as a row of cards and forwards clicks / number keys to it.
-    // All rules (prices, rolling, buying) live in PerkShop — this class only displays.
     public class ShopView : MonoBehaviour
     {
         [SerializeField] private PerkShop shop;
@@ -35,7 +33,7 @@ namespace Soulbreak.UI
         [SerializeField] private Text titleText, soulsText, rerollText;
         [SerializeField] private Button rerollButton, nextButton;
         [SerializeField] private RectTransform cardRow;
-        [SerializeField] private List<Card> cards = new List<Card>();   // one per possible offer, unused ones hidden
+        [SerializeField] private List<Card> cards = new List<Card>();
         [SerializeField] private UIStrings strings;
         [SerializeField] private UITheme theme;
 
@@ -50,7 +48,6 @@ namespace Soulbreak.UI
             {
                 int index = i;
                 cards[i].Buy.onClick.AddListener(() => shop.TryBuy(index));
-                // each card animates its own shader values, so it needs its own material instance
                 if (cards[i].Background.material != null) cards[i].Background.material = new Material(cards[i].Background.material);
             }
             Hide();
@@ -76,7 +73,6 @@ namespace Soulbreak.UI
         {
             if (!shop.IsOpen) return;
 
-            // Open animation: overlay fades in, cards fly up one after another.
             showTime += Time.unscaledDeltaTime;
             group.alpha = Mathf.Clamp01(showTime * 4f);
             for (int i = 0; i < cards.Count && i < cardBase.Count; i++)
@@ -84,7 +80,6 @@ namespace Soulbreak.UI
                 float t = Mathf.Clamp01((showTime - 0.12f - i * 0.07f) / 0.45f);
                 float ease = 1f - Mathf.Pow(1f - t, 3f);
                 cards[i].Intro.alpha = ease;
-                // Hover: card lifts and the shader edge brightens.
                 var c = cards[i];
                 c.Hover = Mathf.MoveTowards(c.Hover, c.Fx.IsHovered ? 1f : 0f, Time.unscaledDeltaTime * 6f);
                 float h = c.Hover * c.Hover * (3f - 2f * c.Hover);
@@ -138,14 +133,13 @@ namespace Soulbreak.UI
                 bool affordable = wallet.Souls >= offer.Cost;
 
                 card.RarityBar.color = rarity;
-                // Buff cards and technique cards get different animated faces (UICard shader).
                 var technique = perk.TechniqueEffect;
                 var mat = card.Background.material;
                 if (mat != null && mat.HasProperty("_Style"))
                 {
                     var accent = technique != null && technique.module != null ? (Color)technique.module.color * 0.45f + rarity * 0.55f : rarity;
                     float peak = Mathf.Max(accent.r, Mathf.Max(accent.g, accent.b));
-                    if (peak > 1f) accent /= peak;   // module colors are HDR; keep the card face readable
+                    if (peak > 1f) accent /= peak;
                     accent.a = 1f;
                     mat.SetColor("_Accent", accent);
                     mat.SetFloat("_Style", technique != null ? 1f : 0f);
@@ -176,7 +170,6 @@ namespace Soulbreak.UI
             }
         }
 
-        // Centers however many cards are on offer.
         private void LayoutCards(int count)
         {
             const float gap = 30f;

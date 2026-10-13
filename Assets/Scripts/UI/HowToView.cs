@@ -3,8 +3,6 @@ using UnityEngine.UI;
 
 namespace Soulbreak.UI
 {
-    // "How to play" popup, shared by the main menu and the pause menu. Pure display.
-    // Copy lives in UIStrings and is applied on Awake so it can be edited without touching the prefab.
     public class HowToView : MonoBehaviour
     {
         public bool IsOpen { get; private set; }

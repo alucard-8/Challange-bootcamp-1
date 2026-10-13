@@ -5,7 +5,6 @@ namespace Soulbreak.Perks
     public enum PerkCategory { Offense, Economy, Defense, Ability, Weapon }
     public enum PerkRarity { Common, Rare, Epic, Legendary }
 
-    // A shop item: display data + a list of effect strategies. New perk = new asset.
     [CreateAssetMenu(menuName = "Soulbreak/Perk", fileName = "Perk")]
     public class PerkDefinition : ScriptableObject
     {
@@ -19,7 +18,6 @@ namespace Soulbreak.Perks
         [Min(0)] public int maxStacks = 0;
         public PerkEffect[] effects;
 
-        // A "technique" perk installs a weapon module; everything else is a buff.
         public WeaponModulePerkEffect TechniqueEffect
         {
             get

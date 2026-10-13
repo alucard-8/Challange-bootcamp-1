@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Soulbreak.Enemies
 {
-    // Black-hole boss behaviour: drags nearby hostiles along with it toward the target (the star).
     [RequireComponent(typeof(Enemy))]
     public class GravityWell : MonoBehaviour
     {

@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Soulbreak.Meta
 {
-    // Persistent between-runs progress (Soul Essence, unlocks, equipped loadout), saved as JSON in PlayerPrefs.
-    // Plain service class: no scene objects, so both the menu and the game scene can use it.
     public static class MetaProgress
     {
         [Serializable]
@@ -18,20 +16,18 @@ namespace Soulbreak.Meta
             public int bestWave;
             public string mode = "";
             public List<string> secrets = new List<string>();
-            public int difficulty = 1;   // Normal
+            public int difficulty = 1;
             public int bestScore;
             public int lastScore;
             public int lastWave;
             public int runs;
             public List<string> seenEnemies = new List<string>();
             public List<string> seenPerks = new List<string>();
-            public long savedAt;   // unix ms, so cloud sync can tell which copy is newer
+            public long savedAt;
         }
 
-        // ---------- Index (discovered enemies & perks) ----------
         public static bool IsDiscovered(bool enemy, string id) => Seen(enemy).Contains(id);
 
-        // Returns true the first time something is discovered.
         public static bool Discover(bool enemy, string id)
         {
             var list = Seen(enemy);
@@ -55,7 +51,6 @@ namespace Soulbreak.Meta
             return enemy ? Data.seenEnemies : Data.seenPerks;
         }
 
-        // ---------- Difficulty & scores ----------
         public static Difficulty SelectedDifficulty
         {
             get => (Difficulty)Mathf.Clamp(Data.difficulty, 0, 3);
@@ -67,7 +62,6 @@ namespace Soulbreak.Meta
         public static int LastWave => Data.lastWave;
         public static int Runs => Data.runs;
 
-        // Records a finished run. Returns true if it's a new best score.
         public static bool RecordRun(int score, int wave)
         {
             Data.lastScore = score;
@@ -103,7 +97,6 @@ namespace Soulbreak.Meta
         public static bool IsUnlocked(MetaItem item) =>
             item.type == MetaItemType.GameMode ? IsSecretUnlocked(item.id) : item.cost == 0 || Data.unlocked.Contains(item.id);
 
-        // ---------- Game modes & secrets ----------
         public static string SelectedMode
         {
             get => Data.mode;
@@ -119,7 +112,6 @@ namespace Soulbreak.Meta
             Save();
         }
 
-        // Admin: unlock every skin, technique and secret mode in the catalog.
         public static void UnlockAll(MetaCatalog catalog)
         {
             foreach (var i in catalog.items)
@@ -153,7 +145,6 @@ namespace Soulbreak.Meta
             return true;
         }
 
-        // Equip (or unequip if already equipped) an unlocked item.
         public static void ToggleEquip(MetaItem item)
         {
             if (!IsUnlocked(item)) return;
@@ -173,12 +164,10 @@ namespace Soulbreak.Meta
             }
         }
 
-        // ---------- Cloud sync (used by CloudProgress) ----------
         public static string ExportJson() => JsonUtility.ToJson(Data);
         public static long SavedAt => Data.savedAt;
         public static bool HasProgress => Data.runs > 0 || Data.essence > 0 || Data.unlocked.Count > 0;
 
-        // Replaces local progress with a copy from the cloud (keeps its timestamp).
         public static void ImportJson(string json)
         {
             var incoming = string.IsNullOrEmpty(json) ? null : JsonUtility.FromJson<SaveData>(json);
