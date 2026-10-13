@@ -33,7 +33,7 @@ namespace Soulbreak.Player
             new StatValue(StatType.SplashRadius, 0f),
             new StatValue(StatType.HeadshotMultiplier, 2f),
             new StatValue(StatType.ClipSize, 6),
-            new StatValue(StatType.ReloadTime, 0.35f),   // seconds to regain one shot (ammo auto-recharges)
+            new StatValue(StatType.ReloadTime, 2f),   // seconds to regain one shot (ammo auto-recharges)
             new StatValue(StatType.SoulGain, 1f),
             new StatValue(StatType.OrbValue, 1f),
             new StatValue(StatType.OrbLifetime, 4f),
