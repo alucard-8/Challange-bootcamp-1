@@ -805,7 +805,7 @@ namespace Soulbreak.EditorTools
                                        PerkDefinition[] perks, VolumeProfile profile)
         {
             var scene = EditorSceneManager.GetActiveScene();
-            foreach (var n in new[] { "Systems", "Background", "Global Volume", "Pause Volume", "EventSystem" })
+            foreach (var n in new[] { "Systems", "Background", "Global Volume", "Pause Volume", "Overdrive Volume", "EventSystem" })
             {
                 var old = GameObject.Find(n);
                 if (old != null) Object.DestroyImmediate(old);
