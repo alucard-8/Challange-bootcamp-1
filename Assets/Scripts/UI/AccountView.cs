@@ -19,6 +19,11 @@ namespace Soulbreak.UI
         [SerializeField] private Button loginButton, createButton, logoutButton, closeButton;
         [SerializeField] private Text statusText, messageText;
         [SerializeField] private GameObject formRoot;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
 
         public bool IsOpen { get; private set; }
         private bool busy;
@@ -28,8 +33,8 @@ namespace Soulbreak.UI
         {
             accountButton.onClick.AddListener(Open);
             closeButton.onClick.AddListener(Close);
-            loginButton.onClick.AddListener(() => _ = Run(() => AccountService.LogIn(usernameField.text, passwordField.text), "Logged in. Progress loaded."));
-            createButton.onClick.AddListener(() => _ = Run(() => AccountService.CreateAccount(usernameField.text.Trim(), passwordField.text), "Account created. Progress saved online."));
+            loginButton.onClick.AddListener(() => _ = Run(() => AccountService.LogIn(usernameField.text, passwordField.text), S.accountLoginSuccess));
+            createButton.onClick.AddListener(() => _ = Run(() => AccountService.CreateAccount(usernameField.text.Trim(), passwordField.text), S.accountCreateSuccess));
             logoutButton.onClick.AddListener(() => _ = LogOut());
         }
 
@@ -81,13 +86,13 @@ namespace Soulbreak.UI
             if (busy) return;
             busy = true;
             SetInteractable(false);
-            messageText.color = new Color(1, 1, 1, 0.7f);
-            messageText.text = "Please wait...";
+            messageText.color = T.neutralText;
+            messageText.text = S.accountWaiting;
             string error = await action();
             if (this == null) return;
             busy = false;
             SetInteractable(true);
-            messageText.color = error == null ? new Color(0.45f, 1f, 0.6f) : new Color(1f, 0.45f, 0.45f);
+            messageText.color = error == null ? T.good : T.bad;
             messageText.text = error ?? success;
             if (error == null) passwordField.text = "";
             Audio.UIAudio.Play(error == null ? Audio.Sfx.Buy : Audio.Sfx.Fail);
@@ -103,8 +108,8 @@ namespace Soulbreak.UI
             if (this == null) return;
             busy = false;
             SetInteractable(true);
-            messageText.color = new Color(1, 1, 1, 0.7f);
-            messageText.text = "Logged out. You're playing as a guest.";
+            messageText.color = T.neutralText;
+            messageText.text = S.accountLoggedOut;
             Refresh();
         }
 
@@ -118,12 +123,12 @@ namespace Soulbreak.UI
         {
             bool online = AccountService.Status == AccountService.State.Online;
             bool guest = AccountService.IsGuest;
-            accountLabel.text = !online && AccountService.Status != AccountService.State.Connecting ? "OFFLINE"
-                : guest ? "GUEST  -  SIGN IN" : AccountService.Username.ToUpper();
+            accountLabel.text = !online && AccountService.Status != AccountService.State.Connecting ? S.accountOffline
+                : guest ? S.accountSignIn : AccountService.Username.ToUpper();
 
             statusText.text = guest
-                ? "You're playing as a <b>guest</b>: progress is only saved in this browser.\nCreate an account to save it online and put your name on the leaderboard."
-                : $"Logged in as <b>{AccountService.Username}</b>. Your progress is saved online.";
+                ? S.accountGuestStatus
+                : string.Format(S.accountLoggedInStatus, AccountService.Username);
             formRoot.SetActive(guest);
             logoutButton.gameObject.SetActive(!guest);
         }

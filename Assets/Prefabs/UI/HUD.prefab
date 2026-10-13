@@ -9087,6 +9087,7 @@ MonoBehaviour:
   healthText: {fileID: 1913366692200680046}
   healthFill: {fileID: 8277367532845153411}
   shieldPipTemplate: {fileID: 5686184576840715856}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
 --- !u!114 &5642334928993076098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9105,6 +9106,7 @@ MonoBehaviour:
   panel: {fileID: 8448055212139467341}
   popupTemplate: {fileID: 1375946721234881248}
   moteTemplate: {fileID: 247827722053013518}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
 --- !u!114 &2906452851214038153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9123,6 +9125,8 @@ MonoBehaviour:
   reloadFill: {fileID: 5892272471311529066}
   reloadText: {fileID: 2504808036695400402}
   pipTemplate: {fileID: 7138387610995894819}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &4263332425732413428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9139,6 +9143,8 @@ MonoBehaviour:
   nova: {fileID: 0}
   label: {fileID: 7965599107612407137}
   fill: {fileID: 3715288463402957938}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &5559495701493645875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9155,6 +9161,7 @@ MonoBehaviour:
   combo: {fileID: 0}
   label: {fileID: 312317381437724749}
   fill: {fileID: 283054926532134114}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
 --- !u!114 &8730067554179352072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9172,6 +9179,7 @@ MonoBehaviour:
   nova: {fileID: 0}
   text: {fileID: 2062944336269144945}
   group: {fileID: 86291452484503730}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
 --- !u!114 &4578257227481507817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9230,6 +9238,8 @@ MonoBehaviour:
   - label: {fileID: 7899892553588411416}
     value: {fileID: 1198065017786575897}
     group: {fileID: 1579969791542897954}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &6084966851618299868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9265,6 +9275,8 @@ MonoBehaviour:
   markerText: {fileID: 6228564157770766716}
   progress: {fileID: 6354295460024809531}
   confetti: {fileID: 1016508032100051101}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &6532069177545129948
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9280,6 +9292,7 @@ MonoBehaviour:
   hud: {fileID: 4528176184207285217}
   hitStop: {fileID: 0}
   flash: {fileID: 1887466781973903143}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &4198902958442251733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9296,6 +9309,8 @@ MonoBehaviour:
   overdrive: {fileID: 0}
   label: {fileID: 5976598197642149717}
   fill: {fileID: 3253836593420562403}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &1914977554932921697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9368,6 +9383,8 @@ MonoBehaviour:
   fill: {fileID: 5434355648731605036}
   fillImage: {fileID: 7019488689443911244}
   label: {fileID: 5131691054654232182}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &3955979257046296043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9384,6 +9401,8 @@ MonoBehaviour:
   damaged: {fileID: 0}
   stats: {fileID: 0}
   numberTemplate: {fileID: 2745451911221725142}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!114 &706116275963654436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9404,6 +9423,8 @@ MonoBehaviour:
   distance: 2.75
   label: {fileID: 8241783762148941387}
   group: {fileID: 667137327956015288}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!1 &9020513101532312887
 GameObject:
   m_ObjectHideFlags: 0

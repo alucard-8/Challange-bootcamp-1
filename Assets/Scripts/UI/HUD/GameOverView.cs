@@ -29,7 +29,6 @@ namespace Soulbreak.UI
         }
 
         private const float ScoreCount = 1.6f;
-        private static readonly Color Gold = new Color(1f, 0.82f, 0.35f);
 
         [SerializeField] private CanvasGroup root, titleGroup, panelGroup, buttonsGroup, stampGroup, essenceGroup, bestGroup;
         private bool bestCrossed;
@@ -40,6 +39,12 @@ namespace Soulbreak.UI
         [SerializeField] private Button skipButton, retryButton, menuButton;
         [SerializeField] private UIConfetti confetti;
         [SerializeField] private List<Row> rows = new List<Row>();
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private RunResult result;
         private bool running;
         private float time, scoreStart, essenceAt, buttonsAt;
@@ -64,8 +69,8 @@ namespace Soulbreak.UI
             UIAudio.Play(Sfx.Collapse, 0.9f);
 
             var diff = DifficultyTable.Get(r.Difficulty);
-            title.text = Lex.T("gameover", "REACTOR DESTROYED");
-            subtitle.text = $"<color=#{UIFactory.Hex(diff.Color)}>{diff.Name}</color>   -   WAVE {Mathf.Max(1, r.Wave)}";
+            title.text = Lex.T("gameover", S.gameOverTitle);
+            subtitle.text = string.Format(S.gameOverSubtitle, UIFactory.Hex(diff.Color), diff.Name, Mathf.Max(1, r.Wave));
 
             SetRow(0, Mathf.Max(1, r.Wave), "{0:0}");
             SetRow(1, r.Time, "{0:0}s");
@@ -83,9 +88,9 @@ namespace Soulbreak.UI
             stampGroup.alpha = 0f;
 
             // Show the record to beat; it disappears the moment the count passes it.
-            bestText.text = $"BEST   {(r.NewBest ? r.PreviousBest : MetaProgress.BestScore):N0}";
+            bestText.text = string.Format(S.gameOverBest, (r.NewBest ? r.PreviousBest : MetaProgress.BestScore).ToString("N0"));
             bestGroup.alpha = 1f;
-            essenceText.text = $"+{r.Essence} {Lex.T("essence", "SOUL ESSENCE")}      TOTAL  {MetaProgress.Essence}";
+            essenceText.text = string.Format(S.gameOverEssence, r.Essence, Lex.T("essence", "SOUL ESSENCE"), MetaProgress.Essence);
         }
 
         // Debug preview (F3): plays the full game-over sequence with a fake run that beats your best.
@@ -121,7 +126,7 @@ namespace Soulbreak.UI
             if (!running) return;
             time += Time.unscaledDeltaTime;
 
-            backdrop.color = new Color(0.03f, 0f, 0.04f, Mathf.Clamp01(time / 1.0f) * 0.9f);
+            backdrop.color = new Color(T.gameOverBackdrop.r, T.gameOverBackdrop.g, T.gameOverBackdrop.b, Mathf.Clamp01(time / 1.0f) * 0.9f);
 
             // Title slam
             float tk = Mathf.Clamp01((time - 0.5f) / 0.25f);
@@ -155,7 +160,7 @@ namespace Soulbreak.UI
             if (result.NewBest && !bestCrossed && time >= scoreStart && shown > result.PreviousBest) CrossBest();
 
             float flash = badgeTime >= 0f ? Mathf.Clamp01(1f - (time - badgeTime) / 0.5f) : 0f;
-            scoreText.color = Color.Lerp(Gold, Color.white, flash);
+            scoreText.color = Color.Lerp(T.gold, Color.white, flash);
             scoreText.rectTransform.localScale = Vector3.one * (1f + 0.12f * Mathf.Sin(sk * Mathf.PI) + 0.25f * flash * flash);
 
             bestGroup.alpha = Mathf.MoveTowards(bestGroup.alpha, bestCrossed ? 0f : 1f, Time.unscaledDeltaTime * 4f);
@@ -183,8 +188,8 @@ namespace Soulbreak.UI
             UIAudio.Play(Sfx.NewBest, 0.9f);
             PlaceBadge();
             Vector2 at = scoreText.rectTransform.anchoredPosition;
-            UIConfetti.Burst(confetti, at, Gold, 44, 700f);
-            UIConfetti.Burst(confetti, stampRt.anchoredPosition, new Color(1f, 0.95f, 0.6f), 24, 420f);
+            UIConfetti.Burst(confetti, at, T.gold, 44, 700f);
+            UIConfetti.Burst(confetti, stampRt.anchoredPosition, T.stampGlow, 24, 420f);
         }
 
         // Keep the badge just to the right of the (changing-width) score number.

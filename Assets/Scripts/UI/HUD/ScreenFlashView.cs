@@ -11,6 +11,10 @@ namespace Soulbreak.UI
         [SerializeField] private HitStop hitStop;
 
         [SerializeField] private Image flash;
+        [SerializeField] private UITheme theme;
+
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private float alpha;
 
         private void OnEnable() => hitStop.OnImpact += HandleImpact;
@@ -22,7 +26,7 @@ namespace Soulbreak.UI
         {
             if (alpha <= 0f) return;
             alpha = Mathf.Max(0f, alpha - Time.unscaledDeltaTime * 2.5f);
-            flash.color = new Color(1f, 0.95f, 1f, alpha);
+            flash.color = new Color(T.screenFlash.r, T.screenFlash.g, T.screenFlash.b, alpha);
         }
     }
 }

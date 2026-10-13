@@ -14,6 +14,10 @@ namespace Soulbreak.UI
 
         [SerializeField] private Text text;
         [SerializeField] private CanvasGroup group;
+        [SerializeField] private UIStrings strings;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+
         private float timer, punch;
 
 
@@ -32,10 +36,10 @@ namespace Soulbreak.UI
         }
 
         private void HandleWaveStarted(int wave, bool boss) =>
-            Show(boss ? $"WAVE {wave}\n<size=40>THE BOSS APPROACHES</size>" : $"WAVE {wave}", boss ? HudColors.Red : Color.white, 2f);
+            Show(boss ? string.Format(S.hudWaveBoss, wave) : string.Format(S.hudWave, wave), boss ? HudColors.Red : Color.white, 2f);
 
-        private void HandleWaveCleared(int wave) => Show("WAVE CLEARED", HudColors.Soul, 1.5f);
-        private void HandleNovaReady() => Show("NOVA READY", HudColors.Cyan, 1f);
+        private void HandleWaveCleared(int wave) => Show(S.hudWaveCleared, HudColors.Soul, 1.5f);
+        private void HandleNovaReady() => Show(S.hudNovaReady, HudColors.Cyan, 1f);
 
         private void Show(string message, Color color, float duration)
         {

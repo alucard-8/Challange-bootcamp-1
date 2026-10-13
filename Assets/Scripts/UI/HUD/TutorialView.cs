@@ -14,6 +14,7 @@ namespace Soulbreak.UI
     //   - shows a big key prompt and a marker that tracks the thing to look at in the world,
     //   - waits until the player actually does it (observed through events), then ticks off.
     // T skips. Finishing or skipping turns GameSettings.Tutorial off (Settings can turn it back on).
+    // Step copy and chrome live in UIStrings.
     public class TutorialView : MonoBehaviour
     {
         [SerializeField] private GameManager game;
@@ -50,37 +51,42 @@ namespace Soulbreak.UI
         [SerializeField] private Text counter, title, body, check, keyText, markerText;
         [SerializeField] private Image progress;
         [SerializeField] private UIConfetti confetti;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
+        private static string At(string[] a, int i) => a != null && i >= 0 && i < a.Length ? a[i] : "";
 
         private void Awake()
         {
             active = GameSettings.Tutorial;
             if (!active) { enabled = false; return; }
 
+            // Gameplay behaviour lives here; the words come from UIStrings (same order).
             steps = new[]
             {
-                new Step { Title = "AIM & SHOOT", Key = "LEFT CLICK", Look = Look.Enemy, MinTime = 1f,
-                    Body = "Aim with the mouse and fire at the incoming enemies.", Done = () => shots >= 3 },
-                new Step { Title = "PROTECT THE CORE", Key = "LEFT CLICK", Look = Look.Enemy, MinTime = 1.5f,
-                    Body = "Everything marches on the core in the middle. Destroy <b>3 enemies</b> before they reach it.", Done = () => kills >= 3 },
-                new Step { Title = "THE WEAPON RING", Look = Look.Core, MinTime = 9f,
-                    Body = "Your shot goes through the <b>ring slot</b> you aim across. <b>Glowing slots</b> hold techniques: they fire once, then reload a random technique you own. The slot count re-rolls every wave (5 to 12)." },
-                new Step { Title = "RELOAD", Key = "R  /  RIGHT CLICK", MinTime = 1f,
-                    Body = "Empty clips reload on their own, but reloading early saves you in a pinch. <b>Reload now.</b>", Done = () => reloads >= 1 },
-                new Step { Title = "AMMO CHARGES", Look = Look.AmmoOrb, MinTime = 2f,
-                    Body = "Enemies drop <color=#FFC94D>gold ammo charges</color>. They fly to the core and <b>instantly refill</b> your clip. Watch this one.",
+                new Step { Look = Look.Enemy, MinTime = 1f, Done = () => shots >= 3 },
+                new Step { Look = Look.Enemy, MinTime = 1.5f, Done = () => kills >= 3 },
+                new Step { Look = Look.Core, MinTime = 9f },
+                new Step { MinTime = 1f, Done = () => reloads >= 1 },
+                new Step { Look = Look.AmmoOrb, MinTime = 2f,
                     Enter = () => DropAmmo(), Tick = () => { if (ammoOrbs == 0 && Retry(5f)) DropAmmo(); }, Done = () => ammoOrbs >= 1 },
-                new Step { Title = "PICKUPS", Key = "SHOOT THE ORB", Look = Look.Orb, MinTime = 1.5f,
-                    Body = "<color=#C77DFF>Purple orbs</color> are souls, <color=#6CFF9A>green orbs</color> restore shield. <b>Shoot one</b> to collect it.",
+                new Step { Look = Look.Orb, MinTime = 1.5f,
                     Enter = () => DropPickups(), Tick = () => { if (!AnyOrb() && Retry(2f)) DropPickups(); }, Done = () => orbs >= 1 },
-                new Step { Title = "NOVA", Key = "SPACE", Look = Look.Enemy, MinTime = 1f,
-                    Body = "Nova blasts every enemy <b>near the core</b>. Let them come close, then press SPACE.",
+                new Step { Look = Look.Enemy, MinTime = 1f,
                     Enter = () => nova.ResetCooldown(), Done = () => novas >= 1 },
-                new Step { Title = "OVERDRIVE", Key = "Q", MinTime = 1f,
-                    Body = "Kills fill the overdrive bar. It's full now: press <b>Q</b> to slow time and go berserk.",
+                new Step { MinTime = 1f,
                     Enter = () => overdrive.Fill(), Done = () => overdrives >= 1 },
-                new Step { Title = "THE SHOP", MinTime = 7f,
-                    Body = "Clear the wave to open the shop. Spend souls on perks and techniques and combine them for synergies. Good luck!" },
+                new Step { MinTime = 7f },
             };
+            for (int i = 0; i < steps.Length; i++)
+            {
+                steps[i].Title = At(S.tutorialTitles, i);
+                steps[i].Key = At(S.tutorialKeys, i);
+                steps[i].Body = At(S.tutorialBodies, i);
+            }
         }
 
         private bool Retry(float every)
@@ -173,12 +179,12 @@ namespace Soulbreak.UI
                 if (stepTime >= step.MinTime && (step.Done == null || step.Done()))
                 {
                     doneTimer = 1f;
-                    check.text = "NICE!";
-                    check.color = new Color(0.45f, 1f, 0.6f);
-                    keyText.text = "DONE";
-                    keyCap.GetComponent<Image>().color = new Color(0.2f, 0.6f, 0.35f, 0.95f);
+                    check.text = S.tutorialNice;
+                    check.color = T.good;
+                    keyText.text = S.tutorialDone;
+                    keyCap.GetComponent<Image>().color = T.keyCapDone;
                     Audio.UIAudio.Play(Audio.Sfx.Buy);
-                    UIConfetti.Burst(confetti, (Vector2)root.InverseTransformPoint(card.position) + new Vector2(210f, 0f), new Color(1f, 0.79f, 0.3f), 18, 420f);
+                    UIConfetti.Burst(confetti, (Vector2)root.InverseTransformPoint(card.position) + new Vector2(210f, 0f), T.confettiGold, 18, 420f);
                 }
             }
             else if ((doneTimer -= dt) <= 0f) Next();
@@ -191,10 +197,10 @@ namespace Soulbreak.UI
             string label = "";
             switch (look)
             {
-                case Look.Enemy: world = NearestEnemy(); label = "TARGET"; break;
-                case Look.Orb: world = NearestOrb(false); label = "SHOOT"; break;
-                case Look.AmmoOrb: world = NearestOrb(true); label = "AMMO"; break;
-                case Look.Core: world = Vector2.zero; label = "RING"; break;
+                case Look.Enemy: world = NearestEnemy(); label = S.tutorialTarget; break;
+                case Look.Orb: world = NearestOrb(false); label = S.tutorialShoot; break;
+                case Look.AmmoOrb: world = NearestOrb(true); label = S.tutorialAmmo; break;
+                case Look.Core: world = Vector2.zero; label = S.tutorialRing; break;
             }
 
             var cam = Camera.main;
@@ -238,14 +244,14 @@ namespace Soulbreak.UI
             index++;
             if (index >= steps.Length) { Finish(); return; }
             var s = steps[index];
-            counter.text = $"TUTORIAL  {index + 1}/{steps.Length}";
+            counter.text = string.Format(S.tutorialCounter, index + 1, steps.Length);
             title.text = s.Title;
             body.text = s.Body;
-            check.text = "[T] SKIP";
-            check.color = new Color(1f, 1f, 1f, 0.4f);
+            check.text = S.tutorialSkip;
+            check.color = T.faintText;
             keyCap.gameObject.SetActive(!string.IsNullOrEmpty(s.Key));
             keyText.text = s.Key ?? "";
-            keyCap.GetComponent<Image>().color = new Color(0.08f, 0.05f, 0.15f, 0.95f);
+            keyCap.GetComponent<Image>().color = T.keyCapBg;
             keyCap.sizeDelta = new Vector2(Mathf.Max(120f, (s.Key ?? "").Length * 20f + 60f), 64f);
             stepTime = 0f; doneTimer = -1f; slide = 0f; retimer = 0f;
             s.Enter?.Invoke();

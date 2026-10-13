@@ -967,6 +967,8 @@ MonoBehaviour:
     Tag: {fileID: 3540445449508470846}
     Group: {fileID: 9090252406255868134}
     Button: {fileID: 3464788895395498920}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
   dName: {fileID: 4847088878927793970}
   dTag: {fileID: 2695997970971771613}
   dDesc: {fileID: 4669243259683911429}

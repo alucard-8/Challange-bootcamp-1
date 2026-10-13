@@ -3,14 +3,17 @@ using UnityEngine;
 
 namespace Soulbreak.UI
 {
+    // HUD palette, sourced from the shared UITheme (Resources/UITheme) so the whole look
+    // is edited in one place. Kept as named shortcuts for the HUD views.
     public static class HudColors
     {
-        public static readonly Color Soul = new Color(0.78f, 0.5f, 1f);
-        public static readonly Color Cyan = new Color(0.45f, 0.85f, 1f);
-        public static readonly Color Red = new Color(1f, 0.35f, 0.4f);
-        public static readonly Color Gold = new Color(1f, 0.8f, 0.3f);
-        public static readonly Color Dim = new Color(1f, 1f, 1f, 0.15f);
-        public static readonly Color Panel = new Color(0.05f, 0.03f, 0.1f, 0.65f);
+        private static UITheme T => UIFactory.Theme;
+        public static Color Soul => T.soul;
+        public static Color Cyan => T.accent;
+        public static Color Red => T.danger;
+        public static Color Gold => T.hudGold;
+        public static Color Dim => T.dim;
+        public static Color Panel => T.hudPanel;
     }
 
     // Owns the shared HUD canvas that the small HUD views build into, and fades the HUD out

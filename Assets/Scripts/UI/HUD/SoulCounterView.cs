@@ -15,6 +15,10 @@ namespace Soulbreak.UI
         [SerializeField] private RectTransform panel;
         [SerializeField] private Text popupTemplate;
         [SerializeField] private FlyingMote moteTemplate;
+        [SerializeField] private UIStrings strings;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+
         private int displayed, target, actual;
         private bool initialized;
         private float bump;
@@ -49,7 +53,7 @@ namespace Soulbreak.UI
 
             // "+N" popup where it was earned
             var t = UIFactory.Spawn(popupTemplate, hud.Root);
-            t.text = $"+{amount}";
+            t.text = string.Format(S.hudCollect, amount);
             t.fontSize = amount >= 30 ? 40 : 28;
             t.rectTransform.anchoredPosition = from;
 

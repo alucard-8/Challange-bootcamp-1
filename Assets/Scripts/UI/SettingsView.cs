@@ -26,6 +26,9 @@ namespace Soulbreak.UI
         [SerializeField] private RectTransform panel;
         [SerializeField] private Button backButton;
         [SerializeField] private List<Row> rows = new List<Row>();
+        [SerializeField] private UIStrings strings;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
 
         public bool IsOpen { get; private set; }
 
@@ -72,12 +75,12 @@ namespace Soulbreak.UI
             {
                 if (r.toggle != null)
                 {
-                    r.value.text = GetBool(r.setting) ? "ON" : "OFF";
+                    r.value.text = GetBool(r.setting) ? S.settingsOn : S.settingsOff;
                     continue;
                 }
                 float v = GetFloat(r.setting);
                 UIFactory.SetBar(r.bar, v);
-                r.value.text = $"{v * 100f:0}%";
+                r.value.text = string.Format(S.settingsPercent, v * 100f);
             }
         }
 

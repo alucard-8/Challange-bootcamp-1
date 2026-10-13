@@ -18,11 +18,6 @@ namespace Soulbreak.Menu
         private const int Columns = 3, Rows = 3, PerPage = Columns * Rows;
         private static readonly Vector3 PreviewSpot = new Vector3(5000f, 5000f, 0f);
 
-        private static readonly Color[] RarityColors =
-        {
-            new Color(0.65f, 0.72f, 0.82f), new Color(0.3f, 0.65f, 1f), new Color(0.75f, 0.4f, 1f), new Color(1f, 0.75f, 0.2f),
-        };
-
         public bool IsOpen { get; private set; }
 
         private bool enemyTab = true;
@@ -32,6 +27,11 @@ namespace Soulbreak.Menu
         [SerializeField] private Text pageText, countText;
         [SerializeField] private Button enemyTabBtn, perkTabBtn, prevButton, nextButton, backButton;
         [SerializeField] private List<Tile> tiles = new List<Tile>();
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
 
         // detail panel + the offscreen camera rig that renders the selected enemy
         [SerializeField] private Text dName, dTag, dDesc, dStats;
@@ -147,10 +147,10 @@ namespace Soulbreak.Menu
             int total = Count(), found = 0;
             for (int i = 0; i < total; i++) if (Discovered(i)) found++;
             int pages = Mathf.Max(1, Mathf.CeilToInt(total / (float)PerPage));
-            pageText.text = $"{page + 1} / {pages}";
-            countText.text = $"DISCOVERED  {found} / {total}";
-            enemyTabBtn.GetComponent<Image>().color = enemyTab ? UIFactory.Theme.accent * 0.6f : UIFactory.Theme.buttonColor;
-            perkTabBtn.GetComponent<Image>().color = !enemyTab ? UIFactory.Theme.accent * 0.6f : UIFactory.Theme.buttonColor;
+            pageText.text = string.Format(S.indexPage, page + 1, pages);
+            countText.text = string.Format(S.indexDiscovered, found, total);
+            enemyTabBtn.GetComponent<Image>().color = enemyTab ? T.accent * 0.6f : T.buttonColor;
+            perkTabBtn.GetComponent<Image>().color = !enemyTab ? T.accent * 0.6f : T.buttonColor;
 
             for (int t = 0; t < tiles.Count; t++)
             {
@@ -161,12 +161,12 @@ namespace Soulbreak.Menu
 
                 bool known = Discovered(i);
                 tile.Group.alpha = known ? 1f : 0.5f;
-                Color c = known ? ColorOf(i) : new Color(1, 1, 1, 0.15f);
+                Color c = known ? ColorOf(i) : T.dim;
                 tile.Swatch.color = c;
-                tile.Name.text = known ? NameOf(i) : "???";
-                tile.Tag.text = known ? ShortTag(i) : (enemyTab ? "UNKNOWN ENEMY" : "UNKNOWN PERK");
-                tile.Tag.color = known ? c : new Color(1, 1, 1, 0.4f);
-                tile.Body.color = i == selected ? Color.Lerp(new Color(0.07f, 0.05f, 0.13f, 0.95f), c, 0.25f) : new Color(0.07f, 0.05f, 0.13f, 0.95f);
+                tile.Name.text = known ? NameOf(i) : S.indexUnknown;
+                tile.Tag.text = known ? ShortTag(i) : (enemyTab ? S.indexUnknownEnemy : S.indexUnknownPerk);
+                tile.Tag.color = known ? c : T.faintText;
+                tile.Body.color = i == selected ? Color.Lerp(T.cardBackgroundSoft, c, 0.25f) : T.cardBackgroundSoft;
             }
             ShowDetail();
         }
@@ -181,10 +181,10 @@ namespace Soulbreak.Menu
 
             if (!known)
             {
-                dName.text = "???";
-                dTag.text = enemyTab ? "UNKNOWN ENEMY" : "UNKNOWN PERK";
-                dTag.color = new Color(1, 1, 1, 0.4f);
-                dDesc.text = enemyTab ? "You haven't met this enemy yet. Survive longer to reveal it." : "This perk hasn't shown up in the shop yet.";
+                dName.text = S.indexUnknown;
+                dTag.text = enemyTab ? S.indexUnknownEnemy : S.indexUnknownPerk;
+                dTag.color = T.faintText;
+                dDesc.text = enemyTab ? S.indexUnknownEnemyBody : S.indexUnknownPerkBody;
                 dStats.text = "";
                 return;
             }
@@ -195,13 +195,9 @@ namespace Soulbreak.Menu
             if (enemyTab)
             {
                 var e = codex.enemies[i];
-                dTag.text = e.isBoss ? "BOSS" : "ENEMY";
+                dTag.text = e.isBoss ? S.indexBossTag : S.indexEnemyTag;
                 dDesc.text = CodexCatalog.Describe(e);
-                dStats.text =
-                    $"HEALTH      <b>{e.maxHealth}</b>\n" +
-                    $"SPEED        <b>{e.speed:0.0}</b>\n" +
-                    $"CORE DMG   <b>{e.damage}</b>\n" +
-                    $"SOULS        <b>{e.soulReward}</b>";
+                dStats.text = string.Format(S.indexEnemyStats, e.maxHealth, e.speed, e.damage, e.soulReward);
                 previewSr.sprite = e.sprite;
                 if (e.material != null) previewSr.sharedMaterial = e.material;
                 previewSr.GetPropertyBlock(block);
@@ -218,11 +214,9 @@ namespace Soulbreak.Menu
             else
             {
                 var p = codex.perks[i];
-                dTag.text = $"{p.rarity.ToString().ToUpper()}  -  {(p.IsTechnique ? "TECHNIQUE" : p.category.ToString().ToUpper())}";
+                dTag.text = string.Format(S.indexPerkTag, p.rarity.ToString().ToUpper(), p.IsTechnique ? S.shopTechnique : p.category.ToString().ToUpper());
                 dDesc.text = p.description;
-                dStats.text =
-                    $"COST          <b>{p.baseCost}</b>  (+{p.costGrowth} each)\n" +
-                    $"MAX STACKS  <b>{(p.maxStacks > 0 ? p.maxStacks.ToString() : "no limit")}</b>";
+                dStats.text = string.Format(S.indexPerkStats, p.baseCost, p.costGrowth, p.maxStacks > 0 ? p.maxStacks.ToString() : S.indexNoLimit);
                 if (dCardMat != null)
                 {
                     var tech = p.TechniqueEffect;
@@ -248,14 +242,14 @@ namespace Soulbreak.Menu
 
         private string ShortTag(int i)
         {
-            if (enemyTab) { var e = codex.enemies[i]; return (e.isBoss ? "BOSS" : "ENEMY") + $"   HP {e.maxHealth}"; }
+            if (enemyTab) { var e = codex.enemies[i]; return string.Format(S.indexEnemyShortTag, e.isBoss ? S.indexBossTag : S.indexEnemyTag, e.maxHealth); }
             var p = codex.perks[i];
-            return $"{p.rarity.ToString().ToUpper()}   {(p.IsTechnique ? "TECHNIQUE" : p.category.ToString().ToUpper())}";
+            return string.Format(S.indexPerkShortTag, p.rarity.ToString().ToUpper(), p.IsTechnique ? S.shopTechnique : p.category.ToString().ToUpper());
         }
 
         private Color ColorOf(int i)
         {
-            if (!enemyTab) return RarityColors[Mathf.Clamp((int)codex.perks[i].rarity, 0, RarityColors.Length - 1)];
+            if (!enemyTab) return T.Rarity((int)codex.perks[i].rarity);
             var c = (Color)codex.enemies[i].color;
             float peak = Mathf.Max(1f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
             c /= peak; c.a = 1f;

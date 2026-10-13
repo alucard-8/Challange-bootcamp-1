@@ -12,11 +12,15 @@ namespace Soulbreak.UI
 
         [SerializeField] private Text label;
         [SerializeField] private RectTransform fill;
+        [SerializeField] private UIStrings strings;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+
         private void OnEnable() => combo.OnComboChanged += HandleCombo;
         private void OnDisable() => combo.OnComboChanged -= HandleCombo;
 
         private void HandleCombo(int count, float mult) =>
-            label.text = count >= 2 ? $"COMBO {count}   <color=#{UIFactory.Hex(HudColors.Gold)}>x{mult:0.00}</color>" : "";
+            label.text = count >= 2 ? string.Format(S.hudCombo, count, UIFactory.Hex(HudColors.Gold), mult) : "";
 
         private void Update() => UIFactory.SetBar(fill, combo.Count >= 2 ? combo.TimeLeft01 : 0f);
     }

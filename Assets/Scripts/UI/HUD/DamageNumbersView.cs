@@ -15,6 +15,11 @@ namespace Soulbreak.UI
         [SerializeField] private EnemyDamageEventChannel damaged;
         [SerializeField] private PlayerStats stats;
         [SerializeField] private Text numberTemplate;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
 
         private class Number { public Text text; public RectTransform rt; public Vector2 velocity; public float age, life; public Color color; }
 
@@ -32,8 +37,8 @@ namespace Soulbreak.UI
             if (cam == null) return;
 
             bool big = !hit.Blocked && hit.Amount >= stats.Get(StatType.Damage) * 1.5f;
-            string label = hit.Blocked ? "BLOCK" : hit.Amount + (hit.Killed ? "!" : "");
-            var color = hit.Blocked ? new Color(0.5f, 0.85f, 1f) : big ? new Color(1f, 0.82f, 0.3f) : Color.white;
+            string label = hit.Blocked ? S.hudBlock : hit.Amount + (hit.Killed ? S.hudKillSuffix : "");
+            var color = hit.Blocked ? T.blocked : big ? T.bigHit : Color.white;
             int size = hit.Blocked ? 24 : big ? 44 : 30;
 
             Vector2 screen = cam.WorldToScreenPoint(hit.Position);

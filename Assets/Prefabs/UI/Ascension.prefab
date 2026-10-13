@@ -6205,6 +6205,8 @@ MonoBehaviour:
   group: {fileID: 4980676895509754908}
   essenceText: {fileID: 1916498511730468397}
   backButton: {fileID: 7614373897381110977}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!1 &7249834375739482954
 GameObject:
   m_ObjectHideFlags: 0

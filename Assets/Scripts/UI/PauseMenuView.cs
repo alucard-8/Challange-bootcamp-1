@@ -42,7 +42,12 @@ namespace Soulbreak.UI
         [SerializeField] private Image dim;
         [SerializeField] private Button[] menuButtons;   // resume, settings, index, restart, main menu, quit
         [SerializeField] private Button helpButton;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
         private const float PanelWidth = 560f;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
 
         private void Awake()
         {
@@ -73,10 +78,7 @@ namespace Soulbreak.UI
         {
             Audio.UIAudio.Play(paused ? Audio.Sfx.UIOpen : Audio.Sfx.UIClose);
             if (!paused) { CloseAll(); return; }
-            statsText.text =
-                $"WAVE        <b>{Mathf.Max(1, waves.Wave)}</b>\n" +
-                $"{Lex.T("souls", "SOULS"),-12}<b>{wallet.Souls}</b>\n" +
-                $"TIME          <b>{game.SurvivalTime:0}s</b>";
+            statsText.text = string.Format(S.pauseStats, Mathf.Max(1, waves.Wave), Lex.T("souls", "SOULS"), wallet.Souls, game.SurvivalTime);
         }
 
         private void Update()
@@ -84,7 +86,7 @@ namespace Soulbreak.UI
             float b = pause.Blend;
             group.alpha = b;
             group.blocksRaycasts = group.interactable = pause.IsPaused;
-            dim.color = new Color(0.02f, 0f, 0.05f, 0.55f * b);
+            dim.color = new Color(T.pauseDim.r, T.pauseDim.g, T.pauseDim.b, T.pauseDim.a * b);
 
             // Panel slides in from the left with a slight overshoot.
             float slide = 1f - Mathf.Pow(1f - b, 3f);

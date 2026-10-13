@@ -27,6 +27,10 @@ namespace Soulbreak.Menu
         [SerializeField] private RectTransform panel;
         [SerializeField] private Button backButton;
         [SerializeField] private List<Card> cards = new List<Card>();
+        [SerializeField] private UITheme theme;
+
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private float openTime;
 
         private void Awake()
@@ -88,7 +92,7 @@ namespace Soulbreak.Menu
             {
                 bool selected = c.d == MetaProgress.SelectedDifficulty;
                 var info = DifficultyTable.Get(c.d);
-                c.card.color = selected ? Color.Lerp(new Color(0.06f, 0.04f, 0.11f, 0.97f), info.Color, 0.18f) : new Color(0.06f, 0.04f, 0.11f, 0.95f);
+                c.card.color = selected ? Color.Lerp(T.cardSelectedBase, info.Color, 0.18f) : T.cardBackgroundSoft;
             }
         }
     }

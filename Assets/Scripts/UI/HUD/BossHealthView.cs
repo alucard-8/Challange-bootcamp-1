@@ -16,6 +16,12 @@ namespace Soulbreak.UI
         [SerializeField] private RectTransform fill;
         [SerializeField] private Image fillImage;
         [SerializeField] private Text label;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private float shown;
 
         private void OnEnable()
@@ -35,7 +41,7 @@ namespace Soulbreak.UI
             if (!e.Config.isBoss) return;
             boss = e;
             shown = 1f;
-            fillImage.color = new Color(1f, 0.35f, 0.75f);
+            fillImage.color = T.bossPink;
             string n = string.IsNullOrEmpty(e.Config.displayName) ? e.Config.name : e.Config.displayName;
             label.text = n.ToUpper();
         }
@@ -43,8 +49,8 @@ namespace Soulbreak.UI
         private void HandleEnraged(Enemy e)
         {
             if (e != boss) return;
-            fillImage.color = new Color(1f, 0.2f, 0.2f);
-            label.text += "  -  ENRAGED";
+            fillImage.color = T.bossRed;
+            label.text += S.hudEnraged;
         }
 
         private void Update()

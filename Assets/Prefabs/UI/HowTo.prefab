@@ -879,6 +879,12 @@ MonoBehaviour:
   group: {fileID: 1821753732124846888}
   panel: {fileID: 6722469267583246532}
   backButton: {fileID: 7930111541782675831}
+  titleText: {fileID: 2348690920682657778}
+  bodyLeft: {fileID: 8092651423234809847}
+  bodyRight: {fileID: 7620667073256562711}
+  controlsText: {fileID: 8656097303243424815}
+  backLabel: {fileID: 8465559909398139601}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
 --- !u!1 &6236935850381506820
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,5 +18,50 @@ MonoBehaviour:
   previewMaterial: {fileID: 2100000, guid: 8538888bfed1dd549bfaa5fa686b01a9, type: 2}
   panelColor: {r: 0.05, g: 0.03, b: 0.11, a: 0.78}
   buttonColor: {r: 0.16, g: 0.1, b: 0.3, a: 0.95}
+  hudPanel: {r: 0.05, g: 0.03, b: 0.1, a: 0.65}
+  cardBackground: {r: 0.07, g: 0.05, b: 0.13, a: 0.97}
+  cardBackgroundSoft: {r: 0.07, g: 0.05, b: 0.13, a: 0.95}
+  cardBackgroundNear: {r: 0.06, g: 0.04, b: 0.11, a: 0.95}
+  cardSelectedBase: {r: 0.06, g: 0.04, b: 0.11, a: 0.97}
+  cardEquipped: {r: 0.12, g: 0.08, b: 0.22, a: 0.97}
+  buyBase: {r: 0.22, g: 0.13, b: 0.36, a: 1}
+  pauseDim: {r: 0.02, g: 0, b: 0.05, a: 0.55}
+  flashColor: {r: 1, g: 0.95, b: 0.85, a: 1}
+  transitionColor: {r: 0.85, g: 0.92, b: 1, a: 1}
+  screenFlash: {r: 1, g: 0.95, b: 1, a: 1}
   accent: {r: 0.45, g: 0.85, b: 1, a: 1}
   soul: {r: 0.78, g: 0.5, b: 1, a: 1}
+  gold: {r: 1, g: 0.82, b: 0.35, a: 1}
+  goldSoft: {r: 1, g: 0.9, b: 0.6, a: 1}
+  bigHit: {r: 1, g: 0.82, b: 0.3, a: 1}
+  hudGold: {r: 1, g: 0.8, b: 0.3, a: 1}
+  lowAmmo: {r: 1, g: 0.3, b: 0.3, a: 1}
+  purple: {r: 0.85, g: 0.4, b: 1, a: 1}
+  good: {r: 0.45, g: 1, b: 0.6, a: 1}
+  bad: {r: 1, g: 0.45, b: 0.45, a: 1}
+  danger: {r: 1, g: 0.35, b: 0.4, a: 1}
+  blocked: {r: 0.5, g: 0.85, b: 1, a: 1}
+  neutralText: {r: 1, g: 1, b: 1, a: 0.7}
+  dimText: {r: 1, g: 1, b: 1, a: 0.5}
+  dimTextStrong: {r: 1, g: 1, b: 1, a: 0.6}
+  faintText: {r: 1, g: 1, b: 1, a: 0.4}
+  dim: {r: 1, g: 1, b: 1, a: 0.15}
+  bossPink: {r: 1, g: 0.35, b: 0.75, a: 1}
+  bossRed: {r: 1, g: 0.2, b: 0.2, a: 1}
+  gameOverBackdrop: {r: 0.03, g: 0, b: 0.04, a: 1}
+  stampGlow: {r: 1, g: 0.95, b: 0.6, a: 1}
+  rowPlayerBg: {r: 1, g: 0.8, b: 0.3, a: 0.15}
+  rowAlt: {r: 1, g: 1, b: 1, a: 0.04}
+  rowDimText: {r: 1, g: 1, b: 1, a: 0.3}
+  keyCapBg: {r: 0.08, g: 0.05, b: 0.15, a: 0.95}
+  keyCapDone: {r: 0.2, g: 0.6, b: 0.35, a: 0.95}
+  confettiGold: {r: 1, g: 0.79, b: 0.3, a: 1}
+  rarityCommon: {r: 0.65, g: 0.72, b: 0.82, a: 1}
+  rarityRare: {r: 0.3, g: 0.65, b: 1, a: 1}
+  rarityEpic: {r: 0.75, g: 0.4, b: 1, a: 1}
+  rarityLegendary: {r: 1, g: 0.75, b: 0.2, a: 1}
+  catOffense: {r: 1, g: 0.45, b: 0.4, a: 1}
+  catEconomy: {r: 0.8, g: 0.55, b: 1, a: 1}
+  catDefense: {r: 0.4, g: 0.85, b: 1, a: 1}
+  catAbility: {r: 1, g: 0.85, b: 0.35, a: 1}
+  catWeapon: {r: 0.45, g: 1, b: 0.6, a: 1}

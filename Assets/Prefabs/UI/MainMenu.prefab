@@ -866,6 +866,8 @@ MonoBehaviour:
   - {fileID: 5302191160164914475}
   - {fileID: 4430155821317636222}
   helpButton: {fileID: 7169326533756694932}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!1 &3118143390941564608
 GameObject:
   m_ObjectHideFlags: 0

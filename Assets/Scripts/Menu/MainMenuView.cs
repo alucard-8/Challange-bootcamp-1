@@ -39,6 +39,12 @@ namespace Soulbreak.Menu
         [SerializeField] private Image flashImage;
         [SerializeField] private Button[] menuButtons;   // play, ascension, index, settings, quit
         [SerializeField] private Button helpButton;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private float toastTimer, flashAlpha;
         private Vector2 titleBase;
         private float time;
@@ -110,7 +116,7 @@ namespace Soulbreak.Menu
             starting = true;
             mainGroup.interactable = false;
             ambience.ZoomIn();
-            SceneFader.LoadScene(SceneNames.Game, new Color(0.85f, 0.92f, 1f), 0.75f);
+            SceneFader.LoadScene(SceneNames.Game, T.transitionColor, 0.75f);
         }
 
         // ---------- Records panel (top-left): best / last score, best wave, runs, difficulty ----------
@@ -118,12 +124,15 @@ namespace Soulbreak.Menu
         {
             if (recordsText == null) return;
             var diff = DifficultyTable.Current;
-            string gold = UI.UIFactory.Hex(new Color(1f, 0.82f, 0.35f));
-            recordsText.text =
-                $"BEST SCORE   <b><color=#{gold}>{MetaProgress.BestScore:N0}</color></b>\n" +
-                $"LAST SCORE   <b>{MetaProgress.LastScore:N0}</b>   <size=18>(wave {MetaProgress.LastWave})</size>\n" +
-                $"BEST WAVE     <b>{MetaProgress.BestWave}</b>      RUNS  <b>{MetaProgress.Runs}</b>\n" +
-                $"DIFFICULTY    <b><color=#{UI.UIFactory.Hex(diff.Color)}>{diff.Name}</color></b>";
+            recordsText.text = string.Format(S.menuRecords,
+                UI.UIFactory.Hex(T.gold),
+                MetaProgress.BestScore.ToString("N0"),
+                MetaProgress.LastScore.ToString("N0"),
+                MetaProgress.LastWave,
+                MetaProgress.BestWave,
+                MetaProgress.Runs,
+                UI.UIFactory.Hex(diff.Color),
+                diff.Name);
         }
 
         // Mode-specific title ("SOULBREAK" / "STARBREAK").
@@ -151,7 +160,7 @@ namespace Soulbreak.Menu
             if (flashAlpha > 0f)
             {
                 flashAlpha = Mathf.Max(0f, flashAlpha - Time.unscaledDeltaTime * 1.5f);
-                flashImage.color = new Color(1f, 0.95f, 0.85f, flashAlpha);
+                flashImage.color = new Color(T.flashColor.r, T.flashColor.g, T.flashColor.b, flashAlpha);
             }
         }
     }

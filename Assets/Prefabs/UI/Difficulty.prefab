@@ -1531,6 +1531,7 @@ MonoBehaviour:
     card: {fileID: 5995260087574867987}
     rt: {fileID: 7283691237132394098}
     button: {fileID: 7596361501054561567}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!1 &4897709979296765767
 GameObject:
   m_ObjectHideFlags: 0

@@ -699,6 +699,8 @@ MonoBehaviour:
     Fx: {fileID: 8507675318204066040}
     Group: {fileID: 4047195044199078129}
     Intro: {fileID: 5932619187490651157}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!1 &1081514815024527603
 GameObject:
   m_ObjectHideFlags: 0

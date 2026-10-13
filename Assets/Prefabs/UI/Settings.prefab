@@ -1857,6 +1857,7 @@ MonoBehaviour:
     toggle: {fileID: 1411650321390732061}
     bar: {fileID: 0}
     value: {fileID: 4840714410720695122}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
 --- !u!1 &4923330474267543199
 GameObject:
   m_ObjectHideFlags: 0

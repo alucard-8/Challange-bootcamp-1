@@ -1,0 +1,165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7606ac7994b7fc3468698acaedce12ed, type: 3}
+  m_Name: UIStrings
+  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.UI.UIStrings
+  accountOffline: OFFLINE
+  accountSignIn: GUEST  -  SIGN IN
+  accountGuestStatus: 'You''re playing as a <b>guest</b>: progress is only saved in this browser.
+
+    Create an account to save it online and put your name on the leaderboard.'
+  accountLoggedInStatus: Logged in as <b>{0}</b>. Your progress is saved online.
+  accountWaiting: Please wait...
+  accountLoggedOut: Logged out. You're playing as a guest.
+  accountLoginSuccess: Logged in. Progress loaded.
+  accountCreateSuccess: Account created. Progress saved online.
+  leaderboardArrowOpen: '>'
+  leaderboardArrowClosed: <
+  leaderboardConnecting: CONNECTING
+  leaderboardYou: YOU
+  leaderboardGuestTag: '   (GUEST)'
+  leaderboardNoScores: NO SCORES YET - BE THE FIRST
+  leaderboardOffline: OFFLINE - SCORES SAVED LOCALLY
+  leaderboardEmptyName: ---
+  leaderboardUnknownName: ???
+  shopTechnique: TECHNIQUE
+  shopReroll: REROLL  ({0})
+  shopSold: SOLD
+  shopBuy: BUY  -  {0}
+  shopNeed: NEED {0}
+  shopOwnedOf: OWNED {0}/{1}
+  shopOwned: OWNED {0}
+  shopHotkey: '[{0}]'
+  howToTitle: HOW TO PLAY
+  howToBodyLeft: "<color=#73D9FF><b>DEFEND THE CORE</b></color>\n\n    Enemies march on the core in waves. Click them before they reach it. Survive as many waves as you can.\n\n\n    <color=#FFC94C><b>AMMO</b></color>\n\n    Your clip holds <b>6 shots</b> (+3 per <i>Extended Clip</i> perk). Empty clips reload by themselves; <b>R</b> / <b>RMB</b> reloads early. Enemies sometimes drop <b>gold ammo charges</b> that fly to the core and refill the clip instantly, more often when you're low.\n\n\n    <color=#C780FF><b>SOULS & ORBS</b></color>\n\n    Kills give souls. Shoot the orbs they drop: purple = souls, green = a shield charge."
+  howToBodyRight: "<color=#73D9FF><b>THE WEAPON RING</b></color>\n\n    The ring around the core is cut into <b>slots</b>. Every shot goes through the slot your aim crosses, and that slot decides <b>what</b> you fire.\n\n\n    - Plain slots fire your <b>basic shot</b>.\n\n    - Each <b>technique</b> you buy adds one <b>special slot</b> (glowing, with an icon). It fires once, then empties and <b>reloads a random technique you own</b>.\n\n    - Every wave the ring <b>re-rolls</b>: a new random slot count (5 to 12, never fewer than your techniques) and a new layout. That's why the number of slots changes.\n\n    - The ring slowly turns, so aim where the special slot is.\n\n\n    <color=#C780FF><b>SHOP</b></color>\n\n    Between waves spend souls on buffs and techniques. Some techniques combine into <b>synergies</b>."
+  howToControls: <b>LMB</b> shoot     <b>R / RMB</b> reload     <b>SPACE</b> nova     <b>Q</b> overdrive     <b>1-5</b> buy in shop     <b>ESC</b> pause
+  howToBack: BACK
+  pauseStats: 'WAVE        <b>{0}</b>
+
+    {1,-12}<b>{2}</b>
+
+    TIME          <b>{3:0}s</b>'
+  settingsOn: ON
+  settingsOff: OFF
+  settingsPercent: '{0}%'
+  menuRecords: 'BEST SCORE   <b><color=#{0}>{1}</color></b>
+
+    LAST SCORE   <b>{2}</b>   <size=18>(wave {3})</size>
+
+    BEST WAVE     <b>{4}</b>      RUNS  <b>{5}</b>
+
+    DIFFICULTY    <b><color=#{6}>{7}</color></b>'
+  toastStarCoreUnlocked: 'STAR CORE UNLOCKED
+
+    <size=26>Switch modes any time in ASCENSION</size>'
+  toastStarCoreMode: STAR CORE MODE
+  toastSoulReactorMode: SOUL REACTOR MODE
+  ascensionUnknown: ???
+  ascensionSecret: SECRET
+  ascensionPlayMode: PLAY THIS MODE
+  ascensionUnlock: UNLOCK  {0}
+  ascensionEquip: EQUIP
+  ascensionEquipped: EQUIPPED
+  ascensionActive: ACTIVE  (click to leave)
+  ascensionEquippedRemove: EQUIPPED  (click to remove)
+  ascensionStatus: '{0} SOUL ESSENCE      BEST WAVE {1}'
+  indexUnknown: ???
+  indexUnknownEnemy: UNKNOWN ENEMY
+  indexUnknownPerk: UNKNOWN PERK
+  indexUnknownEnemyBody: You haven't met this enemy yet. Survive longer to reveal it.
+  indexUnknownPerkBody: This perk hasn't shown up in the shop yet.
+  indexDiscovered: DISCOVERED  {0} / {1}
+  indexPage: '{0} / {1}'
+  indexEnemyTag: ENEMY
+  indexBossTag: BOSS
+  indexEnemyStats: 'HEALTH      <b>{0}</b>
+
+    SPEED        <b>{1:0.0}</b>
+
+    CORE DMG   <b>{2}</b>
+
+    SOULS        <b>{3}</b>'
+  indexPerkStats: 'COST          <b>{0}</b>  (+{1} each)
+
+    MAX STACKS  <b>{2}</b>'
+  indexNoLimit: no limit
+  indexPerkTag: '{0}  -  {1}'
+  indexEnemyShortTag: '{0}   HP {1}'
+  indexPerkShortTag: '{0}   {1}'
+  gameOverTitle: REACTOR DESTROYED
+  gameOverBest: BEST   {0}
+  gameOverEssence: +{0} {1}      TOTAL  {2}
+  gameOverSubtitle: <color=#{0}>{1}</color>   -   WAVE {2}
+  hudReloading: RELOADING
+  hudReloadingPercent: RELOADING  {0:0}%
+  hudReloadHint: R / RMB to reload
+  hudLowAmmo: LOW AMMO
+  hudAmmoCharge: AMMO CHARGE!
+  hudBlock: BLOCK
+  hudKillSuffix: '!'
+  hudWave: WAVE {0}
+  hudWaveBoss: 'WAVE {0}
+
+    <size=40>THE BOSS APPROACHES</size>'
+  hudWaveCleared: WAVE CLEARED
+  hudNovaReady: NOVA READY
+  hudEnraged: '  -  ENRAGED'
+  hudCombo: COMBO {0}   <color=#{1}>x{2:0.00}</color>
+  hudBossWave: <color=#FF5566>BOSS WAVE</color>
+  hudDefend: Defend the reactor
+  hudWaveClearedShop: Wave cleared - shopping
+  hudOverdriveTimer: OVERDRIVE  {0:0.0}s
+  hudOverdriveReady: OVERDRIVE  <b>[Q]</b>
+  hudOverdrivePercent: OVERDRIVE  {0:0}%
+  hudCoreHealth: '{0}  {1}/{2}'
+  hudCollect: +{0}
+  hudNovaReadyLabel: '{0}  <b>[SPACE]</b>'
+  hudNovaCooldown: '{0}  {1:0.0}s'
+  tutorialCounter: TUTORIAL  {0}/{1}
+  tutorialSkip: '[T] SKIP'
+  tutorialDone: DONE
+  tutorialNice: NICE!
+  tutorialTarget: TARGET
+  tutorialShoot: SHOOT
+  tutorialAmmo: AMMO
+  tutorialRing: RING
+  tutorialTitles:
+  - AIM & SHOOT
+  - PROTECT THE CORE
+  - THE WEAPON RING
+  - RELOAD
+  - AMMO CHARGES
+  - PICKUPS
+  - NOVA
+  - OVERDRIVE
+  - THE SHOP
+  tutorialKeys:
+  - LEFT CLICK
+  - LEFT CLICK
+  - 
+  - R  /  RIGHT CLICK
+  - 
+  - SHOOT THE ORB
+  - SPACE
+  - Q
+  - 
+  tutorialBodies:
+  - Aim with the mouse and fire at the incoming enemies.
+  - Everything marches on the core in the middle. Destroy <b>3 enemies</b> before they reach it.
+  - 'Your shot goes through the <b>ring slot</b> you aim across. <b>Glowing slots</b> hold techniques: they fire once, then reload a random technique you own. The slot count re-rolls every wave (5 to 12).'
+  - Empty clips reload on their own, but reloading early saves you in a pinch. <b>Reload now.</b>
+  - Enemies drop <color=#FFC94D>gold ammo charges</color>. They fly to the core and <b>instantly refill</b> your clip. Watch this one.
+  - <color=#C77DFF>Purple orbs</color> are souls, <color=#6CFF9A>green orbs</color> restore shield. <b>Shoot one</b> to collect it.
+  - Nova blasts every enemy <b>near the core</b>. Let them come close, then press SPACE.
+  - 'Kills fill the overdrive bar. It''s full now: press <b>Q</b> to slow time and go berserk.'
+  - Clear the wave to open the shop. Spend souls on perks and techniques and combine them for synergies. Good luck!

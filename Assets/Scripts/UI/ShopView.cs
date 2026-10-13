@@ -15,23 +15,6 @@ namespace Soulbreak.UI
         [SerializeField] private SoulWallet wallet;
         [SerializeField] private Weapons.SynergySystem synergies;
 
-        private static readonly Color[] RarityColors =
-        {
-            new Color(0.65f, 0.72f, 0.82f),   // Common
-            new Color(0.3f, 0.65f, 1f),       // Rare
-            new Color(0.75f, 0.4f, 1f),       // Epic
-            new Color(1f, 0.75f, 0.2f),       // Legendary
-        };
-
-        private static readonly Color[] CategoryColors =
-        {
-            new Color(1f, 0.45f, 0.4f),       // Offense
-            new Color(0.8f, 0.55f, 1f),       // Economy
-            new Color(0.4f, 0.85f, 1f),       // Defense
-            new Color(1f, 0.85f, 0.35f),      // Ability
-            new Color(0.45f, 1f, 0.6f),       // Weapon
-        };
-
         [System.Serializable]
         private class Card
         {
@@ -53,6 +36,11 @@ namespace Soulbreak.UI
         [SerializeField] private Button rerollButton, nextButton;
         [SerializeField] private RectTransform cardRow;
         [SerializeField] private List<Card> cards = new List<Card>();   // one per possible offer, unused ones hidden
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
 
         private void Awake()
         {
@@ -129,7 +117,7 @@ namespace Soulbreak.UI
         private void Refresh()
         {
             soulsText.text = $"{wallet.Souls} {Lex.T("souls", "SOULS")}";
-            rerollText.text = $"REROLL  ({shop.RerollCost})";
+            rerollText.text = string.Format(S.shopReroll, shop.RerollCost);
             rerollButton.interactable = wallet.Souls >= shop.RerollCost;
 
             var offers = shop.Offers;
@@ -144,8 +132,8 @@ namespace Soulbreak.UI
 
                 var offer = offers[i];
                 var perk = offer.Perk;
-                var rarity = RarityColors[Mathf.Clamp((int)perk.rarity, 0, RarityColors.Length - 1)];
-                var cat = CategoryColors[Mathf.Clamp((int)perk.category, 0, CategoryColors.Length - 1)];
+                var rarity = T.Rarity((int)perk.rarity);
+                var cat = T.Category((int)perk.category);
                 int stacks = shop.GetStacks(perk);
                 bool affordable = wallet.Souls >= offer.Cost;
 
@@ -168,20 +156,21 @@ namespace Soulbreak.UI
                 }
                 card.Rarity.text = perk.rarity.ToString().ToUpper();
                 card.Rarity.color = rarity;
-                card.Category.text = perk.IsTechnique ? "TECHNIQUE" : perk.category.ToString().ToUpper();
+                card.Category.text = perk.IsTechnique ? S.shopTechnique : perk.category.ToString().ToUpper();
                 card.Category.color = cat;
                 card.Name.text = perk.displayName;
                 var tech = perk.TechniqueEffect;
                 card.Description.text = perk.description;
                 card.Synergy.text = synergies != null && tech != null ? synergies.HintFor(tech.module).Trim() : "";
-                card.Owned.text = perk.maxStacks > 0 ? $"OWNED {stacks}/{perk.maxStacks}" : (stacks > 0 ? $"OWNED {stacks}" : "");
-                card.Hotkey.text = $"[{i + 1}]";
+                card.Owned.text = perk.maxStacks > 0 ? string.Format(S.shopOwnedOf, stacks, perk.maxStacks)
+                    : (stacks > 0 ? string.Format(S.shopOwned, stacks) : "");
+                card.Hotkey.text = string.Format(S.shopHotkey, i + 1);
 
-                card.Background.color = Color.Lerp(new Color(0.07f, 0.05f, 0.13f, 0.97f), rarity, 0.08f);
+                card.Background.color = Color.Lerp(T.cardBackground, rarity, 0.08f);
                 card.Buy.interactable = !offer.Sold && affordable;
-                card.BuyImage.color = Color.Lerp(new Color(0.22f, 0.13f, 0.36f), rarity, affordable ? 0.45f : 0.1f);
-                card.ButtonText.text = offer.Sold ? "SOLD" : affordable ? $"BUY  -  {offer.Cost}" : $"NEED {offer.Cost}";
-                card.ButtonText.color = offer.Sold || affordable ? Color.white : new Color(1f, 0.45f, 0.45f);
+                card.BuyImage.color = Color.Lerp(T.buyBase, rarity, affordable ? 0.45f : 0.1f);
+                card.ButtonText.text = offer.Sold ? S.shopSold : affordable ? string.Format(S.shopBuy, offer.Cost) : string.Format(S.shopNeed, offer.Cost);
+                card.ButtonText.color = offer.Sold || affordable ? Color.white : T.bad;
                 card.Stamp.gameObject.SetActive(offer.Sold);
                 card.Group.alpha = offer.Sold ? 0.55f : 1f;
             }

@@ -764,6 +764,8 @@ MonoBehaviour:
     rank: {fileID: 9048336445884547070}
     name: {fileID: 6626712208368982935}
     score: {fileID: 7289470149863390822}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!1 &862288763696335493
 GameObject:
   m_ObjectHideFlags: 0

@@ -1612,6 +1612,8 @@ MonoBehaviour:
   statusText: {fileID: 6524756837524134572}
   messageText: {fileID: 1891274479828221071}
   formRoot: {fileID: 4804680399682088349}
+  strings: {fileID: 11400000, guid: b32c3c5c75128be4ba0023a052905285, type: 2}
+  theme: {fileID: 11400000, guid: 10599890fb9f8894ca5f6838a9103cb1, type: 2}
 --- !u!1 &6010475588059585987
 GameObject:
   m_ObjectHideFlags: 0

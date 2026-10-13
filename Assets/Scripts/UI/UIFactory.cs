@@ -10,6 +10,7 @@ namespace Soulbreak.UI
     {
         private static Font font;
         private static UITheme theme;
+        private static UIStrings strings;
 
         public static UITheme Theme
         {
@@ -18,6 +19,17 @@ namespace Soulbreak.UI
                 if (theme == null) theme = Resources.Load<UITheme>("UITheme");
                 if (theme == null) theme = ScriptableObject.CreateInstance<UITheme>();
                 return theme;
+            }
+        }
+
+        // Fallback copy source for views whose [SerializeField] ref is not wired.
+        public static UIStrings Strings
+        {
+            get
+            {
+                if (strings == null) strings = Resources.Load<UIStrings>("UIStrings");
+                if (strings == null) strings = ScriptableObject.CreateInstance<UIStrings>();
+                return strings;
             }
         }
 

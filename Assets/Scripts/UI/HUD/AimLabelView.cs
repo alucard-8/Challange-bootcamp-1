@@ -19,6 +19,12 @@ namespace Soulbreak.UI
 
         [SerializeField] private Text label;
         [SerializeField] private CanvasGroup group;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private Camera cam;
 
         private void LateUpdate()
@@ -34,8 +40,8 @@ namespace Soulbreak.UI
             group.alpha = Mathf.MoveTowards(group.alpha, show ? 0.9f : 0f, Time.unscaledDeltaTime * 8f);
             if (!show) return;
 
-            label.text = loading ? $"RELOADING  {ring.LoadProgress(slot) * 100f:0}%" : Lex.T(pattern.displayName, pattern.displayName).ToUpper();
-            var c = loading ? new Color(1f, 1f, 1f, 0.6f) : pattern.color;
+            label.text = loading ? string.Format(S.hudReloadingPercent, ring.LoadProgress(slot) * 100f) : Lex.T(pattern.displayName, pattern.displayName).ToUpper();
+            var c = loading ? T.dimTextStrong : pattern.color;
             float m = Mathf.Max(1f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
             label.color = new Color(c.r / m, c.g / m, c.b / m, 1f);
 

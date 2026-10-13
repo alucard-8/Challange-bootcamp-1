@@ -17,6 +17,10 @@ namespace Soulbreak.UI
         [SerializeField] private Text healthText;
         [SerializeField] private RectTransform healthFill;
         [SerializeField] private Image shieldPipTemplate;
+        [SerializeField] private UIStrings strings;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+
         private readonly List<Image> shieldPips = new List<Image>();
 
 
@@ -38,7 +42,7 @@ namespace Soulbreak.UI
 
         private void HandleHealth(int cur, int max)
         {
-            healthText.text = $"{Lex.T("core", "CORE")}  {cur}/{max}";
+            healthText.text = string.Format(S.hudCoreHealth, Lex.T("core", "CORE"), cur, max);
             UIFactory.SetBar(healthFill, max > 0 ? (float)cur / max : 0f);
         }
 
@@ -50,10 +54,10 @@ namespace Soulbreak.UI
 
         private void HandleWaveStarted(int wave, bool boss)
         {
-            waveText.text = $"WAVE {wave}";
-            subText.text = boss ? "<color=#FF5566>BOSS WAVE</color>" : Lex.T("defend", "Defend the reactor");
+            waveText.text = string.Format(S.hudWave, wave);
+            subText.text = boss ? S.hudBossWave : Lex.T("defend", "Defend the reactor");
         }
 
-        private void HandleWaveCleared(int wave) => subText.text = "Wave cleared - shopping";
+        private void HandleWaveCleared(int wave) => subText.text = S.hudWaveClearedShop;
     }
 }

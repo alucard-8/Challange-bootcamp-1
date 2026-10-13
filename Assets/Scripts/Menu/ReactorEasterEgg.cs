@@ -1,5 +1,6 @@
 using System.Collections;
 using Soulbreak.Meta;
+using Soulbreak.UI;
 using UnityEngine;
 
 namespace Soulbreak.Menu
@@ -14,6 +15,9 @@ namespace Soulbreak.Menu
         [SerializeField] private MainMenuView view;
         [SerializeField] private int clicksNeeded = 7;
         [SerializeField] private float window = 2.5f;
+        [SerializeField] private UIStrings strings;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
 
         private int clicks;
         private float lastClick;
@@ -72,8 +76,8 @@ namespace Soulbreak.Menu
             }
             core.localScale = baseScale;
 
-            if (firstTime) view.ShowToast("STAR CORE UNLOCKED\n<size=26>Switch modes any time in ASCENSION</size>");
-            else view.ShowToast(GameModeService.IsStar ? "STAR CORE MODE" : "SOUL REACTOR MODE");
+            if (firstTime) view.ShowToast(S.toastStarCoreUnlocked);
+            else view.ShowToast(GameModeService.IsStar ? S.toastStarCoreMode : S.toastSoulReactorMode);
             busy = false;
         }
     }

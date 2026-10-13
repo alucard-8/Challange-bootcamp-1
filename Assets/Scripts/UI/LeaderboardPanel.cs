@@ -27,8 +27,12 @@ namespace Soulbreak.UI
         [SerializeField] private Button tabButton, refreshButton;
         [SerializeField] private Text arrowText, playerText, bestText, lastText, rankText, statusText;
         [SerializeField] private List<Row> rows = new List<Row>();
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
 
-        private static readonly Color Gold = new Color(1f, 0.82f, 0.35f);
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private bool open, loading;
         private float slide;
 
@@ -63,15 +67,16 @@ namespace Soulbreak.UI
             slide = Mathf.MoveTowards(slide, open ? 1f : 0f, Time.unscaledDeltaTime * 4f);
             float e = 1f - Mathf.Pow(1f - slide, 3f);
             slider.anchoredPosition = new Vector2(Mathf.Lerp(slider.sizeDelta.x, 0f, e), slider.anchoredPosition.y);
-            arrowText.text = open ? ">" : "<";
+            arrowText.text = open ? S.leaderboardArrowOpen : S.leaderboardArrowClosed;
 
-            if (loading) statusText.text = "CONNECTING" + new string('.', 1 + (int)(Time.unscaledTime * 3f) % 3);
+            if (loading) statusText.text = S.leaderboardConnecting + new string('.', 1 + (int)(Time.unscaledTime * 3f) % 3);
         }
 
         private void ShowLocal()
         {
             string name = LeaderboardService.DisplayName;
-            playerText.text = (string.IsNullOrEmpty(name) || name == "???" ? "YOU" : name.ToUpper()) + (AccountService.IsGuest ? "   (GUEST)" : "");
+            playerText.text = (string.IsNullOrEmpty(name) || name == S.leaderboardUnknownName ? S.leaderboardYou : name.ToUpper())
+                + (AccountService.IsGuest ? S.leaderboardGuestTag : "");
             bestText.text = $"{MetaProgress.BestScore:N0}";
             lastText.text = $"{MetaProgress.LastScore:N0}";
         }
@@ -88,7 +93,7 @@ namespace Soulbreak.UI
             ShowLocal();
             bool online = LeaderboardService.Online;
             rankText.text = me.HasValue ? $"#{me.Value.Rank}" : "-";
-            statusText.text = online ? (top.Count == 0 ? "NO SCORES YET - BE THE FIRST" : "") : "OFFLINE - SCORES SAVED LOCALLY";
+            statusText.text = online ? (top.Count == 0 ? S.leaderboardNoScores : "") : S.leaderboardOffline;
             ShowRows(top);
         }
 
@@ -100,11 +105,11 @@ namespace Soulbreak.UI
                 bool has = i < top.Count;
                 var e = has ? top[i] : default;
                 row.rank.text = has ? $"{e.Rank}" : $"{i + 1}";
-                row.name.text = has ? e.Name : "---";
+                row.name.text = has ? e.Name : S.leaderboardEmptyName;
                 row.score.text = has ? $"{e.Score:N0}" : "";
-                var c = !has ? new Color(1, 1, 1, 0.3f) : e.IsPlayer ? Gold : i == 0 ? new Color(1f, 0.9f, 0.6f) : Color.white;
+                var c = !has ? T.rowDimText : e.IsPlayer ? T.gold : i == 0 ? T.goldSoft : Color.white;
                 row.rank.color = row.name.color = row.score.color = c;
-                row.background.color = has && e.IsPlayer ? new Color(1f, 0.8f, 0.3f, 0.15f) : new Color(1, 1, 1, i % 2 == 0 ? 0.04f : 0f);
+                row.background.color = has && e.IsPlayer ? T.rowPlayerBg : (i % 2 == 0 ? T.rowAlt : new Color(1f, 1f, 1f, 0f));
             }
         }
     }

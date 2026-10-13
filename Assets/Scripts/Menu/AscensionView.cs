@@ -33,6 +33,12 @@ namespace Soulbreak.Menu
         [SerializeField] private CanvasGroup group;
         [SerializeField] private Text essenceText;
         [SerializeField] private Button backButton;
+        [SerializeField] private UIStrings strings;
+        [SerializeField] private UITheme theme;
+
+        private UIStrings S => strings != null ? strings : UIFactory.Strings;
+        private UITheme T => theme != null ? theme : UIFactory.Theme;
+
         private MaterialPropertyBlock block;
 
         private void Awake()
@@ -104,7 +110,7 @@ namespace Soulbreak.Menu
 
         private void Refresh()
         {
-            essenceText.text = $"{MetaProgress.Essence} SOUL ESSENCE      BEST WAVE {MetaProgress.BestWave}";
+            essenceText.text = string.Format(S.ascensionStatus, MetaProgress.Essence, MetaProgress.BestWave);
             foreach (var e in entries)
             {
                 bool unlocked = MetaProgress.IsUnlocked(e.item);
@@ -114,17 +120,18 @@ namespace Soulbreak.Menu
                 if (e.item.type == MetaItemType.GameMode)
                 {
                     // Secret mode: locked cards only show a hint about how to find it.
-                    e.title.text = unlocked ? e.item.displayName : "???";
+                    e.title.text = unlocked ? e.item.displayName : S.ascensionUnknown;
                     e.body.text = unlocked ? e.item.description : e.item.unlockHint;
-                    e.buttonText.text = !unlocked ? "SECRET" : equipped ? "ACTIVE  (click to leave)" : "PLAY THIS MODE";
+                    e.buttonText.text = !unlocked ? S.ascensionSecret : equipped ? S.ascensionActive : S.ascensionPlayMode;
                     e.button.interactable = unlocked;
                 }
                 else
                 {
-                    e.buttonText.text = !unlocked ? $"UNLOCK  {e.item.cost}" : equipped ? (e.item.type == MetaItemType.ReactorSkin ? "EQUIPPED" : "EQUIPPED  (click to remove)") : "EQUIP";
+                    e.buttonText.text = !unlocked ? string.Format(S.ascensionUnlock, e.item.cost)
+                        : equipped ? (e.item.type == MetaItemType.ReactorSkin ? S.ascensionEquipped : S.ascensionEquippedRemove) : S.ascensionEquip;
                     e.button.interactable = unlocked || MetaProgress.Essence >= e.item.cost;
                 }
-                e.card.color = equipped ? new Color(0.12f, 0.08f, 0.22f, 0.97f) : new Color(0.06f, 0.04f, 0.11f, 0.95f);
+                e.card.color = equipped ? T.cardEquipped : T.cardBackgroundNear;
             }
         }
 
