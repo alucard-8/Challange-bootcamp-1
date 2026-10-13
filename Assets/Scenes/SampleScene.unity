@@ -1693,53 +1693,6 @@ MonoBehaviour:
   payoutPoint: {fileID: 1752002930}
   announcements: {fileID: 11400000, guid: 6a4c0f999b152604197596ce5cf015de, type: 2}
   soulsPerKillInStreak: 3
---- !u!1 &693581942
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 693581944}
-  - component: {fileID: 693581943}
-  m_Layer: 0
-  m_Name: Music
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &693581943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 693581942}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd888adfa0163534cbc93849fb990fe3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Audio.MusicSynth
-  volume: 0.3
-  bpm: 112
-  startIntensity: 0.15
---- !u!4 &693581944
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 693581942}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 872834919}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705237491
 GameObject:
   m_ObjectHideFlags: 0
@@ -2301,7 +2254,6 @@ Transform:
   - {fileID: 860319508}
   - {fileID: 1551575456}
   - {fileID: 276603975}
-  - {fileID: 693581944}
   - {fileID: 1494306834}
   - {fileID: 1876918261}
   - {fileID: 612219712}
@@ -3375,7 +3327,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d091a4f0aa770944a0ef6e605da4d28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Audio.MusicDirector
-  music: {fileID: 693581943}
   game: {fileID: 1072417589}
   waves: {fileID: 317333787}
   registry: {fileID: 2097331683}
@@ -3871,7 +3822,6 @@ MonoBehaviour:
   shop: {fileID: 1084613725}
   dropper: {fileID: 1547177810}
   fx: {fileID: 936013444}
-  music: {fileID: 693581943}
   core: {fileID: 1752002929}
   background: {fileID: 1691434205}
 --- !u!1 &1876918260

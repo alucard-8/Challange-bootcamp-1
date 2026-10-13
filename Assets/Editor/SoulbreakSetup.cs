@@ -138,16 +138,12 @@ namespace Soulbreak.EditorTools
             Set(ascension, "menuReactor", reactor);
             Set(view, "ascension", ascension);
 
-            var music = new GameObject("Music").AddComponent<MusicSynth>();
-            var mso = new SerializedObject(music);
-            mso.FindProperty("startIntensity").floatValue = 0.12f;
-            mso.ApplyModifiedPropertiesWithoutUndo();
             camGo.AddComponent<AudioListener>();
 
             // Mode theming + the secret that unlocks Star Core mode
             var modeApplier = view.gameObject.AddComponent<Soulbreak.Menu.MenuModeApplier>();
             Set(modeApplier, "core", reactor); Set(modeApplier, "background", bg); Set(modeApplier, "ambience", amb);
-            Set(modeApplier, "music", music); Set(modeApplier, "view", view);
+            Set(modeApplier, "view", view);
             var egg = view.gameObject.AddComponent<Soulbreak.Menu.ReactorEasterEgg>();
             Set(egg, "core", reactor.transform); Set(egg, "view", view);
             Set(menuInput, "easterEgg", egg);
@@ -1105,9 +1101,8 @@ namespace Soulbreak.EditorTools
             }
             aso.ApplyModifiedPropertiesWithoutUndo();
 
-            var music = Sys<MusicSynth>("Music");
             var musicDir = Sys<MusicDirector>("MusicDirector");
-            Set(musicDir, "music", music); Set(musicDir, "game", gm); Set(musicDir, "waves", waves); Set(musicDir, "registry", registry);
+            Set(musicDir, "game", gm); Set(musicDir, "waves", waves); Set(musicDir, "registry", registry);
             Set(musicDir, "pause", pause); Set(musicDir, "overdrive", overdrive); Set(musicDir, "reactor", reactorGo.transform);
             if (cam.GetComponent<AudioListener>() == null) cam.gameObject.AddComponent<AudioListener>();
 
@@ -1150,7 +1145,7 @@ namespace Soulbreak.EditorTools
             var modeApplier = Sys<ModeApplier>("ModeApplier");
             Set(modeApplier, "waves", waves); Set(modeApplier, "splitter", splitter); Set(modeApplier, "mapEvents", events);
             Set(modeApplier, "shop", shop); Set(modeApplier, "dropper", Object.FindAnyObjectByType<OrbDropper>());
-            Set(modeApplier, "fx", fx); Set(modeApplier, "music", music);
+            Set(modeApplier, "fx", fx);
             Set(modeApplier, "core", reactorGo.GetComponent<SpriteRenderer>());
             Set(modeApplier, "background", GameObject.Find("Background").GetComponent<SpriteRenderer>());
         }

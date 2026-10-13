@@ -5,17 +5,26 @@ using UnityEngine;
 
 namespace Soulbreak.Audio
 {
-    // Reads game state and steers the music: intensity grows with the wave number and with danger
-    // near the reactor, maxes out in Overdrive / boss fights; muffled while paused or shopping.
+    // Reads game state and steers the music (played by the AudioManager from authored clips):
+    // intensity grows with the wave number and with danger near the reactor, maxes out in
+    // Overdrive / boss fights; muffled while paused or shopping.
     public class MusicDirector : MonoBehaviour
     {
-        [SerializeField] private MusicSynth music;
         [SerializeField] private GameManager game;
         [SerializeField] private WaveManager waves;
         [SerializeField] private EnemyRegistry registry;
         [SerializeField] private PauseController pause;
         [SerializeField] private OverdriveSystem overdrive;
         [SerializeField] private Transform reactor;
+
+        private bool musicStarted;
+
+        private void OnEnable()
+        {
+            if (musicStarted) return;
+            musicStarted = true;
+            AudioManager.Instance.PlayGameMusic();
+        }
 
         private void Update()
         {
@@ -35,8 +44,8 @@ namespace Soulbreak.Audio
             if (game.State == GameState.Shop) intensity = 0.25f;
             if (game.State == GameState.GameOver) intensity = 0.05f;
 
-            music.Intensity = intensity;
-            music.Muffle = Mathf.Max(pause.Blend, game.State == GameState.Shop ? 0.55f : 0f, game.State == GameState.GameOver ? 0.8f : 0f);
+            AudioManager.Instance.SetIntensity(intensity);
+            AudioManager.Instance.SetMuffle(Mathf.Max(pause.Blend, game.State == GameState.Shop ? 0.55f : 0f, game.State == GameState.GameOver ? 0.8f : 0f));
         }
     }
 }

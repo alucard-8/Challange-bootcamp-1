@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Soulbreak.Core.Events;
 using Soulbreak.Economy;
@@ -11,7 +10,7 @@ using UnityEngine;
 
 namespace Soulbreak.Audio
 {
-    [Serializable]
+    [System.Serializable]
     public class PatternSound
     {
         public ShotPattern pattern;
@@ -19,7 +18,8 @@ namespace Soulbreak.Audio
     }
 
     // Pure observer: turns gameplay events into sound effects. Nothing in gameplay knows audio exists.
-    // Uses a small pool of AudioSources, slight random pitch, and a per-sound cooldown to avoid spam.
+    // Delegates playing to the AudioManager (clips come from the AudioLibrary); keeps a per-sound
+    // cooldown here to avoid spam.
     public class AudioDirector : MonoBehaviour
     {
         [Header("Systems")]
@@ -45,23 +45,8 @@ namespace Soulbreak.Audio
         [SerializeField] private PatternSound[] patternSounds;
         [SerializeField, Range(0f, 1f)] private float volume = 0.6f;
 
-        private readonly List<AudioSource> pool = new List<AudioSource>();
         private readonly Dictionary<Sfx, float> lastPlayed = new Dictionary<Sfx, float>();
-        private int next;
         private bool alarmPlayed;
-
-        private void Awake()
-        {
-            for (int i = 0; i < 16; i++)
-            {
-                var s = gameObject.AddComponent<AudioSource>();
-                s.playOnAwake = false;
-                s.spatialBlend = 0f;
-                pool.Add(s);
-            }
-            // Pre-build every clip now so the first shot doesn't hitch.
-            foreach (Sfx id in Enum.GetValues(typeof(Sfx))) SfxSynth.Get(id);
-        }
 
         private void OnEnable()
         {
@@ -151,11 +136,7 @@ namespace Soulbreak.Audio
         {
             if (lastPlayed.TryGetValue(id, out float last) && Time.unscaledTime - last < 0.035f) return;
             lastPlayed[id] = Time.unscaledTime;
-
-            var src = pool[next];
-            next = (next + 1) % pool.Count;
-            src.pitch = 1f + UnityEngine.Random.Range(-pitchVariance, pitchVariance);
-            src.PlayOneShot(SfxSynth.Get(id), vol * volume * Core.GameSettings.Sfx);
+            AudioManager.Instance.PlaySfx(id, vol * volume, pitchVariance);
         }
     }
 }

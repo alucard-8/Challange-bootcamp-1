@@ -1096,53 +1096,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c07451f881935f499d2a7e247f4162a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.UI.HowToView
---- !u!1 &1627053605
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1627053607}
-  - component: {fileID: 1627053606}
-  m_Layer: 0
-  m_Name: Music
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1627053606
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1627053605}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd888adfa0163534cbc93849fb990fe3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Audio.MusicSynth
-  volume: 0.3
-  bpm: 112
-  startIntensity: 0.12
---- !u!4 &1627053607
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1627053605}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1899533174
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1280,7 +1233,6 @@ MonoBehaviour:
   core: {fileID: 725020104}
   background: {fileID: 478134999}
   ambience: {fileID: 505441879}
-  music: {fileID: 1627053606}
   view: {fileID: 1899533175}
 --- !u!114 &1899533179
 MonoBehaviour:
@@ -1313,7 +1265,6 @@ SceneRoots:
   - {fileID: 505441880}
   - {fileID: 1899533174}
   - {fileID: 1130870900}
-  - {fileID: 1627053607}
   - {fileID: 800953972}
   - {fileID: 590868993}
   - {fileID: 130720482}

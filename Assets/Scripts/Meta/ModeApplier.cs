@@ -19,7 +19,6 @@ namespace Soulbreak.Meta
         [SerializeField] private PerkShop shop;
         [SerializeField] private OrbDropper dropper;
         [SerializeField] private FxSystem fx;
-        [SerializeField] private MusicSynth music;
         [SerializeField] private SpriteRenderer core;
         [SerializeField] private SpriteRenderer background;
 
@@ -36,7 +35,6 @@ namespace Soulbreak.Meta
             if (mode.enemyMaterial != null) fx.SetEnemyMaterial(mode.enemyMaterial);
             if (mode.coreMaterial != null) core.sharedMaterial = mode.coreMaterial;
             if (mode.backgroundMaterial != null) background.sharedMaterial = mode.backgroundMaterial;
-            music.SetVariant(mode.musicVariant);
         }
     }
 }

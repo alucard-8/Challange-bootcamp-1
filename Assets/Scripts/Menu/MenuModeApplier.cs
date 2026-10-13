@@ -12,7 +12,6 @@ namespace Soulbreak.Menu
         [SerializeField] private SpriteRenderer core;
         [SerializeField] private SpriteRenderer background;
         [SerializeField] private MenuAmbience ambience;
-        [SerializeField] private MusicSynth music;
         [SerializeField] private MainMenuView view;
 
         private string applied;
@@ -30,8 +29,8 @@ namespace Soulbreak.Menu
             if (mode.coreMaterial != null) core.sharedMaterial = mode.coreMaterial;
             if (mode.backgroundMaterial != null) background.sharedMaterial = mode.backgroundMaterial;
             if (mode.enemyMaterial != null) ambience.SetEnemyMaterial(mode.enemyMaterial);
-            music.SetVariant(mode.musicVariant);
             view.SetTitle(mode.title, mode.tagline);
+            Audio.AudioManager.Instance.PlayMenuMusic();
         }
     }
 }
