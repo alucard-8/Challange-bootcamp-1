@@ -16,6 +16,10 @@ namespace Soulbreak.Player
         public Vector2 AimPoint { get; private set; }
         public Vector2 AimDirection { get; private set; } = Vector2.up;
 
+        public Vector2 MuzzlePosition => muzzle.position;
+
+        public bool IgnoreAmmo { get; set; }
+
         public event Action<Vector2, Vector2, bool, ShotPattern> OnShotFired;
 
         private void Awake()
@@ -25,7 +29,12 @@ namespace Soulbreak.Player
 
         public void AimAtScreenPoint(Vector2 screenPoint)
         {
-            AimPoint = cam.ScreenToWorldPoint(screenPoint);
+            AimAtWorldPoint(cam.ScreenToWorldPoint(screenPoint));
+        }
+
+        public void AimAtWorldPoint(Vector2 worldPoint)
+        {
+            AimPoint = worldPoint;
             Vector2 toAim = AimPoint - (Vector2)muzzle.position;
             if (toAim.sqrMagnitude > 0.0001f) AimDirection = toAim.normalized;
         }
@@ -34,7 +43,7 @@ namespace Soulbreak.Player
         {
             if (Time.timeScale == 0f) return false;
             bool overdriven = overdrive != null && overdrive.IsActive;
-            if (!overdriven && !ammo.TryConsume()) return false;
+            if (!overdriven && !IgnoreAmmo && !ammo.TryConsume()) return false;
 
             Vector2 origin = muzzle.position;
             bool crit = UnityEngine.Random.value < stats.Get(StatType.CritChance);

@@ -88,6 +88,15 @@ namespace Soulbreak.Core
 #endif
         }
 
+        public static bool AutoAimPressed()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current.f4Key.wasPressedThisFrame;
+#else
+            return Input.GetKeyDown(KeyCode.F4);
+#endif
+        }
+
         public static bool SkipTutorialPressed()
         {
 #if ENABLE_INPUT_SYSTEM

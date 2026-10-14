@@ -871,7 +871,7 @@ namespace Soulbreak.EditorTools
 
             var admin = Sys<AdminCheats>("AdminCheats");
             Set(admin, "shop", shop); Set(admin, "wallet", wallet); Set(admin, "reactor", reactor);
-
+            Set(admin, "shooter", shooter);
             Set(ammo, "stats", stats);
             Set(shooter, "stats", stats); Set(shooter, "ammo", ammo); Set(shooter, "muzzle", reactorGo.transform); Set(shooter, "cam", cam);
             Set(nova, "center", reactorGo.transform); Set(nova, "stats", stats);
@@ -975,6 +975,8 @@ namespace Soulbreak.EditorTools
             var registry = Sys<EnemyRegistry>("EnemyRegistry");
             Set(registry, "spawned", ch.enemySpawned); Set(registry, "killed", ch.enemyKilled); Set(registry, "reachedTarget", ch.enemyReached);
             Set(waves, "registry", registry);
+            var adminCheats = sys.GetComponentInChildren<AdminCheats>(true);
+            if (adminCheats != null) Set(adminCheats, "enemies", registry);
             var wso = new SerializedObject(waves);
             wso.FindProperty("channels.bossEnraged").objectReferenceValue = ch.bossEnraged;
             wso.FindProperty("channels.damaged").objectReferenceValue = ch.enemyDamaged;
