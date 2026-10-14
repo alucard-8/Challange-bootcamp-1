@@ -22,7 +22,6 @@ namespace Soulbreak.UI
 
         private readonly List<Image> shieldPips = new List<Image>();
 
-
         private void OnEnable()
         {
             reactor.OnHealthChanged += HandleHealth;

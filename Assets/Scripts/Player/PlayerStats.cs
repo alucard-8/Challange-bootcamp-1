@@ -31,7 +31,7 @@ namespace Soulbreak.Player
             new StatValue(StatType.SplashRadius, 0f),
             new StatValue(StatType.HeadshotMultiplier, 2f),
             new StatValue(StatType.ClipSize, 6),
-            new StatValue(StatType.ReloadTime, 2f),
+            new StatValue(StatType.ReloadTime, 1.7f),
             new StatValue(StatType.SoulGain, 1f),
             new StatValue(StatType.OrbValue, 1f),
             new StatValue(StatType.OrbLifetime, 4f),

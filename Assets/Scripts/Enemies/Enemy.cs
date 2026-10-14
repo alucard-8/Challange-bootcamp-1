@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Soulbreak.Enemies
 {
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
+
     public class Enemy : MonoBehaviour, IHostile, IDamageable, IWeakPoint
     {
         public event Action<Enemy> OnDamaged;

@@ -77,7 +77,7 @@ namespace Soulbreak.Reactor
             block.SetFloat(ShieldMaxId, max);
             Apply();
         }
-        private void HandleHit(bool shielded) => flash = 1f;
+        private void HandleHit(bool shielded) => flash = Core.GameSettings.ReduceFlashing ? 0.4f : 1f;
 
         private void Update()
         {

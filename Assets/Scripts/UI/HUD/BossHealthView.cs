@@ -9,6 +9,7 @@ namespace Soulbreak.UI
         [SerializeField] private HUDCanvas hud;
         [SerializeField] private EnemyEventChannel spawned;
         [SerializeField] private EnemyEventChannel bossEnraged;
+        [SerializeField] private Soulbreak.Core.Events.AnnouncementEventChannel announcements;
 
         private Enemy boss;
         [SerializeField] private CanvasGroup group;
@@ -50,6 +51,8 @@ namespace Soulbreak.UI
             if (e != boss) return;
             fillImage.color = T.bossRed;
             label.text += S.hudEnraged;
+            if (announcements != null)
+                announcements.Raise(new Soulbreak.Core.Events.Announcement(S.hudBossEnragedBanner, S.hudBossEnragedBody, Color.red));
         }
 
         private void Update()

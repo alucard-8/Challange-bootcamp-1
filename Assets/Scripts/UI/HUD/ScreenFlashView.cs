@@ -19,7 +19,7 @@ namespace Soulbreak.UI
         private void OnEnable() => hitStop.OnImpact += HandleImpact;
         private void OnDisable() => hitStop.OnImpact -= HandleImpact;
 
-        private void HandleImpact(float strength) => alpha = Mathf.Max(alpha, 0.22f * strength);
+        private void HandleImpact(float strength) => alpha = Core.GameSettings.ReduceFlashing ? 0f : Mathf.Max(alpha, 0.22f * strength);
 
         private void Update()
         {

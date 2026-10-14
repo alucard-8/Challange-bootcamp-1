@@ -28,7 +28,7 @@ namespace Soulbreak.UI
             else if (overdrive.IsReady)
             {
                 label.text = S.hudOverdriveReady;
-                float pulse = 0.6f + 0.4f * Mathf.Sin(Time.unscaledTime * 8f);
+                float pulse = Core.GameSettings.ReduceFlashing ? 1f : 0.6f + 0.4f * Mathf.Sin(Time.unscaledTime * 8f);
                 label.color = Color.Lerp(T.purple, Color.white, pulse);
             }
             else

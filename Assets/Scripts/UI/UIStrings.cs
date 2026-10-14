@@ -69,12 +69,18 @@ namespace Soulbreak.UI
         [Header("Pause Menu")]
         [Tooltip("{0}=wave, {1}=souls label, {2}=souls, {3}=seconds")]
         public string pauseStats = "WAVE        <b>{0}</b>\n{1,-12}<b>{2}</b>\nTIME          <b>{3:0}s</b>";
+        public string pauseQuit = "QUIT";
+        public string pauseQuitConfirm = "CONFIRM QUIT";
 
         [Header("Settings")]
         public string settingsOn = "ON";
         public string settingsOff = "OFF";
         [Tooltip("{0} = percent")]
         public string settingsPercent = "{0}%";
+        public string settingsFullscreen = "FULLSCREEN";
+        public string settingsResolution = "RESOLUTION";
+        public string settingsQuality = "QUALITY";
+        public string settingsReset = "RESET TO DEFAULTS";
 
         [Header("Main Menu")]
         [Tooltip("{0}=gold hex, {1}=best, {2}=last, {3}=last wave, {4}=best wave, {5}=runs, {6}=diff hex, {7}=diff name")]
@@ -151,6 +157,8 @@ namespace Soulbreak.UI
         public string hudWaveCleared = "WAVE CLEARED";
         public string hudNovaReady = "NOVA READY";
         public string hudEnraged = "  -  ENRAGED";
+        public string hudBossEnragedBanner = "BOSS ENRAGED";
+        public string hudBossEnragedBody = "PHASE 2 - ATTACK PATTERN CHANGED";
         [Tooltip("{0}=count, {1}=mult hex, {2}=mult")]
         public string hudCombo = "COMBO {0}   <color=#{1}>x{2:0.00}</color>";
         [Tooltip("{0}=wave")]

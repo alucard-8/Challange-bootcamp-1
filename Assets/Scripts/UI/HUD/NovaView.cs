@@ -17,7 +17,6 @@ namespace Soulbreak.UI
         private UIStrings S => strings != null ? strings : UIFactory.Strings;
         private UITheme T => theme != null ? theme : UIFactory.Theme;
 
-
         private void Update()
         {
             float ready = nova.Cooldown > 0f ? 1f - nova.CooldownRemaining / nova.Cooldown : 1f;

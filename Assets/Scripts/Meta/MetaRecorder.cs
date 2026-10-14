@@ -9,6 +9,7 @@ namespace Soulbreak.Meta
     public struct RunResult
     {
         public int Score, Essence, Wave, WavesCleared, Kills, EliteKills, BossKills, Headshots, BestStreak, SoulsEarned;
+        public int Seed;
         public float Time;
         public bool NewBest;
         public int PreviousBest;
@@ -47,7 +48,7 @@ namespace Soulbreak.Meta
                 Score = score, Essence = essence, Wave = waves.Wave, WavesCleared = game.WavesCleared,
                 Kills = stats.Kills, EliteKills = stats.EliteKills, BossKills = stats.BossKills, Headshots = stats.Headshots,
                 BestStreak = stats.BestStreak, SoulsEarned = wallet.TotalEarned, Time = game.SurvivalTime,
-                NewBest = best, PreviousBest = previousBest, Difficulty = MetaProgress.SelectedDifficulty,
+                NewBest = best, PreviousBest = previousBest, Difficulty = MetaProgress.SelectedDifficulty, Seed = Core.RunSeed.Value,
             };
             OnRunRecorded?.Invoke(Last);
         }

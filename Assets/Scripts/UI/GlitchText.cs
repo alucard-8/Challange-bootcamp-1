@@ -9,6 +9,7 @@ namespace Soulbreak.UI
         public float burstChance = 1.2f;
         public float maxOffset = 10f;
         public Color colorA = new Color(1f, 0.2f, 0.5f, 0.75f);
+        public float ghostImageAlpha = 0.35f;
         public Color colorB = new Color(0.2f, 0.9f, 1f, 0.75f);
 
         private Text main, ghostA, ghostB;
@@ -32,6 +33,7 @@ namespace Soulbreak.UI
             go.transform.SetSiblingIndex(transform.GetSiblingIndex());
             var t = go.GetComponent<Text>();
             t.color = c;
+            foreach (var img in go.GetComponentsInChildren<Image>()) img.color = new Color(c.r, c.g, c.b, c.a * ghostImageAlpha);
             return t;
         }
 
@@ -44,6 +46,8 @@ namespace Soulbreak.UI
             float fade = group != null ? group.alpha : 1f;
             ghostA.color = new Color(colorA.r, colorA.g, colorA.b, colorA.a * fade);
             ghostB.color = new Color(colorB.r, colorB.g, colorB.b, colorB.a * fade);
+            foreach (var img in ghostA.GetComponentsInChildren<Image>()) img.color = new Color(colorA.r, colorA.g, colorA.b, colorA.a * ghostImageAlpha * fade);
+            foreach (var img in ghostB.GetComponentsInChildren<Image>()) img.color = new Color(colorB.r, colorB.g, colorB.b, colorB.a * ghostImageAlpha * fade);
 
             if (Random.value < burstChance * Time.unscaledDeltaTime) burst = Random.Range(0.08f, 0.25f);
             burst -= Time.unscaledDeltaTime;

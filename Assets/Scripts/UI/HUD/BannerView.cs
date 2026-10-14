@@ -19,7 +19,6 @@ namespace Soulbreak.UI
 
         private float timer, punch;
 
-
         private void OnEnable()
         {
             waves.OnWaveStarted += HandleWaveStarted;

@@ -46,7 +46,7 @@ namespace Soulbreak.Enemies
 
         private void HandleDamaged(Enemy e)
         {
-            flash = 1f;
+            flash = Core.GameSettings.ReduceFlashing ? 0.45f : 1f;
             squash = 1f;
         }
 

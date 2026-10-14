@@ -7,6 +7,12 @@ namespace Soulbreak.UI
 {
     public class DangerView : MonoBehaviour
     {
+        private static readonly int PulseSpeedId = Shader.PropertyToID("_PulseSpeed");
+
+        private static readonly Color CbEnemy = new Color(0.34f, 0.71f, 0.91f, 0.9f);
+        private static readonly Color CbElite = new Color(0.94f, 0.89f, 0.26f, 0.9f);
+        private static readonly Color CbBoss = new Color(0.90f, 0.62f, 0f, 0.9f);
+
         [SerializeField] private HUDCanvas hud;
         [SerializeField] private EnemyRegistry registry;
         [SerializeField] private Reactor.Reactor reactor;
@@ -18,10 +24,22 @@ namespace Soulbreak.UI
         [SerializeField] private Image arrowTemplate;
         private float lowHealth;
         private Camera cam;
+        private Material vignetteInstance;
 
         private void Awake()
         {
             cam = Camera.main;
+
+            if (vignetteMaterial != null && vignette != null)
+            {
+                vignetteInstance = Instantiate(vignetteMaterial);
+                vignette.material = vignetteInstance;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (vignetteInstance != null) Destroy(vignetteInstance);
         }
 
         private void OnEnable() => reactor.OnHealthChanged += HandleHealth;
@@ -52,9 +70,7 @@ namespace Soulbreak.UI
                 Vector2 pos = new Vector2(dir.x * size.x, dir.y * size.y) * scale;
                 arrow.rectTransform.anchoredPosition = pos;
                 arrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 45f);
-                var c = e.Config.color;
-                float max = Mathf.Max(1f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
-                arrow.color = new Color(c.r / max, c.g / max, c.b / max, 0.9f);
+                arrow.color = ArrowColor(e);
                 arrow.rectTransform.localScale = Vector3.one * (e.Config.isBoss ? 1.8f : e.IsElite ? 1.3f : 1f);
             }
             for (int i = used; i < arrows.Count; i++) arrows[i].enabled = false;
@@ -63,7 +79,19 @@ namespace Soulbreak.UI
             var vc = vignette.color;
             vc.a = Mathf.MoveTowards(vc.a, strength * 0.35f, Time.unscaledDeltaTime * 1.5f);
             vignette.color = vc;
-            if (vignette.material != null) vignette.material.SetFloat("_PulseSpeed", 2f + strength * 3f);
+
+            if (vignetteInstance != null)
+                vignetteInstance.SetFloat(PulseSpeedId, Core.GameSettings.ReduceFlashing ? 0f : 2f + strength * 3f);
+        }
+
+        private static Color ArrowColor(Enemy e)
+        {
+            if (Core.GameSettings.Colorblind)
+                return e.Config.isBoss ? CbBoss : e.IsElite ? CbElite : CbEnemy;
+
+            var c = e.Config.color;
+            float max = Mathf.Max(1f, Mathf.Max(c.r, Mathf.Max(c.g, c.b)));
+            return new Color(c.r / max, c.g / max, c.b / max, 0.9f);
         }
 
         private Image GetArrow(int i)

@@ -861,6 +861,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8069508857591830981, guid: 1ab28ab4c9d26c84eb89b81aea83b451, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -37
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1132,6 +1136,10 @@ PrefabInstance:
       propertyPath: difficulty
       value: 
       objectReference: {fileID: 590868994}
+    - target: {fileID: 5462702250958841338, guid: dfef582cc99996941a933dcd7537526d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1599
+      objectReference: {fileID: 0}
     - target: {fileID: 5977840377487792049, guid: dfef582cc99996941a933dcd7537526d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1218,6 +1226,7 @@ MonoBehaviour:
   view: {fileID: 1899533175}
   clicksNeeded: 7
   window: 2.5
+  strings: {fileID: 0}
 --- !u!114 &1899533178
 MonoBehaviour:
   m_ObjectHideFlags: 0

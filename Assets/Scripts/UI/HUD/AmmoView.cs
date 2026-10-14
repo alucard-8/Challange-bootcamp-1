@@ -47,7 +47,7 @@ namespace Soulbreak.UI
         {
             pickupFlash = Mathf.MoveTowards(pickupFlash, 0f, Time.unscaledDeltaTime * 1.6f);
             bool low = current > 0 && current <= Mathf.Max(1, max / 4);
-            float blink = low ? 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 14f) : 0f;
+            float blink = low && !Core.GameSettings.ReduceFlashing ? 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 14f) : 0f;
             var lowColor = Color.Lerp(HudColors.Gold, T.lowAmmo, blink);
             for (int i = 0; i < pips.Count; i++)
                 pips[i].color = i < current ? Color.Lerp(low ? lowColor : HudColors.Gold, Color.white, pickupFlash) : HudColors.Dim;

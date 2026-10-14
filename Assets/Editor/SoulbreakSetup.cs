@@ -1037,6 +1037,7 @@ namespace Soulbreak.EditorTools
             Set(danger, "registry", registry); Set(danger, "reactor", reactor);
             var bossBar = hudGo.GetComponent<BossHealthView>();
             Set(bossBar, "spawned", ch.enemySpawned); Set(bossBar, "bossEnraged", ch.bossEnraged);
+            Set(bossBar, "announcements", ch.announcements);
 
             var audio = Sys<AudioDirector>("AudioDirector");
             Set(audio, "shooter", shooter); Set(audio, "ammo", ammo); Set(audio, "nova", nova); Set(audio, "overdrive", overdrive);

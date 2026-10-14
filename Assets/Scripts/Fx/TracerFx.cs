@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Soulbreak.Fx
@@ -8,8 +9,9 @@ namespace Soulbreak.Fx
         private LineRenderer line;
         private float duration, age, width;
         private Color color;
+        private Action onComplete;
 
-        public void Init(Vector2 from, Vector2 to, Material material, Color color, float width, float duration)
+        public void Init(Vector2 from, Vector2 to, Material material, Color color, float width, float duration, Action onComplete = null)
         {
             line = GetComponent<LineRenderer>();
             line.useWorldSpace = true;
@@ -23,6 +25,8 @@ namespace Soulbreak.Fx
             this.color = color;
             this.width = width;
             this.duration = duration;
+            this.onComplete = onComplete;
+            age = 0f;
             Apply(0f);
         }
 
@@ -31,7 +35,10 @@ namespace Soulbreak.Fx
             age += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(age / duration);
             Apply(t);
-            if (t >= 1f) Destroy(gameObject);
+            if (t < 1f) return;
+
+            if (onComplete != null) onComplete();
+            else Destroy(gameObject);
         }
 
         private void Apply(float t)

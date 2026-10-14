@@ -4,6 +4,7 @@ using UnityEngine;
 namespace Soulbreak.Enemies
 {
     [DefaultExecutionOrder(-40)]
+
     public class EnemyRegistry : MonoBehaviour
     {
         [SerializeField] private EnemyEventChannel spawned;

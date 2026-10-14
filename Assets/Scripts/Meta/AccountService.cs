@@ -28,7 +28,7 @@ namespace Soulbreak.Meta
 
         public static Task<bool> EnsureSignedIn()
         {
-            if (Status == State.Online) return Task.FromResult(true);
+            if (Status == State.Online && UnityServices.State == ServicesInitializationState.Initialized) return Task.FromResult(true);
             if (connecting == null || (connecting.IsCompleted && Status == State.Offline)) connecting = Connect();
             return connecting;
         }
@@ -159,7 +159,7 @@ namespace Soulbreak.Meta
 
         private static async Task PushProgress()
         {
-            if (Status != State.Online || syncing) return;
+            if (Status != State.Online || syncing || UnityServices.State != ServicesInitializationState.Initialized) return;
             try { await CloudSaveService.Instance.Data.Player.SaveAsync(new Dictionary<string, object> { { CloudKey, MetaProgress.ExportJson() } }); }
             catch (Exception e) { Debug.LogWarning($"Cloud save failed: {e.Message}"); }
         }

@@ -66,7 +66,6 @@ namespace Soulbreak.Weapons
         {
             foreach (var hit in Physics2D.OverlapCircleAll(pos, pattern.bladeSize * 0.6f))
             {
-
                 if (!hit.TryGetComponent(out IHostile s) || !s.IsAlive) continue;
 
                 var id = hit;

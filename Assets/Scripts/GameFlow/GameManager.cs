@@ -42,6 +42,7 @@ namespace Soulbreak.GameFlow
 
         private void Start()
         {
+            Core.RunSeed.Begin();
             time.Clear("gameover");
             Invoke(nameof(BeginFirstWave), firstWaveDelay);
         }
@@ -56,7 +57,6 @@ namespace Soulbreak.GameFlow
                 collapseTimer += Time.unscaledDeltaTime;
                 if (collapseTimer > 1.4f) { time.Set("gameover", 0f); collapseTimer = -1f; }
             }
-
         }
 
         private void HandleWaveCleared(int wave)

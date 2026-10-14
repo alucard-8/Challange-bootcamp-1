@@ -42,6 +42,11 @@ namespace Soulbreak.UI
         [SerializeField] private UITheme theme;
         private const float PanelWidth = 560f;
 
+        private bool quitArmed;
+        private float quitTimer;
+        private Text quitLabel;
+        private string quitLabelDefault;
+
         private UIStrings S => strings != null ? strings : UIFactory.Strings;
         private UITheme T => theme != null ? theme : UIFactory.Theme;
 
@@ -54,7 +59,7 @@ namespace Soulbreak.UI
                 () => index.Open(),
                 () => game.Restart(),
                 () => game.ToMainMenu(),
-                GameManager.Quit,
+                ConfirmQuit,
             };
             for (int i = 0; i < menuButtons.Length && i < actions.Length; i++)
             {
@@ -62,6 +67,11 @@ namespace Soulbreak.UI
                 menuButtons[i].onClick.AddListener(() => action());
             }
             helpButton.onClick.AddListener(() => howTo.Open());
+            if (menuButtons.Length > 0)
+            {
+                quitLabel = menuButtons[menuButtons.Length - 1].GetComponentInChildren<Text>();
+                if (quitLabel != null) quitLabelDefault = quitLabel.text;
+            }
 #if UNITY_WEBGL
             menuButtons[menuButtons.Length - 1].gameObject.SetActive(false);
 #endif
@@ -73,7 +83,7 @@ namespace Soulbreak.UI
         private void HandlePause(bool paused)
         {
             Audio.UIAudio.Play(paused ? Audio.Sfx.UIOpen : Audio.Sfx.UIClose);
-            if (!paused) { CloseAll(); return; }
+            if (!paused) { CloseAll(); DisarmQuit(); return; }
             statsText.text = string.Format(S.pauseStats, Mathf.Max(1, waves.Wave), Lex.T("souls", "SOULS"), wallet.Souls, game.SurvivalTime);
         }
 
@@ -87,6 +97,26 @@ namespace Soulbreak.UI
             float slide = 1f - Mathf.Pow(1f - b, 3f);
             panel.anchoredPosition = new Vector2(Mathf.Lerp(-PanelWidth - 40f, 70f, slide), 0f);
             hint.anchoredPosition = new Vector2(Mathf.Lerp(400f, -70f, slide), 70f);
+
+            if (quitArmed)
+            {
+                quitTimer -= Time.unscaledDeltaTime;
+                if (quitTimer <= 0f) DisarmQuit();
+            }
+        }
+
+        private void ConfirmQuit()
+        {
+            if (quitArmed) { GameManager.Quit(); return; }
+            quitArmed = true;
+            quitTimer = 3f;
+            if (quitLabel != null) quitLabel.text = S.pauseQuitConfirm;
+        }
+
+        private void DisarmQuit()
+        {
+            quitArmed = false;
+            if (quitLabel != null && !string.IsNullOrEmpty(quitLabelDefault)) quitLabel.text = quitLabelDefault;
         }
     }
 }

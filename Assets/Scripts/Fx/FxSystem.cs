@@ -11,6 +11,10 @@ namespace Soulbreak.Fx
         private static readonly int ColorId = Shader.PropertyToID("_Color");
         private static readonly int SpikesId = Shader.PropertyToID("_Spikes");
         private static readonly int SeedId = Shader.PropertyToID("_Seed");
+        private static readonly int ThicknessId = Shader.PropertyToID("_Thickness");
+
+        private readonly System.Collections.Generic.Stack<GameObject> ringPool = new System.Collections.Generic.Stack<GameObject>();
+        private readonly System.Collections.Generic.Stack<GameObject> tracerPool = new System.Collections.Generic.Stack<GameObject>();
 
         [SerializeField] private PlayerShooter shooter;
         [SerializeField] private NovaAbility nova;
@@ -83,8 +87,8 @@ namespace Soulbreak.Fx
                 Ring(from + (to - from).normalized * 1.9f, c, 0.3f, 1.4f, 0.25f);
                 return;
             }
-            var go = new GameObject("Tracer", typeof(LineRenderer), typeof(TracerFx));
-            go.GetComponent<TracerFx>().Init(from, to, tracerMaterial, c, crit ? 0.35f : 0.22f, 0.12f);
+            var go = GetTracer();
+            go.GetComponent<TracerFx>().Init(from, to, tracerMaterial, c, crit ? 0.35f : 0.22f, 0.12f, () => ReturnTracer(go));
             Ring(to, c, 0.2f, crit ? 1.6f : 1f, 0.25f);
         }
 
@@ -99,8 +103,8 @@ namespace Soulbreak.Fx
 
         private void HandleBeam(BeamInfo beam)
         {
-            var go = new GameObject("Lance", typeof(LineRenderer), typeof(TracerFx));
-            go.GetComponent<TracerFx>().Init(beam.From, beam.To, tracerMaterial, beam.Color, beam.Width * 3.5f, 0.35f);
+            var go = GetTracer();
+            go.GetComponent<TracerFx>().Init(beam.From, beam.To, tracerMaterial, beam.Color, beam.Width * 3.5f, 0.35f, () => ReturnTracer(go));
             Ring(beam.From, beam.Color, 0.5f, 2.2f, 0.3f);
         }
 
@@ -162,17 +166,43 @@ namespace Soulbreak.Fx
 
         private void Ring(Vector2 pos, Color color, float startSize, float endSize, float duration, float thickness = 0.15f)
         {
-            var go = new GameObject("RingFx");
+            var go = GetRing();
             go.transform.position = pos;
-            var sr = go.AddComponent<SpriteRenderer>();
+            var sr = go.GetComponent<SpriteRenderer>();
             sr.sprite = quad;
             sr.sharedMaterial = ringMaterial;
             sr.sortingOrder = 7;
 
             var block = new MaterialPropertyBlock();
             block.SetColor(ColorId, color);
-            block.SetFloat(Shader.PropertyToID("_Thickness"), thickness);
-            go.AddComponent<FxAnimator>().Init(block, "_Progress", duration, Vector3.one * startSize, Vector3.one * endSize);
+            block.SetFloat(ThicknessId, thickness);
+            go.GetComponent<FxAnimator>().Init(block, "_Progress", duration, Vector3.one * startSize, Vector3.one * endSize, () => ReturnRing(go));
+        }
+
+        private GameObject GetRing()
+        {
+            var go = ringPool.Count > 0 ? ringPool.Pop() : new GameObject("RingFx", typeof(SpriteRenderer), typeof(FxAnimator));
+            go.SetActive(true);
+            return go;
+        }
+
+        private void ReturnRing(GameObject go)
+        {
+            go.SetActive(false);
+            ringPool.Push(go);
+        }
+
+        private GameObject GetTracer()
+        {
+            var go = tracerPool.Count > 0 ? tracerPool.Pop() : new GameObject("Tracer", typeof(LineRenderer), typeof(TracerFx));
+            go.SetActive(true);
+            return go;
+        }
+
+        private void ReturnTracer(GameObject go)
+        {
+            go.SetActive(false);
+            tracerPool.Push(go);
         }
     }
 }

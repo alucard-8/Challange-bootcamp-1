@@ -21,7 +21,6 @@ namespace Soulbreak.UI
         private bool initialized;
         private float bump;
 
-
         private void OnEnable()
         {
             wallet.OnSoulsChanged += HandleSouls;

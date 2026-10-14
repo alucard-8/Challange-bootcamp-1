@@ -36,5 +36,22 @@ namespace Soulbreak.GameFlow
             IsPaused = paused;
             OnPauseChanged?.Invoke(paused);
         }
+
+        private void OnApplicationFocus(bool focus)
+        {
+            if (!focus) AutoPause();
+        }
+
+        private void OnApplicationPause(bool pause)
+        {
+            if (pause) AutoPause();
+        }
+
+        private void AutoPause()
+        {
+            if (!Core.GameSettings.PauseOnUnfocus || IsPaused) return;
+            if (game == null || game.State != GameState.Combat) return;
+            SetPaused(true);
+        }
     }
 }

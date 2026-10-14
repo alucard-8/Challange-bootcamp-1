@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Soulbreak.Fx
@@ -10,8 +11,9 @@ namespace Soulbreak.Fx
         private int propertyId;
         private float duration, age;
         private Vector3 scaleFrom, scaleTo;
+        private Action onComplete;
 
-        public FxAnimator Init(MaterialPropertyBlock block, string property, float duration, Vector3 scaleFrom, Vector3 scaleTo)
+        public FxAnimator Init(MaterialPropertyBlock block, string property, float duration, Vector3 scaleFrom, Vector3 scaleTo, Action onComplete = null)
         {
             sr = GetComponent<SpriteRenderer>();
             this.block = block;
@@ -19,6 +21,8 @@ namespace Soulbreak.Fx
             this.duration = duration;
             this.scaleFrom = scaleFrom;
             this.scaleTo = scaleTo;
+            this.onComplete = onComplete;
+            age = 0f;
             Step(0f);
             return this;
         }
@@ -28,7 +32,10 @@ namespace Soulbreak.Fx
             age += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(age / duration);
             Step(t);
-            if (t >= 1f) Destroy(gameObject);
+            if (t < 1f) return;
+
+            if (onComplete != null) onComplete();
+            else Destroy(gameObject);
         }
 
         private void Step(float t)

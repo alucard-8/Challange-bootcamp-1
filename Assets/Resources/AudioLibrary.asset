@@ -14,76 +14,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Soulbreak.Audio.AudioLibrary
   sfx:
   - id: 0
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: aaa513be6efe46b458b90fdaa017c6c8, type: 3}
     volume: 1
   - id: 1
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 41f6c59b169f03f4e90391e6dadfecfe, type: 3}
     volume: 1
   - id: 2
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 0c727ad9629b62049ae5ed70121e07ac, type: 3}
     volume: 1
   - id: 3
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: eb48d400ec5157642a4312a19d8df31e, type: 3}
     volume: 1
   - id: 4
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 34664f23bfb16bd49acada9e3d028e46, type: 3}
     volume: 1
   - id: 5
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: c16b6beea6ccada4c86899ab527ecf2d, type: 3}
     volume: 1
   - id: 6
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 0f722f898c798fe4d8d9003733f8e8cc, type: 3}
     volume: 1
   - id: 7
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 43c4704d69f16b04ea71ad557f515044, type: 3}
     volume: 1
   - id: 8
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: cbd92a706087c3d4bbbcb2deb6c83bb7, type: 3}
     volume: 1
   - id: 9
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: c543637832003d3478bb9cf6762928f2, type: 3}
     volume: 1
   - id: 10
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 1652b80a43de4984c88b4b9d8bdb2eab, type: 3}
     volume: 1
   - id: 11
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 1652b80a43de4984c88b4b9d8bdb2eab, type: 3}
     volume: 1
   - id: 12
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 447560df73512ba42ac855511943bdac, type: 3}
     volume: 1
   - id: 13
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 8c08cdc14794d7645921afc240e7c895, type: 3}
     volume: 1
   - id: 14
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: cbd92a706087c3d4bbbcb2deb6c83bb7, type: 3}
     volume: 1
   - id: 15
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 7921004ff7bd0f94c9202b43cdcd65a1, type: 3}
     volume: 1
   - id: 16
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 2d87fdd5f8721d149b54dbe0e9cbe71d, type: 3}
     volume: 1
   - id: 17
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 3975c906a934c5346894b1d4f7b9563a, type: 3}
     volume: 1
   - id: 18
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 2d87fdd5f8721d149b54dbe0e9cbe71d, type: 3}
     volume: 1
   - id: 19
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 3d015970071c1c144aacbcf26ea8b661, type: 3}
     volume: 1
   - id: 20
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 224afbce9149a18428437324d5cf0ae2, type: 3}
     volume: 1
   - id: 21
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: c882995f97d717c468a35e3eb09f315b, type: 3}
     volume: 1
   - id: 22
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 736cd8c04a7c05149aa150e0f421b4e5, type: 3}
     volume: 1
   - id: 23
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: ce91b9300fb0fb34482c0686a6bbcd97, type: 3}
     volume: 1
   - id: 24
     clip: {fileID: 0}
@@ -92,27 +92,27 @@ MonoBehaviour:
     clip: {fileID: 0}
     volume: 1
   - id: 26
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: cec1333065354a44eab2bda3fbd07690, type: 3}
     volume: 1
   - id: 27
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 736cd8c04a7c05149aa150e0f421b4e5, type: 3}
     volume: 1
   - id: 28
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 81053790dfb9849468f0431f84ea5643, type: 3}
     volume: 1
   - id: 29
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 7921004ff7bd0f94c9202b43cdcd65a1, type: 3}
     volume: 1
   - id: 30
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 2d87fdd5f8721d149b54dbe0e9cbe71d, type: 3}
     volume: 1
   - id: 31
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 43957a230c266ef4c9df99d164412e7b, type: 3}
     volume: 1
   - id: 32
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: c882995f97d717c468a35e3eb09f315b, type: 3}
     volume: 1
   menuMusic:
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: f4de841626abb1a459ce7ecb466f420e, type: 3}
     volume: 1
   gameTiers: []

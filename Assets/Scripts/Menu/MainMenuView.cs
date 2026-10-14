@@ -142,7 +142,10 @@ namespace Soulbreak.Menu
             toastTimer = 2.5f;
         }
 
-        public void Flash() => flashAlpha = 1f;
+        public void Flash()
+        {
+            if (!Core.GameSettings.ReduceFlashing) flashAlpha = 1f;
+        }
 
         private void AnimateToastAndFlash()
         {

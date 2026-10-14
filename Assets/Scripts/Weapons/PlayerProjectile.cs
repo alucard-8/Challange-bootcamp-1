@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Soulbreak.Core;
 using UnityEngine;
 
@@ -5,7 +6,10 @@ namespace Soulbreak.Weapons
 {
     public class PlayerProjectile : MonoBehaviour
     {
+        private static readonly Stack<PlayerProjectile> pool = new Stack<PlayerProjectile>();
+
         private ProjectileShotPattern pattern;
+        private SpriteRenderer sr;
         private Vector2 velocityDir, targetPoint;
         private int damage;
         private float travelled, hitRadius;
@@ -14,23 +18,46 @@ namespace Soulbreak.Weapons
 
         public static void Spawn(ProjectileShotPattern pattern, Vector2 origin, Vector2 dir, Vector2 target, int damage, bool crit)
         {
-            var go = new GameObject(pattern.displayName);
-            go.transform.position = origin + dir * 1.9f;
-            go.transform.localScale = Vector3.one * pattern.size * (crit ? 1.25f : 1f);
+            PlayerProjectile p = null;
+            while (pool.Count > 0)
+            {
+                var candidate = pool.Pop();
+                if (candidate != null) { p = candidate; break; }
+            }
 
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = pattern.sprite;
-            if (pattern.material != null) sr.sharedMaterial = pattern.material;
-            sr.color = pattern.color;
-            sr.sortingOrder = 6;
+            if (p == null)
+            {
+                var go = new GameObject(pattern.displayName);
+                p = go.AddComponent<PlayerProjectile>();
+                p.sr = go.AddComponent<SpriteRenderer>();
+                p.sr.sortingOrder = 6;
+            }
+            else
+            {
+                p.gameObject.SetActive(true);
+            }
 
-            var p = go.AddComponent<PlayerProjectile>();
+            p.transform.position = origin + dir * 1.9f;
+            p.transform.localScale = Vector3.one * pattern.size * (crit ? 1.25f : 1f);
+            p.sr.sprite = pattern.sprite;
+            p.sr.sharedMaterial = pattern.material;
+            p.sr.color = pattern.color;
+
             p.pattern = pattern;
             p.velocityDir = dir;
             p.targetPoint = target;
             p.damage = damage;
+            p.travelled = 0f;
             p.hitRadius = pattern.size * 0.45f;
+            p.homingTarget = null;
+            p.retargetTimer = 0f;
             if (pattern.homing) p.homingTarget = NearestHostile(target, 6f);
+        }
+
+        private void Despawn()
+        {
+            gameObject.SetActive(false);
+            pool.Push(this);
         }
 
         private void Update()
@@ -51,7 +78,7 @@ namespace Soulbreak.Weapons
             travelled += step;
 
             if (!pattern.travelToTarget && TryHit()) return;
-            if (travelled >= pattern.range) Destroy(gameObject);
+            if (travelled >= pattern.range) Despawn();
         }
 
         private void Steer()
@@ -76,7 +103,7 @@ namespace Soulbreak.Weapons
                 if (!hit.TryGetComponent(out IHostile hostile) || !hostile.IsAlive) continue;
 
                 if (pattern.explosionRadius > 0f) Explode();
-                else { hostile.Shoot(damage); Destroy(gameObject); }
+                else { hostile.Shoot(damage); Despawn(); }
                 return true;
             }
             return false;
@@ -89,7 +116,7 @@ namespace Soulbreak.Weapons
 
             if (pattern.explodedChannel != null)
                 pattern.explodedChannel.Raise(new ExplosionInfo { Position = transform.position, Radius = pattern.explosionRadius, Color = pattern.color });
-            Destroy(gameObject);
+            Despawn();
         }
 
         public static Transform NearestHostile(Vector2 point, float radius)

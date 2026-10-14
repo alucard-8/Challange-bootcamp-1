@@ -20,6 +20,7 @@ namespace Soulbreak.Perks
         [SerializeField] private PlayerShooter shooter;
         [SerializeField] private EnemyRegistry enemies;
         [SerializeField] private float fireInterval = 0.12f;
+        [SerializeField] private bool infiniteAmmo = true;
 
         private bool autoAim;
         private float fireTimer;
@@ -56,8 +57,8 @@ namespace Soulbreak.Perks
             }
 
             if (!InputReader.AdminPressed()) return;
-            shop.GrantAll();
-            wallet.Add(souls, transform.position);
+            if (shop != null) shop.GrantAll();
+            if (wallet != null) wallet.Add(souls, transform.position);
             Debug.Log("ADMIN: granted every perk and " + souls + " souls.");
         }
 
@@ -81,7 +82,7 @@ namespace Soulbreak.Perks
         {
             autoAim = !autoAim;
             fireTimer = 0f;
-            if (shooter != null) shooter.IgnoreAmmo = autoAim;
+            if (shooter != null) shooter.IgnoreAmmo = autoAim && infiniteAmmo;
             Debug.Log(autoAim ? "ADMIN: auto aim ON." : "ADMIN: auto aim OFF.");
         }
 

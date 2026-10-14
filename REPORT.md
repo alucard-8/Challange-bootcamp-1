@@ -9,12 +9,67 @@ drop for bonus souls or a shield charge, and fire the **Nova** (SPACE) when over
 waves the **Soul Shop** offers 5 random perks: *buffs* (stats) and *techniques* (new ring modules).
 Every 5th wave is a boss wave. Ammo refills on its own, one round at a time.
 
-## How I worked (prompting rules)
-I followed the workshop rule of building **subsystems, not the whole game**: first a plan of
-systems, then one subsystem at a time (Reactor → Enemies/Spawner → Shooting → Souls/Orbs → Perks
-→ UI), compiling and play testing after each step in Unity. Later iterations added several related
-subsystems per step (waves + ammo + combo, then shop + perks, then visuals), always as separate
-classes wired through events, and each step was tested before moving on.
+## My thought process: how I divided the game
+
+### 1. Start from the game loop, not from the code
+Before writing anything I wrote the loop in one sentence:
+*enemies spawn in waves, walk to the reactor, the player shoots them through the ring, kills give
+souls, souls buy perks between waves, the run ends when the reactor breaks.*
+Every noun in that sentence became a **system** and every verb became an **event** between systems:
+
+| Part of the loop | System | What it announces |
+|---|---|---|
+| enemies spawn in waves | **Enemies** (`WaveManager`, `EnemyFactory`, `Enemy`) | `EnemySpawned`, `EnemyKilled`, `EnemyReachedReactor`, `OnWaveCleared` |
+| walk to the reactor | **Reactor** (`Reactor`, `ReactorHealer`) | `OnHealthChanged`, `OnDestroyed` |
+| the player shoots through the ring | **Player** + **Weapons** (`PlayerShooter`, `AmmoSystem`, `WeaponRing`, `ShotPattern`s) | `OnAmmoChanged`, `OnSlotEmptied` |
+| kills give souls | **Economy** + **Orbs** (`SoulWallet`, `ComboSystem`, `OrbDropper`) | `OnSoulsChanged`, `OrbCollected` |
+| souls buy perks between waves | **Perks** (`PerkShop`, `PerkEffect`s) | `OnPerkBought`, `OnClosed` |
+| the run ends | **Game Flow** (`GameManager`, `PauseController`, `RunStats`) | `OnStateChanged` (game over) |
+
+Everything else (UI, audio, effects, meta progression, leaderboard) only **reacts** to those
+events, so they became their own systems that sit on the outside and listen.
+
+### 2. One question decides where code goes: "who owns this data?"
+* The reactor owns its health, so only `Reactor` changes it. Enemies don't damage it directly; they reach it and the reactor takes the hit.
+* The wallet owns souls, so the shop asks `SoulWallet.TrySpend()` instead of editing a number.
+* `TimeScaleService` owns `Time.timeScale`. Pause, hit stop and overdrive ask it for a layer instead of fighting over the value.
+If two classes wanted to change the same data, that was the sign one of them was in the wrong system.
+
+### 3. Split each system into subsystems by reason to change
+A system got split as soon as one class had two jobs:
+* **Logic vs display**: `Reactor` / `ReactorView`, `Enemy` / `EnemyView`, `WeaponRing` / `WeaponRingView`, `PerkShop` / `ShopView`. I can restyle a view without touching gameplay.
+* **Input vs logic**: only controllers read the keyboard and mouse (`PlayerController`, `GameHotkeys`, `ShopHotkeys`, `MainMenuInput`). They call commands like `Fire()` or `TryBuy()`, so gameplay code never knows which key was pressed.
+* **Data vs behaviour**: enemy types, perks, weapon modules, modes and difficulty are ScriptableObject assets. Adding content means adding an asset, not editing code.
+* **HUD**: instead of one giant HUD script there is one small view per element (`AmmoView`, `SoulCounterView`, `ComboView`, `BannerView` and more), each listening to just the event it needs.
+
+### 4. Pick how systems talk
+I used the Observer pattern in two ways and chose between them with one rule:
+* **ScriptableObject event channels** when the sender is spawned at runtime or many unrelated systems listen. An `Enemy` doesn't know the wallet, the combo, the FX or the wave manager exist; it raises `EnemyKilled` and they all react.
+* **Plain C# events** when a single scene system reports its own state (`Reactor.OnHealthChanged`, `SoulWallet.OnSoulsChanged`). Listeners subscribe in `OnEnable` and unsubscribe in `OnDisable`.
+When two systems needed to coordinate (wave cleared → open shop → shop closed → next wave), a small mediator, `GameManager`, connects them so they never reference each other.
+
+### 5. Deadlock as the inspiration
+Once the core loop worked, I took mechanics from **Deadlock** (Valve's hero shooter) to make each
+run feel faster and more skill-based. Every one was added as a new subsystem that listens to events
+that already existed, so no older system had to change:
+* **Headshots**: enemies have a weak point (their eye). Hitting it deals bonus damage and triggers a popup, hit stop and sound.
+* **Hit stop and impact flash**: big hits freeze time for a moment, like Deadlock's heavy hits.
+* **Ultimate (Overdrive, Q)**: a meter fills from kills; when used, every owned technique fires at once with free ammo and slowed time.
+* **Kill streaks with an announcer**: "RAMPAGE", "GODLIKE" and bonus souls.
+* **Souls economy and shop**: like Deadlock's souls, kills give currency you spend on items between waves.
+* **Elite enemies and a two-phase boss** that enrages at half health.
+* **Item synergies**: certain technique pairs unlock a bonus effect.
+* **Map events**: a Soul Urn to shoot before it escapes, a solar flare and a rejuvenator.
+
+The full list is in the *Deadlock inspired features* section below.
+
+## My approach to writing the code
+* **One subsystem at a time** (the workshop prompting rule). The order followed the loop: Reactor → Enemies and waves → Shooting and ammo → Souls and orbs → Perks and shop → UI → audio and effects → meta progression → online. I compiled and play tested in Unity after each one before moving on.
+* **New features plug in as listeners.** Later features like headshots, kill streaks, overdrive, the tutorial, the index and the leaderboard were added by subscribing to existing events. Older systems didn't need to change, which is how I knew the split was right.
+* **Test before building on top.** Each subsystem had to work alone first (for example the wallet counting souls from `EnemyKilled` before any shop existed).
+* **Interfaces over concrete classes.** Weapons hit an `IHostile` and the shooter clicks an `IShootable`, so new targets like the Soul Urn worked with no weapon changes.
+* **UI built as prefabs**: every screen is a prefab with serialized references; the view scripts only react to events and animate.
+* **Balance through data.** Tuning happened in assets and stat values, for example lowering the automatic reload from 2s to 1.7s per bullet after playtests, without touching any system logic.
 
 ## Following the design patterns ebook (*Level up your code with design patterns and SOLID*)
 
@@ -137,10 +192,19 @@ materials, enemies, perks, weapon modules, event channels, UI theme, post proces
 game scene, builds the main menu and registers both scenes in Build Settings. Safe to re run.
 
 ## UI
-* Every screen is a **prefab** in `Assets/Prefabs/UI` (HUD, Shop, PauseMenu, Settings, Index, HowTo, MainMenu, Ascension, Difficulty) with its own Canvas. The scene fader is `Resources/SceneFader.prefab`.
+* Every screen is a **prefab** in `Assets/Prefabs/UI` (HUD, Shop, PauseMenu, Settings, Index, HowTo, MainMenu, Ascension, Difficulty, Leaderboard, Account) with its own Canvas. The scene fader is `Resources/SceneFader.prefab`.
 * View scripts hold `[SerializeField]` references to their prefab objects, wire button listeners in `Awake`, and only animate or react to events.
 * Elements whose count changes at runtime (ammo and shield pips, damage numbers, soul motes, popups, edge arrows, confetti) are inactive templates inside the prefab, cloned with `UIFactory.Spawn`.
 * `UIFontApplier` (on each canvas) applies the Bahnschrift OS font at runtime, since OS fonts cannot be stored in prefabs or redistributed.
+* Text and colors live in the `UIStrings` and `UITheme` ScriptableObjects, so views hold no hardcoded copy.
+* `SafeAreaFitter` wraps the content of the HUD, main menu, pause menu and shop so nothing sits under notches or cut edges.
+* Settings keeps only volume, music, sound effects, screen shake, damage numbers and tutorial, plus a RESET button wired to `SettingsView.ResetAll()`.
+
+## Online and web build
+* `AccountService` signs players in as guests, or with a username and password, through Unity Gaming Services. Progress is synced with Cloud Save and the newer save wins.
+* `LeaderboardService` posts every finished run (through `LeaderboardSubmitter`, which listens to `OnRunRecorded`) and fetches the global top 10. Every call fails soft, so the game works offline.
+* `LeaderboardPanel` slides in from the right edge in the main menu and pause menu: best score, last run, rank and top 10.
+* `Soulbreak/Build WebGL` builds a 1920x1080 browser version for itch.io; progress is saved in the browser.
 
 ## Controls
 * **Left click**: shoot through the weapon ring

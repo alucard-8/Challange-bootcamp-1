@@ -25,32 +25,14 @@ namespace Soulbreak.Core
 #endif
         }
 
-        public static bool AbilityPressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
-#else
-            return Input.GetKeyDown(KeyCode.Space);
-#endif
-        }
+        public static bool AbilityPressed() => Down(Keybinds.Action.Nova);
+        public static bool OverdrivePressed() => Down(Keybinds.Action.Overdrive);
+        public static bool PausePressed() => Down(Keybinds.Action.Pause);
+        public static bool RestartPressed() => Down(Keybinds.Action.Restart);
+        public static bool SkipTutorialPressed() => Down(Keybinds.Action.SkipTutorial);
 
-        public static bool OverdrivePressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
-#else
-            return Input.GetKeyDown(KeyCode.Q);
-#endif
-        }
-
-        public static bool PausePressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && (Keyboard.current.escapeKey.wasPressedThisFrame || Keyboard.current.pKey.wasPressedThisFrame);
-#else
-            return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P);
-#endif
-        }
+        public static bool LeftPressed() => Down(Keybinds.Action.Left) || ArrowPressed(true);
+        public static bool RightPressed() => Down(Keybinds.Action.Right) || ArrowPressed(false);
 
         public static bool ConfirmPressed()
         {
@@ -97,42 +79,6 @@ namespace Soulbreak.Core
 #endif
         }
 
-        public static bool SkipTutorialPressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame;
-#else
-            return Input.GetKeyDown(KeyCode.T);
-#endif
-        }
-
-        public static bool LeftPressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && (Keyboard.current.leftArrowKey.wasPressedThisFrame || Keyboard.current.aKey.wasPressedThisFrame);
-#else
-            return Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A);
-#endif
-        }
-
-        public static bool RightPressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && (Keyboard.current.rightArrowKey.wasPressedThisFrame || Keyboard.current.dKey.wasPressedThisFrame);
-#else
-            return Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D);
-#endif
-        }
-
-        public static bool RestartPressed()
-        {
-#if ENABLE_INPUT_SYSTEM
-            return Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame;
-#else
-            return Input.GetKeyDown(KeyCode.R);
-#endif
-        }
-
         public static bool PerkPressed(int index)
         {
             if (index < 0 || index > 8) return false;
@@ -140,6 +86,27 @@ namespace Soulbreak.Core
             return Keyboard.current != null && Keyboard.current[Key.Digit1 + index].wasPressedThisFrame;
 #else
             return Input.GetKeyDown(KeyCode.Alpha1 + index);
+#endif
+        }
+
+        private static bool Down(Keybinds.Action action)
+        {
+            string name = Keybinds.GetName(action);
+            if (string.IsNullOrEmpty(name)) return false;
+#if ENABLE_INPUT_SYSTEM
+            if (Keyboard.current == null) return false;
+            return System.Enum.TryParse(name, out Key key) && Keyboard.current[key].wasPressedThisFrame;
+#else
+            return System.Enum.TryParse(name, out KeyCode key) && Input.GetKeyDown(key);
+#endif
+        }
+
+        private static bool ArrowPressed(bool left)
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Keyboard.current != null && Keyboard.current[left ? Key.LeftArrow : Key.RightArrow].wasPressedThisFrame;
+#else
+            return Input.GetKeyDown(left ? KeyCode.LeftArrow : KeyCode.RightArrow);
 #endif
         }
     }

@@ -8,7 +8,7 @@ namespace Soulbreak.UI
 {
     public class SettingsView : MonoBehaviour
     {
-        public enum Setting { Master, Music, Sfx, ScreenShake, DamageNumbers, Tutorial }
+        public enum Setting { Master, Music, Sfx, ScreenShake, DamageNumbers, Tutorial, Colorblind, AimAssist, ReduceFlashing, FpsOverlay, Fullscreen, Resolution, Quality }
 
         [Serializable]
         private class Row
@@ -31,18 +31,27 @@ namespace Soulbreak.UI
 
         private void Awake()
         {
-            backButton.onClick.AddListener(Close);
+            if (backButton != null) backButton.onClick.AddListener(Close);
             foreach (var row in rows)
             {
                 var r = row;
                 if (r.toggle != null) r.toggle.onClick.AddListener(() => SetBool(r.setting, !GetBool(r.setting)));
-                if (r.minus != null) r.minus.onClick.AddListener(() => Step(r.setting, -0.1f));
-                if (r.plus != null) r.plus.onClick.AddListener(() => Step(r.setting, 0.1f));
+                if (r.minus != null) r.minus.onClick.AddListener(() => Adjust(r.setting, -1));
+                if (r.plus != null) r.plus.onClick.AddListener(() => Adjust(r.setting, 1));
             }
         }
 
-        private void OnEnable() => GameSettings.OnChanged += Refresh;
-        private void OnDisable() => GameSettings.OnChanged -= Refresh;
+        private void OnEnable()
+        {
+            GameSettings.OnChanged += Refresh;
+            DisplaySettings.OnChanged += Refresh;
+        }
+
+        private void OnDisable()
+        {
+            GameSettings.OnChanged -= Refresh;
+            DisplaySettings.OnChanged -= Refresh;
+        }
 
         public void Open()
         {
@@ -57,6 +66,13 @@ namespace Soulbreak.UI
             if (!IsOpen) return;
             IsOpen = false;
             Audio.UIAudio.Play(Audio.Sfx.UIClose);
+        }
+
+        public void ResetAll()
+        {
+            GameSettings.Reset();
+            DisplaySettings.Reset();
+            Keybinds.Reset();
         }
 
         private void Update()
@@ -75,13 +91,42 @@ namespace Soulbreak.UI
                     r.value.text = GetBool(r.setting) ? S.settingsOn : S.settingsOff;
                     continue;
                 }
+                if (IsOption(r.setting))
+                {
+                    r.value.text = OptionLabel(r.setting);
+                    continue;
+                }
                 float v = GetFloat(r.setting);
-                UIFactory.SetBar(r.bar, v);
+                if (r.bar != null) UIFactory.SetBar(r.bar, v);
                 r.value.text = string.Format(S.settingsPercent, v * 100f);
             }
         }
 
-        private static void Step(Setting s, float delta) => SetFloat(s, Mathf.Round((GetFloat(s) + delta) * 10f) / 10f);
+        private static void Adjust(Setting s, int dir)
+        {
+            if (IsOption(s)) { CycleOption(s, dir); return; }
+            if (IsBool(s)) { SetBool(s, !GetBool(s)); return; }
+            SetFloat(s, Mathf.Round((GetFloat(s) + 0.1f * dir) * 10f) / 10f);
+        }
+
+        private static bool IsOption(Setting s) => s == Setting.Resolution || s == Setting.Quality;
+
+        private static string OptionLabel(Setting s) =>
+            s == Setting.Resolution ? DisplaySettings.ResolutionLabel : DisplaySettings.QualityLabel;
+
+        private static void CycleOption(Setting s, int dir)
+        {
+            if (s == Setting.Resolution)
+            {
+                int n = DisplaySettings.Resolutions.Length;
+                DisplaySettings.ResolutionIndex = (DisplaySettings.ResolutionIndex + dir + n) % n;
+            }
+            else
+            {
+                int n = Mathf.Max(1, QualitySettings.names.Length);
+                DisplaySettings.QualityLevel = (DisplaySettings.QualityLevel + dir + n) % n;
+            }
+        }
 
         private static float GetFloat(Setting s)
         {
@@ -105,12 +150,35 @@ namespace Soulbreak.UI
             }
         }
 
-        private static bool GetBool(Setting s) => s == Setting.Tutorial ? GameSettings.Tutorial : GameSettings.DamageNumbers;
+        private static bool IsBool(Setting s) => s != Setting.Master && s != Setting.Music && s != Setting.Sfx && s != Setting.ScreenShake;
+
+        private static bool GetBool(Setting s)
+        {
+            switch (s)
+            {
+                case Setting.Tutorial: return GameSettings.Tutorial;
+                case Setting.DamageNumbers: return GameSettings.DamageNumbers;
+                case Setting.Colorblind: return GameSettings.Colorblind;
+                case Setting.AimAssist: return GameSettings.AimAssist;
+                case Setting.ReduceFlashing: return GameSettings.ReduceFlashing;
+                case Setting.FpsOverlay: return GameSettings.FpsOverlay;
+                case Setting.Fullscreen: return DisplaySettings.Fullscreen;
+                default: return false;
+            }
+        }
 
         private static void SetBool(Setting s, bool v)
         {
-            if (s == Setting.Tutorial) GameSettings.Tutorial = v;
-            else GameSettings.DamageNumbers = v;
+            switch (s)
+            {
+                case Setting.Tutorial: GameSettings.Tutorial = v; break;
+                case Setting.DamageNumbers: GameSettings.DamageNumbers = v; break;
+                case Setting.Colorblind: GameSettings.Colorblind = v; break;
+                case Setting.AimAssist: GameSettings.AimAssist = v; break;
+                case Setting.ReduceFlashing: GameSettings.ReduceFlashing = v; break;
+                case Setting.FpsOverlay: GameSettings.FpsOverlay = v; break;
+                case Setting.Fullscreen: DisplaySettings.Fullscreen = v; break;
+            }
         }
     }
 }
